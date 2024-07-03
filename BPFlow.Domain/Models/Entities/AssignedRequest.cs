@@ -6,8 +6,7 @@ public class AssignedRequest : HistoryEntity
     {
 
     }
-
-    public int? Code { get; set; }
+    
     public int? ResponsibleEmployeeId { get; set; }
     public int? EmployeeId { get; set; }
     public int? PeriodId { get; set; }

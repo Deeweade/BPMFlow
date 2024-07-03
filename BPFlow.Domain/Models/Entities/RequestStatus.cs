@@ -9,7 +9,7 @@ public class RequestStatus : BaseEntity
         AssignedRequests = new HashSet<AssignedRequest>();
     }
     public int? ResponsibleRoleId { get; set; }
-    public string? Name { get; set; }
+    public string Name { get; set; }
 
     //RequestStatus -> GroupRequest
     public int? GroupRequestId { get; set; }

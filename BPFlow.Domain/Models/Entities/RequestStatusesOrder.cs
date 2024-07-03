@@ -8,7 +8,7 @@ public class RequestStatusesOrder : BaseEntity
     }
 
     public int? StatusOrder { get; set; }
-    public bool? IsFinalStatus { get; set; }
+    public bool IsFinalStatus { get; set; }
 
     // RequestStatusesOrder -> GroupRequest
     public int? GroupRequestId { get; set; }

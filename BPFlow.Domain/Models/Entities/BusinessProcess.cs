@@ -7,7 +7,7 @@ public class BusinessProcess : BaseEntity
         GroupRequests = new HashSet<GroupRequest>();
     }
 
-    public string? Name { get; set; }
+    public string Name { get; set; }
 
     // BusinessProcessType -> GroupRequest
     public ICollection<GroupRequest> GroupRequests { get; set; }
