@@ -10,7 +10,7 @@ public class GroupRequest : BaseEntity
         RequestStatusTransitions = new HashSet<RequestStatusTransition>();
     }
 
-    public string? Name { get; set; }
+    public string Name { get; set; }
 
     // GroupRequest -> BusinessProcess
     public int? BusinessProcessId { get; set; }

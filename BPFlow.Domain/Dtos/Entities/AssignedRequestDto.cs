@@ -2,7 +2,6 @@ namespace BPFlow.Domain.Dtos.Entities;
 
 public class AssignedRequestDto : HistoryEntityDto
 {
-    public int? Code { get; set; }
     public int? GroupRequestId { get; set; }
     public int? RequestStatusId { get; set; }
     public int? ResponsibleEmployeeId { get; set; }
