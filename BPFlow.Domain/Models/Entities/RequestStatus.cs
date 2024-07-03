@@ -9,6 +9,11 @@ public class RequestStatus : BaseEntity
         AssignedRequests = new HashSet<AssignedRequest>();
     }
     public int? ResponsibleRoleId { get; set; }
+    public string? Name { get; set; }
+
+    //RequestStatus -> GroupRequest
+    public int? GroupRequestId { get; set; }
+    public virtual GroupRequest? GroupRequests { get; set; }
 
     // RequestStatus -> AssignedRequest
     public virtual ICollection<AssignedRequest> AssignedRequests { get; set; }
@@ -18,12 +23,4 @@ public class RequestStatus : BaseEntity
 
     // RequestStatus -> RequestStatusesOrder
     public virtual ICollection<RequestStatusesOrder> RequestStatusesOrders { get; set; }
-
-    // RequestStatus -> BusinessProcessStage
-    public int? BusinessProcessStageId { get; set; }
-    public BusinessProcessType? BusinessProcessTypes { get; set; }
-
-    // RequestStatus -> GoalOwnershipType
-    public int? GoalOwnershipTypeId { get; set; }
-    public GoalOwnershipType? GoalOwnershipTypes { get; set;}
 }

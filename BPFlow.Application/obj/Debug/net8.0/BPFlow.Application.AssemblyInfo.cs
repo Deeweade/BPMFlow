@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BPFlow.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3186eb91b2aa92e981d9045208739baddf3aa4dd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+459a51f703f599db66bb8d79ebdfdeeacfe7fc6d")]
 [assembly: System.Reflection.AssemblyProductAttribute("BPFlow.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BPFlow.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

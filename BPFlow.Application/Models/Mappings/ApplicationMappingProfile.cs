@@ -9,9 +9,7 @@ public class InfrastructureMappingProfile : Profile
     public InfrastructureMappingProfile()
     {
         CreateAssignedRequestMapping();
-        CreateBusinessProcessStageMappings();
-        CreateBusinessProcessTypeMappings();
-        CreateGoalOwnershipTypeMappings();
+        CreateBusinessProcessMappings();
         CreateGroupRequestMappings();
         CreateRequestStatusMappings();
         CreateRequestStatusesOrderMappings();
@@ -24,22 +22,10 @@ public class InfrastructureMappingProfile : Profile
         CreateMap<AssignedRequestDto, AssignedRequestView>();
     }
 
-    private void CreateBusinessProcessStageMappings()
+    private void CreateBusinessProcessMappings()
     {
-        CreateMap<BusinessProcessStageView, BusinessProcessStageDto>();
-        CreateMap<BusinessProcessStageDto, BusinessProcessStageView>();
-    }
-
-    private void CreateBusinessProcessTypeMappings()
-    {
-        CreateMap<BusinessProcessTypeView, BusinessProcessTypeDto>();
-        CreateMap<BusinessProcessTypeDto, BusinessProcessTypeView>();
-    }
-
-    private void CreateGoalOwnershipTypeMappings()
-    {
-        CreateMap<GoalOwnershipTypeView, GoalOwnershipTypeDto>();
-        CreateMap<GoalOwnershipTypeDto, GoalOwnershipTypeView>();
+        CreateMap<BusinessProcessView, BusinessProcessDto>();
+        CreateMap<BusinessProcessDto, BusinessProcessView>();
     }
 
     private void CreateGroupRequestMappings()

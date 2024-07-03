@@ -17,9 +17,7 @@ public class BPFlowDbContext : DbContext
     public DbSet<RequestStatusTransition> RequestStatusTransitions { get; set; }
     public DbSet<RequestStatusesOrder> RequestStatusesOrders { get; set; }
     public DbSet<RequestStatus> RequestStatuses { get; set; }
-    public DbSet<BusinessProcessType> BusinessProcessTypes { get; set; }
-    public DbSet<BusinessProcessStage> BusinessProcessStages { get; set; }
-    public DbSet<GoalOwnershipType> GoalOwnershipTypes { get; set; }
+    public DbSet<BusinessProcess> BusinessProcess { get; set; }
     
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

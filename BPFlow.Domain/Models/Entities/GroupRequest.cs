@@ -5,20 +5,22 @@ public class GroupRequest : BaseEntity
     public GroupRequest()
     {
         AssignedRequests = new HashSet<AssignedRequest>();
+        RequestStatuses = new HashSet<RequestStatus>();
         RequestStatusesOrders = new HashSet<RequestStatusesOrder>();
         RequestStatusTransitions = new HashSet<RequestStatusTransition>();
     }
 
     public string? Name { get; set; }
-    public int? BonusSchemeId { get; set; }
-    public int? PeriodId { get; set; }
 
-    // GroupRequest -> BusinessProcessType
-    public int? BusinessProcessTypeId { get; set; }
-    public virtual BusinessProcessType? BusinessProcessTypes { get; set; }
+    // GroupRequest -> BusinessProcess
+    public int? BusinessProcessId { get; set; }
+    public virtual BusinessProcess? BusinessProcesses { get; set; }
 
-    // GroupRequest -> AssignedRequest 
+    // GroupRequest -> AssignedRequest
     public virtual ICollection<AssignedRequest> AssignedRequests { get; set; }
+
+    // GroupRequest -> RequestStatus
+    public virtual ICollection<RequestStatus> RequestStatuses { get; set; }
 
     // GroupRequest -> RequestStatusesOrder
     public virtual ICollection<RequestStatusesOrder> RequestStatusesOrders { get; set; }

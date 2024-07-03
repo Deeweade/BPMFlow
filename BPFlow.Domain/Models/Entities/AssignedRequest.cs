@@ -13,11 +13,11 @@ public class AssignedRequest : HistoryEntity
     public int? PeriodId { get; set; }
     public int? EntityStatusId { get; set; }
 
-    // AssingedRequest -> GroupRequest one-to-many
+    // AssingedRequest -> GroupRequest
     public int? GroupRequestId { get; set; }
     public virtual GroupRequest? GroupRequests { get; set; }
 
-    // AssignedRequest -> RequestStatus one-to-one
+    // AssignedRequest -> RequestStatus
     public int? RequestStatusId { get; set; }
     public virtual RequestStatus? RequestStatuses { get; set; }
 }

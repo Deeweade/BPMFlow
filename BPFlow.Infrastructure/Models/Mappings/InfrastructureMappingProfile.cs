@@ -8,38 +8,24 @@ public class InfrastructureMappingProfile : Profile
 {
     public InfrastructureMappingProfile()
     {
-        CreateAssignedRequestMapping();
-        CreateBusinessProcessStageMappings();
-        CreateBusinessProcessTypeMappings();
-        CreateGoalOwnershipTypeMappings();
+        CreateAssignedRequestMappings();
+        CreateBusinessProcessMappings();
         CreateGroupRequestMappings();
         CreateRequestStatusMappings();
         CreateRequestStatusesOrderMappings();
         CreateRequestStatusTransitionMappings();
     }
 
-    private void CreateAssignedRequestMapping()
+    private void CreateAssignedRequestMappings()
     {
         CreateMap<AssignedRequest, AssignedRequestDto>();
         CreateMap<AssignedRequestDto, AssignedRequest>();
     }
 
-    private void CreateBusinessProcessStageMappings()
+    private void CreateBusinessProcessMappings()
     {
-        CreateMap<BusinessProcessStage, BusinessProcessStageDto>();
-        CreateMap<BusinessProcessStageDto, BusinessProcessStage>();
-    }
-
-    private void CreateBusinessProcessTypeMappings()
-    {
-        CreateMap<BusinessProcessType, BusinessProcessTypeDto>();
-        CreateMap<BusinessProcessTypeDto, BusinessProcessType>();
-    }
-
-    private void CreateGoalOwnershipTypeMappings()
-    {
-        CreateMap<GoalOwnershipType, GoalOwnershipTypeDto>();
-        CreateMap<GoalOwnershipTypeDto, GoalOwnershipType>();
+        CreateMap<BusinessProcess, BusinessProcessDto>();
+        CreateMap<BusinessProcessDto, BusinessProcess>();
     }
 
     private void CreateGroupRequestMappings()

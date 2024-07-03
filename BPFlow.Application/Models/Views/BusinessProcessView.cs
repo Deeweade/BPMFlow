@@ -1,6 +1,6 @@
 namespace BPFlow.Application.Models.Views;
 
-public class BusinessProcessTypeView : BaseEntityView
+public class BusinessProcessView : BaseEntityView
 {
     public string? Name { get; set; }
 }
