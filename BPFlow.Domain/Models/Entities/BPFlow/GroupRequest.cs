@@ -1,4 +1,4 @@
-namespace BPFlow.Domain.Models.Entities;
+namespace BPFlow.Domain.Models.Entities.BPFlow;
 
 public class GroupRequest : BaseEntity
 {

@@ -1,5 +1,4 @@
 namespace BPFlow.Domain.Dtos.Entities;
-
 public abstract class HistoryEntityDto : BaseEntityDto
 {
     public int Code { get; set; }

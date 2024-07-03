@@ -1,4 +1,6 @@
-namespace BPFlow.Domain.Models.Entities;
+using BPFlow.Domain.Models.Entities.PerfManagement1;
+
+namespace BPFlow.Domain.Models.Entities.BPFlow;
 
 public class RequestStatus : BaseEntity
 {
@@ -8,12 +10,16 @@ public class RequestStatus : BaseEntity
         RequestStatusesOrders = new HashSet<RequestStatusesOrder>();
         AssignedRequests = new HashSet<AssignedRequest>();
     }
-    public int? ResponsibleRoleId { get; set; }
+
     public string Name { get; set; }
 
     //RequestStatus -> GroupRequest
     public int? GroupRequestId { get; set; }
     public virtual GroupRequest? GroupRequests { get; set; }
+    
+    // RequestStatus
+    public int? ResponsibleRoleId { get; set; }
+    public virtual Role? Roles { get; set; }
 
     // RequestStatus -> AssignedRequest
     public virtual ICollection<AssignedRequest> AssignedRequests { get; set; }

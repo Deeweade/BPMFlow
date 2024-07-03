@@ -1,4 +1,4 @@
-namespace BPFlow.Application.Models.Views;
+namespace BPFlow.Application.Models.Views.BPFlow;
 
 public class AssignedRequestView : HistoryEntityView
 {

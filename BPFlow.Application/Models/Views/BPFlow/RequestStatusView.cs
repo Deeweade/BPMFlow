@@ -1,8 +1,6 @@
-using System.Runtime.CompilerServices;
+namespace BPFlow.Application.Models.Views.BPFlow;
 
-namespace BPFlow.Domain.Dtos.Entities;
-
-public class RequestStatusDto : BaseEntityDto
+public class RequestStatusView : BaseEntityView
 {
     public int? GroupRequestId { get; set; }
     public int? ResponsibleRoleId { get; set; }
