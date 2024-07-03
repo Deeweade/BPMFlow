@@ -1,12 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "AXZhpw6TN1g=",
+  "dgSpecHash": "qrSYFYcRcdY=",
   "success": true,
   "projectFilePath": "/Users/kudemeow/projects c#/bpflow/BPFlow.API/BPFlow.API.csproj",
   "expectedPackageFiles": [
+    "/Users/kudemeow/.nuget/packages/automapper/12.0.1/automapper.12.0.1.nupkg.sha512",
+    "/Users/kudemeow/.nuget/packages/automapper.extensions.microsoft.dependencyinjection/12.0.1/automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
     "/Users/kudemeow/.nuget/packages/microsoft.aspnetcore.authentication.negotiate/8.0.5/microsoft.aspnetcore.authentication.negotiate.8.0.5.nupkg.sha512",
     "/Users/kudemeow/.nuget/packages/microsoft.aspnetcore.connections.abstractions/8.0.5/microsoft.aspnetcore.connections.abstractions.8.0.5.nupkg.sha512",
     "/Users/kudemeow/.nuget/packages/microsoft.aspnetcore.openapi/8.0.6/microsoft.aspnetcore.openapi.8.0.6.nupkg.sha512",
+    "/Users/kudemeow/.nuget/packages/microsoft.csharp/4.7.0/microsoft.csharp.4.7.0.nupkg.sha512",
     "/Users/kudemeow/.nuget/packages/microsoft.entityframeworkcore/8.0.6/microsoft.entityframeworkcore.8.0.6.nupkg.sha512",
     "/Users/kudemeow/.nuget/packages/microsoft.entityframeworkcore.abstractions/8.0.6/microsoft.entityframeworkcore.abstractions.8.0.6.nupkg.sha512",
     "/Users/kudemeow/.nuget/packages/microsoft.entityframeworkcore.analyzers/8.0.6/microsoft.entityframeworkcore.analyzers.8.0.6.nupkg.sha512",

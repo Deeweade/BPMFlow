@@ -11,7 +11,6 @@ var config = new ConfigurationBuilder()
     .SetBasePath(settingsPath)
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     //.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
-    //comment
     .Build();
 
 string machineName = Environment.MachineName.ToLower();

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BPFlow.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+472c6eae4b0cf745d5d6c0931c4abe0b9e3e5c63")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3186eb91b2aa92e981d9045208739baddf3aa4dd")]
 [assembly: System.Reflection.AssemblyProductAttribute("BPFlow.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BPFlow.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
