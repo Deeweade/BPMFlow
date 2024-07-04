@@ -6,7 +6,7 @@ namespace BPFlow.Infrastructure.Data.Contexts;
 
 public class PerfManagement1DbContext : DbContext
 {
-    public PerfManagement1DbContext(DbContextOptions<BPFlowDbContext> options)
+    public PerfManagement1DbContext(DbContextOptions<PerfManagement1DbContext> options)
         : base (options)
     {
     }
