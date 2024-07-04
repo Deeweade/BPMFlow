@@ -1,6 +1,6 @@
-namespace BPFlow.Application.Models.Views;
+namespace BPFlow.Domain.Dtos.Entities.BPFlow;
 
-public class RequestStatusView : BaseEntityView
+public class RequestStatusDto : BaseEntityDto
 {
     public int? GroupRequestId { get; set; }
     public int? ResponsibleRoleId { get; set; }

@@ -1,4 +1,4 @@
-namespace BPFlow.Domain.Dtos.Entities;
+namespace BPFlow.Domain.Dtos.Entities.BPFlow;
 
 public class AssignedRequestDto : HistoryEntityDto
 {
