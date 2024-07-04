@@ -1,4 +1,4 @@
-namespace BPFlow.Domain.Models.Entities.Enums;
+namespace BPFlow.Domain.Models.Enums;
 
 public enum Roles
 {

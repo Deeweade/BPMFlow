@@ -1,3 +1,5 @@
+namespace BPFlow.Domain.Models.Enums;
+
 public enum EntityStatuses
     {
         ActiveDraft = 1,
