@@ -16,13 +16,13 @@ public class RequestStatusTransition : BaseEntity
 
     // RequestStatusTransition -> GroupRequest
     public int? GroupRequestId { get; set; }
-    public virtual GroupRequest? GroupRequests { get; set; }
+    public virtual GroupRequest? GroupRequest { get; set; }
 
     // RequestStatusTransition -> RequestStatus
     public int? SourceStatusId { get; set; }
-    public virtual RequestStatus? RequestStatuses { get; set; }
+    public virtual RequestStatus? RequestStatus { get; set; }
 
     // RequestStatusTransition
     public int? ResponsibleRoleId { get; set; }
-    public virtual Role? Roles { get; set; }
+    public virtual Role? Role { get; set; }
 }

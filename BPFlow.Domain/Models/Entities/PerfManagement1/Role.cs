@@ -15,7 +15,7 @@ public class Role : BaseEntity
 
     // Role -> RoleType
     public int? RoleTypeId { get; set; }
-    public virtual RoleType? RoleTypes { get; set; }
+    public virtual RoleType? RoleType { get; set; }
 
     // Role -> RoleAllowedAction
     public virtual ICollection<RoleAllowedAction> RoleAllowedActions { get; set; }

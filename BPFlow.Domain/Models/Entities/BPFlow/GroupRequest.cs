@@ -14,7 +14,7 @@ public class GroupRequest : BaseEntity
 
     // GroupRequest -> BusinessProcess
     public int? BusinessProcessId { get; set; }
-    public virtual BusinessProcess? BusinessProcesses { get; set; }
+    public virtual BusinessProcess? BusinessProcess { get; set; }
 
     // GroupRequest -> AssignedRequest
     public virtual ICollection<AssignedRequest> AssignedRequests { get; set; }

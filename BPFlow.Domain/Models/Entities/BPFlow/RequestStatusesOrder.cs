@@ -12,9 +12,9 @@ public class RequestStatusesOrder : BaseEntity
 
     // RequestStatusesOrder -> GroupRequest
     public int? GroupRequestId { get; set; }
-    public virtual GroupRequest? GroupRequests { get; set; }
+    public virtual GroupRequest? GroupRequest { get; set; }
 
     // RequestStatusesOrder -> RequestStatus
     public int? RequestStatusId { get; set; }
-    public virtual RequestStatus? RequestStatuses { get; set; }
+    public virtual RequestStatus? RequestStatus { get; set; }
 }

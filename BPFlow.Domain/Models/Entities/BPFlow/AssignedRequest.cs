@@ -15,13 +15,13 @@ public class AssignedRequest : HistoryEntity
 
     // AssingedRequest -> GroupRequest
     public int? GroupRequestId { get; set; }
-    public virtual GroupRequest? GroupRequests { get; set; }
+    public virtual GroupRequest? GroupRequest { get; set; }
 
     // AssignedRequest -> RequestStatus
     public int? RequestStatusId { get; set; }
-    public virtual RequestStatus? RequestStatuses { get; set; }
+    public virtual RequestStatus? RequestStatuse { get; set; }
 
     // AssignedRequest -> EntityStatus
     public int? EntityStatusId { get; set; }
-    public virtual EntityStatus? EntityStatuses { get; set;}
+    public virtual EntityStatus? EntityStatuse { get; set;}
 }

@@ -15,11 +15,11 @@ public class RequestStatus : BaseEntity
 
     //RequestStatus -> GroupRequest
     public int? GroupRequestId { get; set; }
-    public virtual GroupRequest? GroupRequests { get; set; }
+    public virtual GroupRequest? GroupRequest { get; set; }
     
     // RequestStatus
     public int? ResponsibleRoleId { get; set; }
-    public virtual Role? Roles { get; set; }
+    public virtual Role? Role { get; set; }
 
     // RequestStatus -> AssignedRequest
     public virtual ICollection<AssignedRequest> AssignedRequests { get; set; }
