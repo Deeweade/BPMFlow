@@ -6,9 +6,9 @@ using BPMFlow.Domain.Dtos.Entities.PerfManagement1;
 
 namespace BPMFlow.Infrastructure.Models.Mappings;
 
-public class InfrastructureMappingProfile : Profile
+public class ApplicationMappingProfile : Profile
 {
-    public InfrastructureMappingProfile()
+    public ApplicationMappingProfile()
     {
         CreateAssignedRequestMapping();
         CreateBusinessProcessMappings();

@@ -1,7 +1,14 @@
 using System.Text.Json.Serialization;
 using BPFlow.API.Middlewares;
 using BPMFlow.API.Middlewares;
+using BPMFlow.Application.Interfaces.Services;
+using BPMFlow.Application.Services;
+using BPMFlow.Domain.Interfaces.Repositories;
+using BPMFlow.Infrastructure.Data;
+using BPMFlow.Infrastructure.Data.Contexts;
+using BPMFlow.Infrastructure.Models.Mappings;
 using Microsoft.AspNetCore.Authentication.Negotiate;
+using Microsoft.EntityFrameworkCore;
 
 #region EnvironmentConfiguring
 
@@ -60,11 +67,36 @@ builder.Services.AddControllers(options =>
 
 #endregion
 
+#region ContextsConfiguring
+
+string bpmFlowContextConnectionString = builder.Configuration.GetConnectionString("BPMFlow");
+
+builder.Services.AddDbContext<BPMFlowDbContext>(options =>
+    options.UseSqlServer(bpmFlowContextConnectionString, b => b.MigrationsAssembly("BPMFlow.API")));
+
+var perfManagement1ConnectionString = builder.Configuration.GetConnectionString("PerfManagement1");
+
+builder.Services.AddDbContext<PerfManagement1DbContext>(options =>
+    options.UseSqlServer(perfManagement1ConnectionString, b => b.MigrationsAssembly("BPMFlow.API")));
+
+#endregion
+
+#region DependenciesInjection
+
+//services
+builder.Services.AddScoped<IAssignedRequestService, AssignedRequestService>();
+
+//data
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddAutoMapper(typeof(InfrastructureMappingProfile), typeof(ApplicationMappingProfile));
+
+#endregion
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-
 
 #region ApplicationSettingUp
 
@@ -98,6 +130,19 @@ app.UseSwaggerUI(c =>
 });
 
 app.MapControllers();
+
+#endregion
+
+#region RunMigrations
+
+//Запуск миграций при старте приложения
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var dbContext = services.GetRequiredService<BPMFlowDbContext>();
+    dbContext.Database.Migrate();
+}
 
 #endregion
 
