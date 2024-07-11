@@ -11,10 +11,10 @@ public class EmployeeRole : BaseEntity
     }
 
     // EmployeeRole -> Employee
-    public int? EmployeeId { get; set; }
+    public int EmployeeId { get; set; }
     public virtual Employee? Employee { get; set; }
 
     // EmployeeRole -> Role
-    public int? RoleId { get; set; }
+    public int RoleId { get; set; }
     public virtual Role? Role { get; set; }
 }

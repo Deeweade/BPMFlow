@@ -16,7 +16,7 @@ public class Role : BaseEntity
     public string Title { get; set; }
 
     // Role -> RoleType
-    public int? RoleTypeId { get; set; }
+    public int RoleTypeId { get; set; }
     public virtual RoleType? RoleType { get; set; }
 
     // Role -> RoleAllowedAction

@@ -1,6 +1,7 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BPMFlow.Domain.Dtos.Entities.BPMFlow;
+using BPMFlow.Domain.Dtos.Entities.PerfManagement1;
 using BPMFlow.Domain.Interfaces.Repositories;
 using BPMFlow.Domain.Models.Entities.BPMFlow;
 using BPMFlow.Domain.Models.Enums;
@@ -22,7 +23,7 @@ public class AssignedRequestRepository : IAssignedRequestRepository
         _mapper = mapper;
     }
 
-    public async Task<AssignedRequestDto?> GetById(int requestId)
+    public async Task<AssignedRequestDto> GetById(int requestId)
     {
         if (requestId <= 0 ) throw new ArgumentOutOfRangeException(nameof(requestId));
 
@@ -32,13 +33,16 @@ public class AssignedRequestRepository : IAssignedRequestRepository
             .FirstOrDefaultAsync(x => x.Id == requestId);
     }
 
-    public async Task<AssignedRequestDto?> Create(AssignedRequestDto assignedRequestDto)
+    public async Task<AssignedRequestDto> Create(AssignedRequestDto assignedRequestDto)
     {
         if (assignedRequestDto is null) throw new ArgumentNullException(nameof(assignedRequestDto));
 
         var assignedRequest = _mapper.Map<AssignedRequest>(assignedRequestDto);
         
-        var employee = await _perfManagement1Context.Employees.FindAsync(assignedRequestDto.EmployeeId);
+        var employee = await _perfManagement1Context.Employees
+                       .AsNoTracking()
+                       .ProjectTo<EmployeeDto>(_mapper.ConfigurationProvider)
+                       .FirstOrDefaultAsync(x => x.Id == assignedRequestDto.EmployeeId);
 
         if (employee is null) throw new ArgumentNullException(nameof(employee));
 
@@ -46,7 +50,7 @@ public class AssignedRequestRepository : IAssignedRequestRepository
 
         var request = new AssignedRequest
         {
-            Code = maxCode + 1,
+            Code = ++maxCode,
             GroupRequestId = assignedRequestDto.GroupRequestId,
             RequestStatusId = assignedRequestDto.RequestStatusId,
             ResponsibleEmployeeId = employee.Parent,
@@ -55,10 +59,10 @@ public class AssignedRequestRepository : IAssignedRequestRepository
             DateStart = DateTime.Now,
             DateEnd = DateTime.MaxValue,
             IsActive = true,
-            EntityStatusId = (int?)EntityStatuses.ActiveDraft
+            EntityStatusId = (int)EntityStatuses.ActiveDraft
         };
 
-        _bpmFlowContext.Add(assignedRequest);
+        _bpmFlowContext.AssignedRequests.Add(request);
 
         await _bpmFlowContext.SaveChangesAsync();
 

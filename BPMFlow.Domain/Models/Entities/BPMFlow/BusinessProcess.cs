@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BPMFlow.Domain.Models.Entities.BPMFlow;
 
-[Table("BusinessProcess")]
 public class BusinessProcess : BaseEntity
 {
     public BusinessProcess()
