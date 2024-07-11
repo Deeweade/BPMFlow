@@ -6,7 +6,7 @@ public class AssignedRequest : HistoryEntity
 {
     public AssignedRequest()
     {
-
+        Employees = new HashSet<Employee>();
     }
     
     public int? ResponsibleEmployeeId { get; set; }
@@ -24,4 +24,6 @@ public class AssignedRequest : HistoryEntity
     // AssignedRequest -> EntityStatus
     public int? EntityStatusId { get; set; }
     public virtual EntityStatus? EntityStatuse { get; set;}
+
+    public IEnumerable<Employee> Employees { get; set; }
 }
