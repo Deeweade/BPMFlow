@@ -1,5 +1,8 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace BPMFlow.Domain.Models.Entities.PerfManagement1;
 
+[Table("RoleAllowedAction")]
 public class RoleAllowedAction : BaseEntity
 {
     // RoleAllowedAction -> Action

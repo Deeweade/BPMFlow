@@ -1,5 +1,8 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace BPMFlow.Domain.Models.Entities.BPMFlow;
 
+[Table("GroupRequest")]
 public class GroupRequest : BaseEntity
 {
     public GroupRequest()

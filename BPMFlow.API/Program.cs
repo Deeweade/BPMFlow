@@ -77,7 +77,7 @@ builder.Services.AddDbContext<BPMFlowDbContext>(options =>
 var perfManagement1ConnectionString = builder.Configuration.GetConnectionString("PerfManagement1");
 
 builder.Services.AddDbContext<PerfManagement1DbContext>(options =>
-    options.UseSqlServer(perfManagement1ConnectionString, b => b.MigrationsAssembly("BPMFlow.API")));
+    options.UseSqlServer(perfManagement1ConnectionString));
 
 #endregion
 

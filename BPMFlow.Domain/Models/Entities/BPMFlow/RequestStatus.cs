@@ -1,7 +1,9 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using BPMFlow.Domain.Models.Entities.PerfManagement1;
 
 namespace BPMFlow.Domain.Models.Entities.BPMFlow;
 
+[Table("RequestStatus")]
 public class RequestStatus : BaseEntity
 {
     public RequestStatus()

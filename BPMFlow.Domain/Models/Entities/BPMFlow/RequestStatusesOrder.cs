@@ -1,5 +1,8 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace BPMFlow.Domain.Models.Entities.BPMFlow;
 
+[Table("RequestStatusesOrder")]
 public class RequestStatusesOrder : BaseEntity
 {
     public RequestStatusesOrder()

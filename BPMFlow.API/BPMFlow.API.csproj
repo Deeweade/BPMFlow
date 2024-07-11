@@ -22,4 +22,8 @@
     <ProjectReference Include="..\BPMFlow.Infrastructure\BPMFlow.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations/" />
+  </ItemGroup>
+
 </Project>

@@ -1,7 +1,9 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using BPMFlow.Domain.Models.Entities.BPMFlow;
 
 namespace BPMFlow.Domain.Models.Entities.PerfManagement1;
 
+[Table("Role")]
 public class Role : BaseEntity
 {
     public Role()
