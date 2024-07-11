@@ -36,8 +36,6 @@ public class AssignedRequestRepository : IAssignedRequestRepository
     public async Task<AssignedRequestDto> Create(AssignedRequestDto assignedRequestDto)
     {
         if (assignedRequestDto is null) throw new ArgumentNullException(nameof(assignedRequestDto));
-
-        var assignedRequest = _mapper.Map<AssignedRequest>(assignedRequestDto);
         
         var employee = await _perfManagement1Context.Employees
                        .AsNoTracking()
@@ -66,6 +64,6 @@ public class AssignedRequestRepository : IAssignedRequestRepository
 
         await _bpmFlowContext.SaveChangesAsync();
 
-        return await GetById(assignedRequest.Id);
+        return await GetById(request.Id);
     }
 }
