@@ -5,6 +5,7 @@ using BPMFlow.Application.Models.Views.BPMFlow;
 using BPMFlow.Domain.Dtos.Entities.BPMFlow;
 using BPMFlow.Domain.Dtos.Filters;
 using BPMFlow.Domain.Interfaces.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace BPMFlow.Application.Services;
 
@@ -37,7 +38,7 @@ public class AssignedRequestService : IAssignedRequestService
         var filterDto = _mapper.Map<AssignedRequestsFilterDto>(filterView);
 
         // фильтруем
-        var query = (await _unitOfWork.AssignedRequestRepository.GetByFilter(filterDto)).ToList();
+        var query = (await _unitOfWork.AssignedRequestRepository.GetByFilter(filterDto)).AsQueryable();
 
         // дочерние периоды
         if (filterDto.PeriodId.HasValue)
@@ -50,7 +51,9 @@ public class AssignedRequestService : IAssignedRequestService
                 // получаем дочерние
                 var childPeriodIds = (await _unitOfWork.PeriodRepository.GetChildPeriodIds(filterDto.PeriodId.Value)).ToList();
 
-                query = query.Where(x => childPeriodIds.Contains((int)x.PeriodId!) || x.PeriodId == filterDto.PeriodId.Value).ToList();
+                childPeriodIds.Add(filterDto.PeriodId.Value);
+
+                query = query.Where(x => childPeriodIds.Contains((int)x.PeriodId!));
             }
         }
 
@@ -61,12 +64,12 @@ public class AssignedRequestService : IAssignedRequestService
             
             employeeIds.Add(filterDto.EmployeeId.Value);
 
-            query = query.Where(x => employeeIds.Contains((int)x.EmployeeId!) || x.ResponsibleEmployeeId == filterDto.EmployeeId.Value).ToList();
+            query = query.Where(x => employeeIds.Contains((int)x.EmployeeId!) || x.ResponsibleEmployeeId == filterDto.EmployeeId.Value);
         }
         else
-            query = query.Where(x => x.EmployeeId == filterDto.EmployeeId.Value).ToList();
+            query = query.Where(x => x.EmployeeId == filterDto.EmployeeId.Value);
 
-        var queries = query.Distinct().ToList();
+        var queries = await query.Distinct().ToListAsync();
 
         var views = _mapper.Map<IEnumerable<AssignedRequestView>>(queries);
 
