@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace BPMFlow.Domain.Models.Entities.BPMFlow;
 
 public class GroupRequest : BaseEntity
@@ -13,7 +15,7 @@ public class GroupRequest : BaseEntity
     public string Name { get; set; }
 
     // GroupRequest -> BusinessProcess
-    public int? BusinessProcessId { get; set; }
+    public int BusinessProcessId { get; set; }
     public virtual BusinessProcess? BusinessProcess { get; set; }
 
     // GroupRequest -> AssignedRequest

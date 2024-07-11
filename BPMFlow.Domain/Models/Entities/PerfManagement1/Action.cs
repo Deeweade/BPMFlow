@@ -1,5 +1,9 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace BPMFlow.Domain.Models.Entities.PerfManagement1;
 
+[Table("Action")]
 public class Action : BaseEntity
 {
     public Action()
