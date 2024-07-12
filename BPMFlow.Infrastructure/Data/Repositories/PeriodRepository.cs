@@ -27,14 +27,16 @@ public class PeriodRepository : IPeriodRepository
                                             .ProjectTo<PeriodDto>(_mapper.ConfigurationProvider)
                                             .FirstOrDefaultAsync(x => x.Id == periodId);
     }
-    public async Task<IEnumerable<int>> GetChildPeriodIds(int parentPeriodId)
+    public async Task<IEnumerable<int>> GetChildPeriodIds(int periodId)
     {
-        if (parentPeriodId <= 0) throw new ArgumentOutOfRangeException(nameof(parentPeriodId));
+        if (periodId <= 0) throw new ArgumentOutOfRangeException(nameof(periodId));
+
+        var parentPeriod = await _perfManagement1DbContext.Periods.FindAsync(periodId);
 
         return await _perfManagement1DbContext.Periods
                                             .AsNoTracking()
                                             .ProjectTo<PeriodDto>(_mapper.ConfigurationProvider)
-                                            .Where(p => p.Id == parentPeriodId)
+                                            .Where(p => p.NumberY == parentPeriod.NumberY && p.IsYear == 0)
                                             .Select(p => p.Id)
                                             .ToListAsync();
     }

@@ -37,42 +37,36 @@ public class AssignedRequestService : IAssignedRequestService
 
         var filterDto = _mapper.Map<AssignedRequestsFilterDto>(filterView);
 
-        // фильтруем
-        var query = (await _unitOfWork.AssignedRequestRepository.GetByFilter(filterDto)).AsQueryable();
-
-        // дочерние периоды
-        if (filterDto.PeriodId.HasValue)
+        if (filterDto.PeriodIds is not null && filterDto.PeriodIds.Any())
         {
-            // получаем период
-            var period =  await _unitOfWork.PeriodRepository.GetById(filterDto.PeriodId.Value);
-
+            var period =  await _unitOfWork.PeriodRepository.GetById(filterDto.PeriodId);
+            
             if (period is not null && period.IsYear == 1)
             {
-                // получаем дочерние
-                var childPeriodIds = (await _unitOfWork.PeriodRepository.GetChildPeriodIds(filterDto.PeriodId.Value)).ToList();
+                var childPeriodIds = (await _unitOfWork.PeriodRepository.GetChildPeriodIds(filterDto.PeriodId)).ToList();
 
-                childPeriodIds.Add(filterDto.PeriodId.Value);
+                childPeriodIds.Add(filterDto.PeriodId);
 
-                query = query.Where(x => childPeriodIds.Contains((int)x.PeriodId!));
+                filterDto.PeriodIds = childPeriodIds;
             }
+            else
+                filterDto.PeriodIds = [filterDto.PeriodId];
         }
 
-        if (filterDto.WithSubordinates) 
+        if (filterDto.WithSubordinates)
         {
-            // получаем сотрудников
-            var employeeIds = (await _unitOfWork.EmployeeRepository.GetSubordinateEmployeeIds(filterDto.EmployeeId!.Value)).ToList();
+            var employeeIds = (await _unitOfWork.EmployeeRepository.GetSubordinateEmployeeIds(filterDto.EmployeeId)).ToList();
             
-            employeeIds.Add(filterDto.EmployeeId.Value);
+            employeeIds.Add(filterDto.EmployeeId);
 
-            query = query.Where(x => employeeIds.Contains((int)x.EmployeeId!) || x.ResponsibleEmployeeId == filterDto.EmployeeId.Value);
+            filterDto.SubordinateEmployeeIds = employeeIds;
         }
+
         else
-            query = query.Where(x => x.EmployeeId == filterDto.EmployeeId.Value);
+            filterDto.SubordinateEmployeeIds = [filterDto.EmployeeId];
 
-        var queries = await query.Distinct().ToListAsync();
+        var queries = (await _unitOfWork.AssignedRequestRepository.GetByFilter(filterDto)).AsQueryable().Distinct().ToListAsync();
 
-        var views = _mapper.Map<IEnumerable<AssignedRequestView>>(queries);
-
-        return views;
+        return _mapper.Map<IEnumerable<AssignedRequestView>>(queries);
     }
 }

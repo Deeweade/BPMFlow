@@ -1,5 +1,8 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace BPMFlow.Domain.Models.Entities.PerfManagement1;
 
+[Table("Quarter")]
 public class Period : BaseEntity
 {
     public string Title { get; set; }

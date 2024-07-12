@@ -22,7 +22,7 @@ public class EmployeeRepository : IEmployeeRepository
         return await _perfManagement1DbContext.Employees
                              .AsNoTracking()
                              .ProjectTo<EmployeeDto>(_mapper.ConfigurationProvider)
-                             .Where(e => e.Id == employeeId)
+                             .Where(e => e.Parent == employeeId)
                              .Select(e => e.Id)
                              .ToListAsync();
     }
