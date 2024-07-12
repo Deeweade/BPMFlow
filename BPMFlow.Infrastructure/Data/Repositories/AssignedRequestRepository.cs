@@ -97,7 +97,7 @@ public class AssignedRequestRepository : IAssignedRequestRepository
         }
         else if (filterDto.EmployeeId.HasValue)
         {
-            query = query.Where(x => x.EmployeeId == filterDto.EmployeeId.Value).Distinct();
+            query = query.Where(x => x.EmployeeId == filterDto.EmployeeId.Value);
         }
 
         var result = await query.ToListAsync();
