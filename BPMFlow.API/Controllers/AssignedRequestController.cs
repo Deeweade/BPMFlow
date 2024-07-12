@@ -30,7 +30,7 @@ public class AssignedRequestController : ControllerBase
         return Ok(assignedRequest);
     }
 
-    [HttpPost("bulk")]
+    [HttpPost("create/bulk")]
     public async Task<IActionResult> BulkCreate(AssignedRequestBulkCreateView view)
     {
         if (view.EmployeeIds is null || view.AssignedRequests is null) throw new ArgumentNullException(nameof(view));
