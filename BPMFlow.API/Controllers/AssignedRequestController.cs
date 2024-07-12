@@ -1,4 +1,5 @@
 using BPMFlow.Application.Interfaces.Services;
+using BPMFlow.Application.Models.Filters;
 using BPMFlow.Application.Models.Views.BPMFlow;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,5 +27,15 @@ public class AssignedRequestController : ControllerBase
         var assignedRequest = await _service.Create(assignedRequestView);
 
         return Ok(assignedRequest);
+    }
+
+    [HttpPost("getFiltered")]
+    public async Task<IActionResult> GetFiltered(AssignedRequestsFilterView filter)
+    {
+        if (filter is null) filter = new AssignedRequestsFilterView();
+
+        var requests = await _service.GetByFilter(filter);
+
+        return Ok(requests);
     }
 }

@@ -18,6 +18,7 @@ public class PerfManagement1DbContext : DbContext
     public DbSet<RoleType> RoleTypes { get; set; }
     public DbSet<RoleAllowedAction> RoleAllowedActions { get; set; }
     public DbSet<EntityStatus> EntityStatuses { get; set; }
+    public DbSet<Period> Periods { get; set; }
     
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

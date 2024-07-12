@@ -16,9 +16,13 @@ public class UnitOfWork : IUnitOfWork
         _perfManagement1DbContext = perfManagement1DbContext;
 
         AssignedRequestRepository = new AssignedRequestRepository(_bpmFlowDbContext, _perfManagement1DbContext, mapper);
+        PeriodRepository = new PeriodRepository(_perfManagement1DbContext, mapper);
+        EmployeeRepository = new EmployeeRepository(_perfManagement1DbContext, mapper);
     }
 
     public IAssignedRequestRepository AssignedRequestRepository { get; }
+    public IPeriodRepository PeriodRepository { get; }
+    public IEmployeeRepository EmployeeRepository { get; }
 
     public async Task<int> SaveChangesAsync()
     {

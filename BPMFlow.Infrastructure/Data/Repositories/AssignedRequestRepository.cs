@@ -2,6 +2,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BPMFlow.Domain.Dtos.Entities.BPMFlow;
 using BPMFlow.Domain.Dtos.Entities.PerfManagement1;
+using BPMFlow.Domain.Dtos.Filters;
 using BPMFlow.Domain.Interfaces.Repositories;
 using BPMFlow.Domain.Models.Entities.BPMFlow;
 using BPMFlow.Domain.Models.Enums;
@@ -65,5 +66,42 @@ public class AssignedRequestRepository : IAssignedRequestRepository
         await _bpmFlowContext.SaveChangesAsync();
 
         return await GetById(request.Id);
+    }
+
+    public async Task<IEnumerable<AssignedRequestDto>> GetByFilter(AssignedRequestsFilterDto filterDto)
+    {
+        if (filterDto is null) throw new ArgumentNullException(nameof(filterDto));
+
+        var query = _bpmFlowContext.AssignedRequests
+            .AsNoTracking()
+            .ProjectTo<AssignedRequestDto>(_mapper.ConfigurationProvider);
+
+        if (filterDto.GroupRequestId.HasValue)
+        {
+            query = query.Where(x => x.GroupRequestId == filterDto.GroupRequestId.Value);
+        }
+
+        if (filterDto.RequestStatusId.HasValue)
+        {
+            query = query.Where(x => x.RequestStatusId == filterDto.RequestStatusId.Value);
+        }
+
+        if (filterDto.PeriodIds is not null && filterDto.PeriodIds.Any())
+        {
+            query = query.Where(x => filterDto.PeriodIds.Contains(x.PeriodId));
+        }
+
+        if (filterDto.SubordinateEmployeeIds != null && filterDto.SubordinateEmployeeIds.Any())
+        {
+            query = query.Where(x => filterDto.SubordinateEmployeeIds.Contains(x.EmployeeId) || x.ResponsibleEmployeeId == filterDto.EmployeeId);
+        }
+        else if (filterDto.EmployeeId.HasValue)
+        {
+            query = query.Where(x => x.EmployeeId == filterDto.EmployeeId.Value);
+        }
+
+        var result = await query.ToListAsync();
+
+        return result;
     }
 }
