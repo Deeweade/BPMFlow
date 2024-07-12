@@ -4,6 +4,6 @@ namespace BPMFlow.API.Models.Other;
 
 public class AssignedRequestBulkCreateView
 {
-    public ICollection<int>? EmployeeIds { get; set; }
-    public ICollection<AssignedRequestView>? AssignedRequests { get; set; }
+    public ICollection<int> EmployeeIds { get; set; }
+    public AssignedRequestView AssignedRequests { get; set; }
 }

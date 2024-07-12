@@ -1,14 +1,16 @@
 using AutoMapper;
+using BPMFlow.Application.Models.Filters;
 using BPMFlow.Application.Models.Views.BPMFlow;
 using BPMFlow.Application.Models.Views.PerfManagement1;
 using BPMFlow.Domain.Dtos.Entities.BPMFlow;
 using BPMFlow.Domain.Dtos.Entities.PerfManagement1;
+using BPMFlow.Domain.Dtos.Filters;
 
 namespace BPMFlow.Infrastructure.Models.Mappings;
 
-public class InfrastructureMappingProfile : Profile
+public class ApplicationMappingProfile : Profile
 {
-    public InfrastructureMappingProfile()
+    public ApplicationMappingProfile()
     {
         CreateAssignedRequestMapping();
         CreateBusinessProcessMappings();
@@ -31,6 +33,10 @@ public class InfrastructureMappingProfile : Profile
         {
             CreateMap<AssignedRequestView, AssignedRequestDto>();
             CreateMap<AssignedRequestDto, AssignedRequestView>();
+
+            //filters
+            CreateMap<AssignedRequestsFilterView, AssignedRequestsFilterDto>();
+            CreateMap<AssignedRequestsFilterDto, AssignedRequestsFilterView>();
         }
 
         private void CreateBusinessProcessMappings()

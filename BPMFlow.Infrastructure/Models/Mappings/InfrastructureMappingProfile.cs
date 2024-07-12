@@ -24,6 +24,7 @@ public class InfrastructureMappingProfile : Profile
         CreateRoleMappings();
         CreateRoleAllowedActionMappings();
         CreateRoleTypeMappings();
+        CreatePeriodMappings();
     }
 
     #region BPMFlowMappings
@@ -105,6 +106,12 @@ public class InfrastructureMappingProfile : Profile
         {
             CreateMap<Role, RoleDto>();
             CreateMap<RoleDto, Role>();
+        }
+
+        private void CreatePeriodMappings()
+        {
+            CreateMap<Period, PeriodDto>();
+            CreateMap<PeriodDto, Period>();
         }
     #endregion
 }

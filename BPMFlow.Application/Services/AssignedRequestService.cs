@@ -1,5 +1,3 @@
-using System.Linq;
-using System.Security.Permissions;
 using AutoMapper;
 using BPMFlow.Application.Interfaces.Services;
 using BPMFlow.Application.Models.Filters;
@@ -7,7 +5,6 @@ using BPMFlow.Application.Models.Views.BPMFlow;
 using BPMFlow.Domain.Dtos.Entities.BPMFlow;
 using BPMFlow.Domain.Dtos.Filters;
 using BPMFlow.Domain.Interfaces.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace BPMFlow.Application.Services;
 
@@ -33,7 +30,7 @@ public class AssignedRequestService : IAssignedRequestService
         return _mapper.Map<AssignedRequestView>(assignedRequest);
     }
 
-    public async Task<IEnumerable<int>> BulkCreate(ICollection<int> employeeIds, ICollection<AssignedRequestView> assignedRequests)
+    public async Task<IEnumerable<int>> BulkCreate(ICollection<int> employeeIds, AssignedRequestView assignedRequests)
     {
         if (employeeIds is null) throw new ArgumentNullException(nameof(employeeIds));
         if (assignedRequests is null) throw new ArgumentNullException(nameof(assignedRequests));
@@ -42,32 +39,21 @@ public class AssignedRequestService : IAssignedRequestService
 
         foreach (var employeeId in employeeIds)
         {
-            foreach (var assignedRequest in assignedRequests)
+            var newRequest = new AssignedRequestView
+                {
+                    GroupRequestId = assignedRequests.GroupRequestId,
+                    RequestStatusId = assignedRequests.RequestStatusId,
+                    ResponsibleEmployeeId = assignedRequests.ResponsibleEmployeeId,
+                    EmployeeId = employeeId,
+                    PeriodId = assignedRequests.PeriodId,
+                    EntityStatusId = assignedRequests.EntityStatusId
+                };
+
+            var createdRequest = await Create(newRequest);
+            
+            if (createdRequest != null)
             {
-                var newRequest = new AssignedRequestView
-                    {
-                        GroupRequestId = assignedRequest.GroupRequestId,
-                        RequestStatusId = assignedRequest.RequestStatusId,
-                        ResponsibleEmployeeId = assignedRequest.ResponsibleEmployeeId,
-                        EmployeeId = employeeId,
-                        PeriodId = assignedRequest.PeriodId,
-                        EntityStatusId = assignedRequest.EntityStatusId
-                    };
-
-                    var createdRequest = await Create(newRequest);
-                    
-                    if (createdRequest != null)
-                    {
-                        codes.Add(createdRequest.Code);
-                    }
-                // assignedRequest.EmployeeId = employeeId;
-
-                // var createdRequest = await Create(assignedRequest);
-                
-                // if (createdRequest != null)
-                // {
-                //     codes.Add(createdRequest.Code);
-                // }
+                codes.Add(createdRequest.Code);
             }
         }
 
@@ -80,42 +66,31 @@ public class AssignedRequestService : IAssignedRequestService
 
         var filterDto = _mapper.Map<AssignedRequestsFilterDto>(filterView);
 
-        // фильтруем
-        var query = (await _unitOfWork.AssignedRequestRepository.GetByFilter(filterDto)).AsQueryable();
-
-        // дочерние периоды
-        if (filterDto.PeriodId.HasValue)
+        if (filterDto.PeriodIds is not null && filterDto.PeriodIds.Any())
         {
-            // получаем период
-            var period =  await _unitOfWork.PeriodRepository.GetById(filterDto.PeriodId.Value);
-
+            var period =  await _unitOfWork.PeriodRepository.GetById(filterDto.PeriodId!.Value);
+            
             if (period is not null && period.IsYear == 1)
             {
-                // получаем дочерние
                 var childPeriodIds = (await _unitOfWork.PeriodRepository.GetChildPeriodIds(filterDto.PeriodId.Value)).ToList();
 
-                childPeriodIds.Add(filterDto.PeriodId.Value);
-
-                query = query.Where(x => childPeriodIds.Contains((int)x.PeriodId!));
+                filterDto.PeriodIds = childPeriodIds;
             }
-        }
-
-        if (filterDto.WithSubordinates) 
-        {
-            // получаем сотрудников
-            var employeeIds = (await _unitOfWork.EmployeeRepository.GetSubordinateEmployeeIds(filterDto.EmployeeId!.Value)).ToList();
             
-            employeeIds.Add(filterDto.EmployeeId.Value);
-
-            query = query.Where(x => employeeIds.Contains((int)x.EmployeeId!) || x.ResponsibleEmployeeId == filterDto.EmployeeId.Value);
+            filterDto.PeriodIds.Add(filterDto.PeriodId.Value);
         }
-        else
-            query = query.Where(x => x.EmployeeId == filterDto.EmployeeId.Value);
 
-        var queries = await query.Distinct().ToListAsync();
+        if (filterDto.WithSubordinates)
+        {
+            var employeeIds = (await _unitOfWork.EmployeeRepository.GetSubordinateEmployeeIds(filterDto.EmployeeId!.Value)).ToList();
 
-        var views = _mapper.Map<IEnumerable<AssignedRequestView>>(queries);
+            filterDto.SubordinateEmployeeIds = employeeIds;
+        }
 
-        return views;
+        filterDto.SubordinateEmployeeIds.Add(filterDto.EmployeeId!.Value);
+
+        var queries = await _unitOfWork.AssignedRequestRepository.GetByFilter(filterDto);
+
+        return _mapper.Map<IEnumerable<AssignedRequestView>>(queries);
     }
 }
