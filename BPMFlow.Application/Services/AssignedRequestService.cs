@@ -39,33 +39,29 @@ public class AssignedRequestService : IAssignedRequestService
 
         if (filterDto.PeriodIds is not null && filterDto.PeriodIds.Any())
         {
-            var period =  await _unitOfWork.PeriodRepository.GetById(filterDto.PeriodId);
+            var period =  await _unitOfWork.PeriodRepository.GetById(filterDto.PeriodId!.Value);
             
             if (period is not null && period.IsYear == 1)
             {
-                var childPeriodIds = (await _unitOfWork.PeriodRepository.GetChildPeriodIds(filterDto.PeriodId)).ToList();
-
-                childPeriodIds.Add(filterDto.PeriodId);
+                var childPeriodIds = (await _unitOfWork.PeriodRepository.GetChildPeriodIds(filterDto.PeriodId.Value)).ToList();
 
                 filterDto.PeriodIds = childPeriodIds;
             }
-            else
-                filterDto.PeriodIds = [filterDto.PeriodId];
+            
+            filterDto.PeriodIds.Add(filterDto.PeriodId.Value);
         }
 
         if (filterDto.WithSubordinates)
         {
-            var employeeIds = (await _unitOfWork.EmployeeRepository.GetSubordinateEmployeeIds(filterDto.EmployeeId)).ToList();
+            var employeeIds = (await _unitOfWork.EmployeeRepository.GetSubordinateEmployeeIds(filterDto.EmployeeId!.Value)).ToList();
             
-            employeeIds.Add(filterDto.EmployeeId);
 
             filterDto.SubordinateEmployeeIds = employeeIds;
         }
 
-        else
-            filterDto.SubordinateEmployeeIds = [filterDto.EmployeeId];
+        filterDto.SubordinateEmployeeIds.Add(filterDto.EmployeeId!.Value);
 
-        var queries = (await _unitOfWork.AssignedRequestRepository.GetByFilter(filterDto)).AsQueryable().Distinct().ToListAsync();
+        var queries = await _unitOfWork.AssignedRequestRepository.GetByFilter(filterDto);
 
         return _mapper.Map<IEnumerable<AssignedRequestView>>(queries);
     }

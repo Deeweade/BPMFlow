@@ -76,14 +76,14 @@ public class AssignedRequestRepository : IAssignedRequestRepository
             .AsNoTracking()
             .ProjectTo<AssignedRequestDto>(_mapper.ConfigurationProvider);
 
-        if (filterDto.GroupRequestId > 0)
+        if (filterDto.GroupRequestId.HasValue)
         {
-            query = query.Where(x => x.GroupRequestId == filterDto.GroupRequestId);
+            query = query.Where(x => x.GroupRequestId == filterDto.GroupRequestId.Value);
         }
 
-        if (filterDto.RequestStatusId > 0)
+        if (filterDto.RequestStatusId.HasValue)
         {
-            query = query.Where(x => x.RequestStatusId == filterDto.RequestStatusId);
+            query = query.Where(x => x.RequestStatusId == filterDto.RequestStatusId.Value);
         }
 
         if (filterDto.PeriodIds is not null && filterDto.PeriodIds.Any())
@@ -95,9 +95,9 @@ public class AssignedRequestRepository : IAssignedRequestRepository
         {
             query = query.Where(x => filterDto.SubordinateEmployeeIds.Contains(x.EmployeeId) || x.ResponsibleEmployeeId == filterDto.EmployeeId);
         }
-        else if (filterDto.EmployeeId > 0)
+        else if (filterDto.EmployeeId.HasValue)
         {
-            query = query.Where(x => x.EmployeeId == filterDto.EmployeeId);
+            query = query.Where(x => x.EmployeeId == filterDto.EmployeeId.Value).Distinct();
         }
 
         var result = await query.ToListAsync();
