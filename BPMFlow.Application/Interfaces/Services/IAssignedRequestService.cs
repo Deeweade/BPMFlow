@@ -5,6 +5,6 @@ namespace BPMFlow.Application.Interfaces.Services;
 
 public interface IAssignedRequestService
 {
-    Task<AssignedRequestView?> Create(AssignedRequestView assignedRequestView);
+    Task<AssignedRequestView> Create(AssignedRequestView assignedRequestView);
     Task<IEnumerable<AssignedRequestView>> GetByFilter(AssignedRequestsFilterView filterView);
 }

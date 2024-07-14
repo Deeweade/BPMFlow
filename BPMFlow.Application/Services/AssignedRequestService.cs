@@ -20,7 +20,7 @@ public class AssignedRequestService : IAssignedRequestService
         _mapper = mapper;
     }
 
-    public async Task<AssignedRequestView?> Create(AssignedRequestView assignedRequestView)
+    public async Task<AssignedRequestView> Create(AssignedRequestView assignedRequestView)
     {
         if (assignedRequestView is null) throw new ArgumentNullException(nameof(assignedRequestView));
 

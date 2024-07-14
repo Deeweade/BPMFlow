@@ -2,6 +2,6 @@ namespace BPMFlow.Application.Models.Views.PerfManagement1;
 
 public class RoleAllowedActionView : BaseEntityView
 {
-    public int ActionId { get; set; }
-    public int RoleId { get; set; }
+    public int? ActionId { get; set; }
+    public int? RoleId { get; set; }
 }

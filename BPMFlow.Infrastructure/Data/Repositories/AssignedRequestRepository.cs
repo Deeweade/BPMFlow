@@ -52,7 +52,7 @@ public class AssignedRequestRepository : IAssignedRequestRepository
             Code = ++maxCode,
             GroupRequestId = assignedRequestDto.GroupRequestId,
             RequestStatusId = assignedRequestDto.RequestStatusId,
-            ResponsibleEmployeeId = employee.Parent,
+            ResponsibleEmployeeId = (int)employee.Parent,
             EmployeeId = assignedRequestDto.EmployeeId,
             PeriodId = assignedRequestDto.PeriodId,
             DateStart = DateTime.Now,
