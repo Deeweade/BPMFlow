@@ -19,9 +19,10 @@ public class AssignedRequestService : IAssignedRequestService
         _mapper = mapper;
     }
 
-    public async Task<AssignedRequestView?> Create(AssignedRequestView assignedRequestView)
+    public async Task<AssignedRequestView> Create(AssignedRequestView assignedRequestView)
     {
-        if (assignedRequestView is null) throw new ArgumentNullException(nameof(assignedRequestView));
+        ArgumentNullException.ThrowIfNull(assignedRequestView);
+
 
         var assignedRequestDto = _mapper.Map<AssignedRequestDto>(assignedRequestView);
 
@@ -32,8 +33,8 @@ public class AssignedRequestService : IAssignedRequestService
 
     public async Task<IEnumerable<int>> BulkCreate(ICollection<int> employeeIds, AssignedRequestView assignedRequests)
     {
-        if (employeeIds is null) throw new ArgumentNullException(nameof(employeeIds));
-        if (assignedRequests is null) throw new ArgumentNullException(nameof(assignedRequests));
+        ArgumentNullException.ThrowIfNull(employeeIds);
+        ArgumentNullException.ThrowIfNull(assignedRequests);
 
         var codes = new List<int>();
 
@@ -62,7 +63,7 @@ public class AssignedRequestService : IAssignedRequestService
 
     public async Task<IEnumerable<AssignedRequestView>> GetByFilter(AssignedRequestsFilterView filterView)
     {
-        if (filterView is null) throw new ArgumentNullException(nameof(filterView));
+        ArgumentNullException.ThrowIfNull(filterView);
 
         var filterDto = _mapper.Map<AssignedRequestsFilterDto>(filterView);
 

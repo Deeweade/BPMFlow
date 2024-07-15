@@ -23,7 +23,7 @@ public class AssignedRequestController : ControllerBase
     [HttpPost("create")]
     public async Task<IActionResult> Create(AssignedRequestView assignedRequestView)
     {
-        if (assignedRequestView is null) throw new ArgumentNullException(nameof(assignedRequestView));
+        ArgumentNullException.ThrowIfNull(assignedRequestView);
 
         var assignedRequest = await _service.Create(assignedRequestView);
 
@@ -43,7 +43,7 @@ public class AssignedRequestController : ControllerBase
     [HttpPost("getFiltered")]
     public async Task<IActionResult> GetFiltered(AssignedRequestsFilterView filter)
     {
-        if (filter is null) filter = new AssignedRequestsFilterView();
+        ArgumentNullException.ThrowIfNull(filter);
 
         var requests = await _service.GetByFilter(filter);
 

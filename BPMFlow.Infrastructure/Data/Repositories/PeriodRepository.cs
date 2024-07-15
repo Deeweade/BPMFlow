@@ -18,14 +18,14 @@ public class PeriodRepository : IPeriodRepository
         _mapper = mapper;
     }
 
-    public async Task<PeriodDto?> GetById(int periodId)
+    public async Task<PeriodDto> GetById(int periodId)
     {
         if (periodId <= 0) throw new ArgumentOutOfRangeException(nameof(periodId));
 
         return await _perfManagement1DbContext.Periods
-                                            .AsNoTracking()
-                                            .ProjectTo<PeriodDto>(_mapper.ConfigurationProvider)
-                                            .FirstOrDefaultAsync(x => x.Id == periodId);
+            .AsNoTracking()
+            .ProjectTo<PeriodDto>(_mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync(x => x.Id == periodId);
     }
     public async Task<IEnumerable<int>> GetChildPeriodIds(int periodId)
     {
@@ -34,10 +34,10 @@ public class PeriodRepository : IPeriodRepository
         var parentPeriod = await _perfManagement1DbContext.Periods.FindAsync(periodId);
 
         return await _perfManagement1DbContext.Periods
-                                            .AsNoTracking()
-                                            .ProjectTo<PeriodDto>(_mapper.ConfigurationProvider)
-                                            .Where(p => p.NumberY == parentPeriod.NumberY && p.IsYear == 0)
-                                            .Select(p => p.Id)
-                                            .ToListAsync();
+            .AsNoTracking()
+            .ProjectTo<PeriodDto>(_mapper.ConfigurationProvider)
+            .Where(p => p.NumberY == parentPeriod.NumberY && p.IsYear == 0)
+            .Select(p => p.Id)
+            .ToListAsync();
     }
 }

@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace BPMFlow.Domain.Models.Entities.BPMFlow;
 
 public class BusinessProcess : BaseEntity

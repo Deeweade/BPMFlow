@@ -4,6 +4,6 @@ namespace BPMFlow.Domain.Interfaces.Repositories;
 
 public interface IPeriodRepository
 {
-    Task<PeriodDto?> GetById(int periodId);
+    Task<PeriodDto> GetById(int periodId);
     Task<IEnumerable<int>> GetChildPeriodIds(int parentPeriodId);
 }

@@ -2,7 +2,6 @@ namespace BPMFlow.Application.Models.Views.BPMFlow;
 
 public class RequestStatusTransitionView : BaseEntityView
 {
-    public int GroupRequestId { get; set; }
     public int SourceStatusId { get; set; }
     public int NextStatusId { get; set; }
     public string Name { get; set; }
