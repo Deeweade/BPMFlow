@@ -5,7 +5,6 @@ using BPMFlow.Application.Models.Views.BPMFlow;
 using BPMFlow.Domain.Dtos.Entities.BPMFlow;
 using BPMFlow.Domain.Dtos.Filters;
 using BPMFlow.Domain.Interfaces.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace BPMFlow.Application.Services;
 
@@ -22,7 +21,8 @@ public class AssignedRequestService : IAssignedRequestService
 
     public async Task<AssignedRequestView> Create(AssignedRequestView assignedRequestView)
     {
-        if (assignedRequestView is null) throw new ArgumentNullException(nameof(assignedRequestView));
+        ArgumentNullException.ThrowIfNull(assignedRequestView);
+
 
         var assignedRequestDto = _mapper.Map<AssignedRequestDto>(assignedRequestView);
 
@@ -31,13 +31,43 @@ public class AssignedRequestService : IAssignedRequestService
         return _mapper.Map<AssignedRequestView>(assignedRequest);
     }
 
+    public async Task<IEnumerable<int>> BulkCreate(ICollection<int> employeeIds, AssignedRequestView assignedRequests)
+    {
+        ArgumentNullException.ThrowIfNull(employeeIds);
+        ArgumentNullException.ThrowIfNull(assignedRequests);
+
+        var codes = new List<int>();
+
+        foreach (var employeeId in employeeIds)
+        {
+            var newRequest = new AssignedRequestView
+                {
+                    GroupRequestId = assignedRequests.GroupRequestId,
+                    RequestStatusId = assignedRequests.RequestStatusId,
+                    ResponsibleEmployeeId = assignedRequests.ResponsibleEmployeeId,
+                    EmployeeId = employeeId,
+                    PeriodId = assignedRequests.PeriodId,
+                    EntityStatusId = assignedRequests.EntityStatusId
+                };
+
+            var createdRequest = await Create(newRequest);
+            
+            if (createdRequest != null)
+            {
+                codes.Add(createdRequest.Code);
+            }
+        }
+
+        return codes;
+    }
+
     public async Task<IEnumerable<AssignedRequestView>> GetByFilter(AssignedRequestsFilterView filterView)
     {
-        if (filterView is null) throw new ArgumentNullException(nameof(filterView));
+        ArgumentNullException.ThrowIfNull(filterView);
 
         var filterDto = _mapper.Map<AssignedRequestsFilterDto>(filterView);
 
-        if (filterDto.PeriodIds is not null && filterDto.PeriodIds.Any())
+        if (filterDto.PeriodId.HasValue && filterDto.PeriodId.Value != 0)
         {
             var period =  await _unitOfWork.PeriodRepository.GetById(filterDto.PeriodId!.Value);
             
@@ -46,20 +76,19 @@ public class AssignedRequestService : IAssignedRequestService
                 var childPeriodIds = (await _unitOfWork.PeriodRepository.GetChildPeriodIds(filterDto.PeriodId.Value)).ToList();
 
                 filterDto.PeriodIds = childPeriodIds;
+                
+                filterDto.PeriodIds.Add(filterDto.PeriodId.Value);
             }
-            
-            filterDto.PeriodIds.Add(filterDto.PeriodId.Value);
         }
 
         if (filterDto.WithSubordinates)
         {
             var employeeIds = (await _unitOfWork.EmployeeRepository.GetSubordinateEmployeeIds(filterDto.EmployeeId!.Value)).ToList();
-            
 
             filterDto.SubordinateEmployeeIds = employeeIds;
+            
+            filterDto.SubordinateEmployeeIds.Add(filterDto.EmployeeId!.Value);
         }
-
-        filterDto.SubordinateEmployeeIds.Add(filterDto.EmployeeId!.Value);
 
         var queries = await _unitOfWork.AssignedRequestRepository.GetByFilter(filterDto);
 

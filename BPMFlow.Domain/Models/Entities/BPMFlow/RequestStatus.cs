@@ -16,7 +16,6 @@ public class RequestStatus : BaseEntity
     public int GroupRequestId { get; set; }
     public virtual GroupRequest GroupRequest { get; set; }
     
-
     // RequestStatus -> AssignedRequest
     public virtual ICollection<AssignedRequest> AssignedRequests { get; set; }
 

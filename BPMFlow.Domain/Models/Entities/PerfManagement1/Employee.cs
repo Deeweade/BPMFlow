@@ -37,20 +37,6 @@ public class Employee : BaseEntity
     public int? BlockNum { get; set; }
     public string PhotoUrl { get; set; }
     public string BonusType { get; set; }
-    public string FirstName 
-    {
-        get
-        {
-            return Fio.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[1];
-        }
-    }
-    public string LastName
-    {
-        get
-        {
-            return Fio.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0];
-        }
-    }
 
     // Employee -> EmployeeRole
     public virtual ICollection<EmployeeRole> EmployeeRoles { get; set; }

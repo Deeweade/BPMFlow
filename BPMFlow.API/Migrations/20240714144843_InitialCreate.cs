@@ -12,7 +12,7 @@ namespace BPMFlow.API.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "BusinessProcess",
+                name: "BusinessProcesses",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -21,7 +21,7 @@ namespace BPMFlow.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BusinessProcess", x => x.Id);
+                    table.PrimaryKey("PK_BusinessProcesses", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -37,9 +37,9 @@ namespace BPMFlow.API.Migrations
                 {
                     table.PrimaryKey("PK_GroupRequests", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_GroupRequests_BusinessProcess_BusinessProcessId",
+                        name: "FK_GroupRequests_BusinessProcesses_BusinessProcessId",
                         column: x => x.BusinessProcessId,
-                        principalTable: "BusinessProcess",
+                        principalTable: "BusinessProcesses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -194,7 +194,7 @@ namespace BPMFlow.API.Migrations
                 name: "GroupRequests");
 
             migrationBuilder.DropTable(
-                name: "BusinessProcess");
+                name: "BusinessProcesses");
         }
     }
 }

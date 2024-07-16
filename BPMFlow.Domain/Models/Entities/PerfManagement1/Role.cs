@@ -10,8 +10,6 @@ public class Role : BaseEntity
     {
         RoleAllowedActions = new HashSet<RoleAllowedAction>();
         EmployeeRoles = new HashSet<EmployeeRole>();
-        RequestStatusTransitions = new HashSet<RequestStatusTransition>();
-        RequestStatuses = new HashSet<RequestStatus>();
     }
     public string Title { get; set; }
 
@@ -24,10 +22,4 @@ public class Role : BaseEntity
 
     // Role -> EmployeeRole
     public virtual ICollection<EmployeeRole> EmployeeRoles { get; set; }
-
-    // Role -> RequestStatusTransition
-    public virtual ICollection<RequestStatusTransition> RequestStatusTransitions { get; set; }
-
-    // Role -> RequestStatus
-    public virtual ICollection<RequestStatus> RequestStatuses { get; set; }
 }

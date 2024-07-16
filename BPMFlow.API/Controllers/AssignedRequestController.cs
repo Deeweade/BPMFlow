@@ -1,3 +1,4 @@
+using BPMFlow.API.Models.Other;
 using BPMFlow.Application.Interfaces.Services;
 using BPMFlow.Application.Models.Filters;
 using BPMFlow.Application.Models.Views.BPMFlow;
@@ -22,17 +23,27 @@ public class AssignedRequestController : ControllerBase
     [HttpPost("create")]
     public async Task<IActionResult> Create(AssignedRequestView assignedRequestView)
     {
-        if (assignedRequestView is null) throw new ArgumentNullException(nameof(assignedRequestView));
+        ArgumentNullException.ThrowIfNull(assignedRequestView);
 
         var assignedRequest = await _service.Create(assignedRequestView);
 
         return Ok(assignedRequest);
     }
 
+    [HttpPost("create/bulk")]
+    public async Task<IActionResult> BulkCreate(AssignedRequestBulkCreateView view)
+    {
+        if (view.EmployeeIds is null || view.AssignedRequests is null) throw new ArgumentNullException(nameof(view));
+
+        var codes = await _service.BulkCreate(view.EmployeeIds, view.AssignedRequests);
+
+        return Ok(codes);
+    }
+
     [HttpPost("getFiltered")]
     public async Task<IActionResult> GetFiltered(AssignedRequestsFilterView filter)
     {
-        if (filter is null) filter = new AssignedRequestsFilterView();
+        ArgumentNullException.ThrowIfNull(filter);
 
         var requests = await _service.GetByFilter(filter);
 

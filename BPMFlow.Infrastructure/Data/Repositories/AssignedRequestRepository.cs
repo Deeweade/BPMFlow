@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BPMFlow.Domain.Dtos.Entities.BPMFlow;
@@ -26,7 +27,7 @@ public class AssignedRequestRepository : IAssignedRequestRepository
 
     public async Task<AssignedRequestDto> GetById(int requestId)
     {
-        if (requestId <= 0 ) throw new ArgumentOutOfRangeException(nameof(requestId));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(requestId);
 
         return await _bpmFlowContext.AssignedRequests
             .AsNoTracking()
@@ -36,16 +37,18 @@ public class AssignedRequestRepository : IAssignedRequestRepository
 
     public async Task<AssignedRequestDto> Create(AssignedRequestDto assignedRequestDto)
     {
-        if (assignedRequestDto is null) throw new ArgumentNullException(nameof(assignedRequestDto));
-        
+        ArgumentNullException.ThrowIfNull(assignedRequestDto);
+
         var employee = await _perfManagement1Context.Employees
-                       .AsNoTracking()
-                       .ProjectTo<EmployeeDto>(_mapper.ConfigurationProvider)
-                       .FirstOrDefaultAsync(x => x.Id == assignedRequestDto.EmployeeId);
+            .AsNoTracking()
+            .ProjectTo<EmployeeDto>(_mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync(x => x.Id == assignedRequestDto.EmployeeId);
 
-        if (employee is null) throw new ArgumentNullException(nameof(employee));
+        ArgumentNullException.ThrowIfNull(employee);
 
-        var maxCode = await _bpmFlowContext.AssignedRequests.MaxAsync(x => x.Code);
+        var maxCode = await _bpmFlowContext.AssignedRequests.AnyAsync()
+            ? await _bpmFlowContext.AssignedRequests.MaxAsync(x => x.Code)
+            : 0;
 
         var request = new AssignedRequest
         {
@@ -70,38 +73,37 @@ public class AssignedRequestRepository : IAssignedRequestRepository
 
     public async Task<IEnumerable<AssignedRequestDto>> GetByFilter(AssignedRequestsFilterDto filterDto)
     {
-        if (filterDto is null) throw new ArgumentNullException(nameof(filterDto));
+        ArgumentNullException.ThrowIfNull(filterDto);
 
-        var query = _bpmFlowContext.AssignedRequests
+        var query = await _bpmFlowContext.AssignedRequests
             .AsNoTracking()
-            .ProjectTo<AssignedRequestDto>(_mapper.ConfigurationProvider);
+            .ProjectTo<AssignedRequestDto>(_mapper.ConfigurationProvider)
+            .ToListAsync();
 
-        if (filterDto.GroupRequestId.HasValue)
+        if (filterDto.GroupRequestId.HasValue && filterDto.GroupRequestId.Value != 0)
         {
-            query = query.Where(x => x.GroupRequestId == filterDto.GroupRequestId.Value);
+            query = query.Where(x => x.GroupRequestId == filterDto.GroupRequestId.Value).ToList();
         }
 
-        if (filterDto.RequestStatusId.HasValue)
+        if (filterDto.RequestStatusId.HasValue && filterDto.RequestStatusId.Value != 0)
         {
-            query = query.Where(x => x.RequestStatusId == filterDto.RequestStatusId.Value);
+            query = query.Where(x => x.RequestStatusId == filterDto.RequestStatusId.Value).ToList();
         }
 
-        if (filterDto.PeriodIds is not null && filterDto.PeriodIds.Any())
+        if (filterDto.PeriodIds is not null && filterDto.PeriodIds.Count != 0)
         {
-            query = query.Where(x => filterDto.PeriodIds.Contains(x.PeriodId));
+            query = query.Where(x => filterDto.PeriodIds.Contains(x.PeriodId)).ToList();
         }
 
-        if (filterDto.SubordinateEmployeeIds != null && filterDto.SubordinateEmployeeIds.Any())
+        if (filterDto.SubordinateEmployeeIds != null && filterDto.SubordinateEmployeeIds.Count != 0)
         {
-            query = query.Where(x => filterDto.SubordinateEmployeeIds.Contains(x.EmployeeId) || x.ResponsibleEmployeeId == filterDto.EmployeeId);
+            query = query.Where(x => filterDto.SubordinateEmployeeIds.Contains(x.EmployeeId) || x.ResponsibleEmployeeId == filterDto.EmployeeId).ToList();
         }
-        else if (filterDto.EmployeeId.HasValue)
+        else if (filterDto.EmployeeId.HasValue && filterDto.EmployeeId.Value != 0)
         {
-            query = query.Where(x => x.EmployeeId == filterDto.EmployeeId.Value);
+            query = query.Where(x => x.EmployeeId == filterDto.EmployeeId.Value).ToList();
         }
 
-        var result = await query.ToListAsync();
-
-        return result;
+        return query;
     }
 }

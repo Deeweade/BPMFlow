@@ -1,7 +1,9 @@
+using BPMFlow.Domain.Models.Entities.PerfManagement1;
+
 namespace BPMFlow.Domain.Models.Entities.BPMFlow;
 
 public class AssignedRequest : HistoryEntity
-{   
+{
     public int ResponsibleEmployeeId { get; set; }
     public int EmployeeId { get; set; }
     public int PeriodId { get; set; }

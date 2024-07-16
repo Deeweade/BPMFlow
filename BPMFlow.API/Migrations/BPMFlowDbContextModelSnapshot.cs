@@ -69,7 +69,7 @@ namespace BPMFlow.API.Migrations
                     b.ToTable("AssignedRequests");
                 });
 
-            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.BusinessProcess", b =>
+            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.BusinessProcesses", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -82,7 +82,7 @@ namespace BPMFlow.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BusinessProcess");
+                    b.ToTable("BusinessProcesses");
                 });
 
             modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.GroupRequest", b =>
@@ -211,13 +211,13 @@ namespace BPMFlow.API.Migrations
 
             modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.GroupRequest", b =>
                 {
-                    b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.BusinessProcess", "BusinessProcess")
+                    b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.BusinessProcesses", "BusinessProcesses")
                         .WithMany("GroupRequests")
                         .HasForeignKey("BusinessProcessId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("BusinessProcess");
+                    b.Navigation("BusinessProcesses");
                 });
 
             modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatus", b =>
@@ -251,7 +251,7 @@ namespace BPMFlow.API.Migrations
                     b.Navigation("RequestStatus");
                 });
 
-            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.BusinessProcess", b =>
+            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.BusinessProcesses", b =>
                 {
                     b.Navigation("GroupRequests");
                 });
