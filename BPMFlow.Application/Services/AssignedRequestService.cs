@@ -67,7 +67,7 @@ public class AssignedRequestService : IAssignedRequestService
 
         var filterDto = _mapper.Map<AssignedRequestsFilterDto>(filterView);
 
-        if (filterDto.PeriodIds is not null && filterDto.PeriodIds.Any())
+        if (filterDto.PeriodId.HasValue && filterDto.PeriodId.Value != 0)
         {
             var period =  await _unitOfWork.PeriodRepository.GetById(filterDto.PeriodId!.Value);
             
@@ -76,9 +76,9 @@ public class AssignedRequestService : IAssignedRequestService
                 var childPeriodIds = (await _unitOfWork.PeriodRepository.GetChildPeriodIds(filterDto.PeriodId.Value)).ToList();
 
                 filterDto.PeriodIds = childPeriodIds;
+                
+                filterDto.PeriodIds.Add(filterDto.PeriodId.Value);
             }
-            
-            filterDto.PeriodIds.Add(filterDto.PeriodId.Value);
         }
 
         if (filterDto.WithSubordinates)
@@ -86,9 +86,9 @@ public class AssignedRequestService : IAssignedRequestService
             var employeeIds = (await _unitOfWork.EmployeeRepository.GetSubordinateEmployeeIds(filterDto.EmployeeId!.Value)).ToList();
 
             filterDto.SubordinateEmployeeIds = employeeIds;
+            
+            filterDto.SubordinateEmployeeIds.Add(filterDto.EmployeeId!.Value);
         }
-
-        filterDto.SubordinateEmployeeIds.Add(filterDto.EmployeeId!.Value);
 
         var queries = await _unitOfWork.AssignedRequestRepository.GetByFilter(filterDto);
 
