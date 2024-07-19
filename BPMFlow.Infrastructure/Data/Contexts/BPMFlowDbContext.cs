@@ -11,12 +11,12 @@ public class BPMFlowDbContext : DbContext
     {
     }
 
-    public DbSet<AssignedRequest> AssignedRequests { get; set; }
-    public DbSet<GroupRequest> GroupRequests {get; set; }
+    public DbSet<ObjectRequest> ObjectRequests { get; set; }
+    public DbSet<Request> Requests {get; set; }
     public DbSet<RequestStatusTransition> RequestStatusTransitions { get; set; }
-    public DbSet<RequestStatusesOrder> RequestStatusesOrders { get; set; }
     public DbSet<RequestStatus> RequestStatuses { get; set; }
     public DbSet<BusinessProcess> BusinessProcesses { get; set; }
+    public DbSet<RequestStatusTrigger> RequestStatusTriggers { get; set; }
     
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -26,28 +26,22 @@ public class BPMFlowDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<AssignedRequest>()
+        modelBuilder.Entity<ObjectRequest>()
             .HasOne(ar => ar.RequestStatus)
-            .WithMany(rs => rs.AssignedRequests)
+            .WithMany(rs => rs.ObjectRequests)
             .HasForeignKey(ar => ar.RequestStatusId)
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<RequestStatus>()
-            .HasOne(rs => rs.GroupRequest)
+            .HasOne(rs => rs.Request)
             .WithMany(gr => gr.RequestStatuses)
-            .HasForeignKey(rs => rs.GroupRequestId)
+            .HasForeignKey(rs => rs.RequestId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<GroupRequest>()
-            .HasMany(rs => rs.AssignedRequests)
-            .WithOne(gr => gr.GroupRequest)
-            .HasForeignKey(rs => rs.GroupRequestId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<GroupRequest>()
+        modelBuilder.Entity<Request>()
             .HasMany(rs => rs.RequestStatuses)
-            .WithOne(gr => gr.GroupRequest)
-            .HasForeignKey(rs => rs.GroupRequestId)
+            .WithOne(gr => gr.Request)
+            .HasForeignKey(rs => rs.RequestId)
             .OnDelete(DeleteBehavior.Restrict);
 
         base.OnModelCreating(modelBuilder);

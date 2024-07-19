@@ -8,46 +8,45 @@ using BPMFlow.Domain.Interfaces.Repositories;
 
 namespace BPMFlow.Application.Services;
 
-public class AssignedRequestService : IAssignedRequestService
+public class ObjectRequestService : IObjectRequestService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public AssignedRequestService(IUnitOfWork unitOfWork, IMapper mapper)
+    public ObjectRequestService(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
 
-    public async Task<AssignedRequestView> Create(AssignedRequestView assignedRequestView)
+    public async Task<ObjectRequestView> Create(ObjectRequestView objectRequestView)
     {
-        ArgumentNullException.ThrowIfNull(assignedRequestView);
+        ArgumentNullException.ThrowIfNull(objectRequestView);
 
 
-        var assignedRequestDto = _mapper.Map<AssignedRequestDto>(assignedRequestView);
+        var objectRequestDto = _mapper.Map<ObjectRequestDto>(objectRequestView);
 
-        var assignedRequest = await _unitOfWork.AssignedRequestRepository.Create(assignedRequestDto);
+        var objectRequest = await _unitOfWork.ObjectRequestRepository.Create(objectRequestDto);
 
-        return _mapper.Map<AssignedRequestView>(assignedRequest);
+        return _mapper.Map<ObjectRequestView>(objectRequest);
     }
 
-    public async Task<IEnumerable<int>> BulkCreate(ICollection<int> employeeIds, AssignedRequestView assignedRequests)
+    public async Task<IEnumerable<int>> BulkCreate(ICollection<int> employeeIds, ObjectRequestView objectRequests)
     {
         ArgumentNullException.ThrowIfNull(employeeIds);
-        ArgumentNullException.ThrowIfNull(assignedRequests);
+        ArgumentNullException.ThrowIfNull(objectRequests);
 
         var codes = new List<int>();
 
         foreach (var employeeId in employeeIds)
         {
-            var newRequest = new AssignedRequestView
+            var newRequest = new ObjectRequestView
                 {
-                    GroupRequestId = assignedRequests.GroupRequestId,
-                    RequestStatusId = assignedRequests.RequestStatusId,
-                    ResponsibleEmployeeId = assignedRequests.ResponsibleEmployeeId,
+                    RequestStatusId = objectRequests.RequestStatusId,
+                    ResponsibleEmployeeId = objectRequests.ResponsibleEmployeeId,
                     EmployeeId = employeeId,
-                    PeriodId = assignedRequests.PeriodId,
-                    EntityStatusId = assignedRequests.EntityStatusId
+                    PeriodId = objectRequests.PeriodId,
+                    EntityStatusId = objectRequests.EntityStatusId
                 };
 
             var createdRequest = await Create(newRequest);
@@ -61,11 +60,11 @@ public class AssignedRequestService : IAssignedRequestService
         return codes;
     }
 
-    public async Task<IEnumerable<AssignedRequestView>> GetByFilter(AssignedRequestsFilterView filterView)
+    public async Task<IEnumerable<ObjectRequestView>> GetByFilter(ObjectRequestsFilterView filterView)
     {
         ArgumentNullException.ThrowIfNull(filterView);
 
-        var filterDto = _mapper.Map<AssignedRequestsFilterDto>(filterView);
+        var filterDto = _mapper.Map<ObjectRequestsFilterDto>(filterView);
 
         if (filterDto.PeriodId.HasValue && filterDto.PeriodId.Value != 0)
         {
@@ -90,8 +89,8 @@ public class AssignedRequestService : IAssignedRequestService
             filterDto.SubordinateEmployeeIds.Add(filterDto.EmployeeId!.Value);
         }
 
-        var queries = await _unitOfWork.AssignedRequestRepository.GetByFilter(filterDto);
+        var queries = await _unitOfWork.ObjectRequestRepository.GetByFilter(filterDto);
 
-        return _mapper.Map<IEnumerable<AssignedRequestView>>(queries);
+        return _mapper.Map<IEnumerable<ObjectRequestView>>(queries);
     }
 }

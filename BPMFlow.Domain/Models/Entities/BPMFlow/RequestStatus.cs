@@ -4,24 +4,23 @@ public class RequestStatus : BaseEntity
 {
     public RequestStatus()
     {
-        RequestStatusTransitions = new HashSet<RequestStatusTransition>();
-        RequestStatusesOrders = new HashSet<RequestStatusesOrder>();
-        AssignedRequests = new HashSet<AssignedRequest>();
+        ObjectRequests = new HashSet<ObjectRequest>();
+        RequestStatusTriggers = new HashSet<RequestStatusTrigger>();
     }
 
-    public string Name { get; set; }
+    public string Title { get; set; }
     public int ResponsibleRoleId { get; set; }
+    public int StatusOrder { get; set; }
+    public bool IsFinalApproved { get; set; }
+    public bool IsFinalDenied { get; set; }
 
-    //RequestStatus -> GroupRequest
-    public int GroupRequestId { get; set; }
-    public virtual GroupRequest GroupRequest { get; set; }
+    //RequestStatus -> Request
+    public int RequestId { get; set; }
+    public virtual Request Request { get; set; }
     
-    // RequestStatus -> AssignedRequest
-    public virtual ICollection<AssignedRequest> AssignedRequests { get; set; }
+    // RequestStatus -> ObjectRequest
+    public virtual ICollection<ObjectRequest> ObjectRequests { get; set; }
 
-    // RequestStatus -> RequestStatusTransition
-    public virtual ICollection<RequestStatusTransition> RequestStatusTransitions { get; set; }
-
-    // RequestStatus -> RequestStatusesOrder
-    public virtual ICollection<RequestStatusesOrder> RequestStatusesOrders { get; set; }
+    // RequestStatus -> RequestStatusTrigger
+    public virtual ICollection<RequestStatusTrigger> RequestStatusTriggers { get; set; }
 }

@@ -15,12 +15,12 @@ public class UnitOfWork : IUnitOfWork
         _bpmFlowDbContext = bpmFlowDbContext;
         _perfManagement1DbContext = perfManagement1DbContext;
 
-        AssignedRequestRepository = new AssignedRequestRepository(_bpmFlowDbContext, _perfManagement1DbContext, mapper);
+        ObjectRequestRepository = new ObjectRequestRepository(_bpmFlowDbContext, _perfManagement1DbContext, mapper);
         PeriodRepository = new PeriodRepository(_perfManagement1DbContext, mapper);
         EmployeeRepository = new EmployeeRepository(_perfManagement1DbContext, mapper);
     }
 
-    public IAssignedRequestRepository AssignedRequestRepository { get; }
+    public IObjectRequestRepository ObjectRequestRepository { get; }
     public IPeriodRepository PeriodRepository { get; }
     public IEmployeeRepository EmployeeRepository { get; }
 

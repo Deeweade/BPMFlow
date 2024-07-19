@@ -1,4 +1,3 @@
-using System.Security.Cryptography.X509Certificates;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BPMFlow.Domain.Dtos.Entities.BPMFlow;
@@ -12,78 +11,72 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BPMFlow.Infrastructure.Data.Repositories;
 
-public class AssignedRequestRepository : IAssignedRequestRepository
+public class ObjectRequestRepository : IObjectRequestRepository
 {
     private readonly BPMFlowDbContext _bpmFlowContext;
     private readonly PerfManagement1DbContext _perfManagement1Context;
     private readonly IMapper _mapper;
 
-    public AssignedRequestRepository(BPMFlowDbContext bpmFlowContext, PerfManagement1DbContext perfManagement1Context, IMapper mapper)
+    public ObjectRequestRepository(BPMFlowDbContext bpmFlowContext, PerfManagement1DbContext perfManagement1Context, IMapper mapper)
     {
         _bpmFlowContext = bpmFlowContext;
         _perfManagement1Context = perfManagement1Context;
         _mapper = mapper;
     }
 
-    public async Task<AssignedRequestDto> GetById(int requestId)
+    public async Task<ObjectRequestDto> GetById(int requestId)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(requestId);
 
-        return await _bpmFlowContext.AssignedRequests
+        return await _bpmFlowContext.ObjectRequests
             .AsNoTracking()
-            .ProjectTo<AssignedRequestDto>(_mapper.ConfigurationProvider)
+            .ProjectTo<ObjectRequestDto>(_mapper.ConfigurationProvider)
             .FirstOrDefaultAsync(x => x.Id == requestId);
     }
 
-    public async Task<AssignedRequestDto> Create(AssignedRequestDto assignedRequestDto)
+    public async Task<ObjectRequestDto> Create(ObjectRequestDto objectRequestDto)
     {
-        ArgumentNullException.ThrowIfNull(assignedRequestDto);
+        ArgumentNullException.ThrowIfNull(objectRequestDto);
 
         var employee = await _perfManagement1Context.Employees
             .AsNoTracking()
             .ProjectTo<EmployeeDto>(_mapper.ConfigurationProvider)
-            .FirstOrDefaultAsync(x => x.Id == assignedRequestDto.EmployeeId);
+            .FirstOrDefaultAsync(x => x.Id == objectRequestDto.EmployeeId);
 
         ArgumentNullException.ThrowIfNull(employee);
 
-        var maxCode = await _bpmFlowContext.AssignedRequests.AnyAsync()
-            ? await _bpmFlowContext.AssignedRequests.MaxAsync(x => x.Code)
+        var maxCode = await _bpmFlowContext.ObjectRequests.AnyAsync()
+            ? await _bpmFlowContext.ObjectRequests.MaxAsync(x => x.Code)
             : 0;
 
-        var request = new AssignedRequest
+        var request = new ObjectRequest
         {
             Code = ++maxCode,
-            GroupRequestId = assignedRequestDto.GroupRequestId,
-            RequestStatusId = assignedRequestDto.RequestStatusId,
+            RequestStatusId = objectRequestDto.RequestStatusId,
             ResponsibleEmployeeId = (int)employee.Parent,
-            EmployeeId = assignedRequestDto.EmployeeId,
-            PeriodId = assignedRequestDto.PeriodId,
+            EmployeeId = objectRequestDto.EmployeeId,
+            PeriodId = objectRequestDto.PeriodId,
             DateStart = DateTime.Now,
             DateEnd = DateTime.MaxValue,
             IsActive = true,
             EntityStatusId = (int)EntityStatuses.ActiveDraft
         };
 
-        _bpmFlowContext.AssignedRequests.Add(request);
+        _bpmFlowContext.ObjectRequests.Add(request);
 
         await _bpmFlowContext.SaveChangesAsync();
 
         return await GetById(request.Id);
     }
 
-    public async Task<IEnumerable<AssignedRequestDto>> GetByFilter(AssignedRequestsFilterDto filterDto)
+    public async Task<IEnumerable<ObjectRequestDto>> GetByFilter(ObjectRequestsFilterDto filterDto)
     {
         ArgumentNullException.ThrowIfNull(filterDto);
 
-        var query = await _bpmFlowContext.AssignedRequests
+        var query = await _bpmFlowContext.ObjectRequests
             .AsNoTracking()
-            .ProjectTo<AssignedRequestDto>(_mapper.ConfigurationProvider)
+            .ProjectTo<ObjectRequestDto>(_mapper.ConfigurationProvider)
             .ToListAsync();
-
-        if (filterDto.GroupRequestId.HasValue && filterDto.GroupRequestId.Value != 0)
-        {
-            query = query.Where(x => x.GroupRequestId == filterDto.GroupRequestId.Value).ToList();
-        }
 
         if (filterDto.RequestStatusId.HasValue && filterDto.RequestStatusId.Value != 0)
         {

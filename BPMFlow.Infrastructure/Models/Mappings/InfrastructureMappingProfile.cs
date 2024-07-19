@@ -14,7 +14,6 @@ public class InfrastructureMappingProfile : Profile
         CreateBusinessProcessMappings();
         CreateGroupRequestMappings();
         CreateRequestStatusMappings();
-        CreateRequestStatusesOrderMappings();
         CreateRequestStatusTransitionMappings();
 
         CreateActionMapping();
@@ -30,8 +29,8 @@ public class InfrastructureMappingProfile : Profile
     #region BPMFlowMappings
         private void CreateAssignedRequestMappings()
         {
-            CreateMap<AssignedRequest, AssignedRequestDto>();
-            CreateMap<AssignedRequestDto, AssignedRequest>();
+            CreateMap<ObjectRequest, ObjectRequestDto>();
+            CreateMap<ObjectRequestDto, ObjectRequest>();
         }
 
         private void CreateBusinessProcessMappings()
@@ -42,20 +41,14 @@ public class InfrastructureMappingProfile : Profile
 
         private void CreateGroupRequestMappings()
         {
-            CreateMap<GroupRequest, GroupRequestDto>();
-            CreateMap<GroupRequestDto, GroupRequest>();
+            CreateMap<Request, RequestDto>();
+            CreateMap<RequestDto, Request>();
         }
 
         private void CreateRequestStatusMappings()
         {
             CreateMap<RequestStatus, RequestStatusDto>();
             CreateMap<RequestStatusDto, RequestStatus>();
-        }
-        
-        private void CreateRequestStatusesOrderMappings()
-        {
-            CreateMap<RequestStatusesOrder, RequestStatusesOrderDto>();
-            CreateMap<RequestStatusesOrderDto, RequestStatusesOrder>();
         }
 
         private void CreateRequestStatusTransitionMappings()

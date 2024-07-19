@@ -11,17 +11,17 @@ namespace BPMFlow.API.Controllers;
 [Route("api/[controller]")]
 [Authorize(Policy = "RequireAuthenticatedUser")]
 
-public class AssignedRequestController : ControllerBase
+public class ObjectRequestController : ControllerBase
 {
-    private readonly IAssignedRequestService _service;
+    private readonly IObjectRequestService _service;
 
-    public AssignedRequestController(IAssignedRequestService service)
+    public ObjectRequestController(IObjectRequestService service)
     {
         _service = service;
     }
 
     [HttpPost("create")]
-    public async Task<IActionResult> Create(AssignedRequestView assignedRequestView)
+    public async Task<IActionResult> Create(ObjectRequestView assignedRequestView)
     {
         ArgumentNullException.ThrowIfNull(assignedRequestView);
 
@@ -31,17 +31,17 @@ public class AssignedRequestController : ControllerBase
     }
 
     [HttpPost("create/bulk")]
-    public async Task<IActionResult> BulkCreate(AssignedRequestBulkCreateView view)
+    public async Task<IActionResult> BulkCreate(ObjectRequestBulkCreateView view)
     {
-        if (view.EmployeeIds is null || view.AssignedRequests is null) throw new ArgumentNullException(nameof(view));
+        if (view.EmployeeIds is null || view.ObjectRequests is null) throw new ArgumentNullException(nameof(view));
 
-        var codes = await _service.BulkCreate(view.EmployeeIds, view.AssignedRequests);
+        var codes = await _service.BulkCreate(view.EmployeeIds, view.ObjectRequests);
 
         return Ok(codes);
     }
 
     [HttpPost("getFiltered")]
-    public async Task<IActionResult> GetFiltered(AssignedRequestsFilterView filter)
+    public async Task<IActionResult> GetFiltered(ObjectRequestsFilterView filter)
     {
         ArgumentNullException.ThrowIfNull(filter);
 

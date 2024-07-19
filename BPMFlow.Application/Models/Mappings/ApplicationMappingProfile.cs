@@ -16,7 +16,6 @@ public class ApplicationMappingProfile : Profile
         CreateBusinessProcessMappings();
         CreateGroupRequestMappings();
         CreateRequestStatusMappings();
-        CreateRequestStatusesOrderMappings();
         CreateRequestStatusTransitionMappings();
 
         CreateActionMapping();
@@ -31,12 +30,12 @@ public class ApplicationMappingProfile : Profile
     #region BPMFlowMappings
         private void CreateAssignedRequestMapping()
         {
-            CreateMap<AssignedRequestView, AssignedRequestDto>();
-            CreateMap<AssignedRequestDto, AssignedRequestView>();
+            CreateMap<ObjectRequestView, ObjectRequestDto>();
+            CreateMap<ObjectRequestDto, ObjectRequestView>();
 
             //filters
-            CreateMap<AssignedRequestsFilterView, AssignedRequestsFilterDto>();
-            CreateMap<AssignedRequestsFilterDto, AssignedRequestsFilterView>();
+            CreateMap<ObjectRequestsFilterView, ObjectRequestsFilterDto>();
+            CreateMap<ObjectRequestsFilterDto, ObjectRequestsFilterView>();
         }
 
         private void CreateBusinessProcessMappings()
@@ -47,20 +46,14 @@ public class ApplicationMappingProfile : Profile
 
         private void CreateGroupRequestMappings()
         {
-            CreateMap<GroupRequestView, GroupRequestDto>();
-            CreateMap<GroupRequestDto, GroupRequestView>();
+            CreateMap<RequestView, RequestDto>();
+            CreateMap<RequestDto, RequestView>();
         }
 
         private void CreateRequestStatusMappings()
         {
             CreateMap<RequestStatusView, RequestStatusDto>();
             CreateMap<RequestStatusDto, RequestStatusView>();
-        }
-        
-        private void CreateRequestStatusesOrderMappings()
-        {
-            CreateMap<RequestStatusesOrderView, RequestStatusesOrderDto>();
-            CreateMap<RequestStatusesOrderDto, RequestStatusesOrderView>();
         }
 
         private void CreateRequestStatusTransitionMappings()
