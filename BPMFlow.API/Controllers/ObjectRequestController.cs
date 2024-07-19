@@ -20,14 +20,14 @@ public class ObjectRequestController : ControllerBase
         _service = service;
     }
 
-    [HttpPost("create")]
-    public async Task<IActionResult> Create(ObjectRequestView assignedRequestView)
+    /* [HttpPost("create")]
+    public async Task<IActionResult> Create(ObjectRequestView objectRequestView)
     {
-        ArgumentNullException.ThrowIfNull(assignedRequestView);
+        ArgumentNullException.ThrowIfNull(objectRequestView);
 
-        var assignedRequest = await _service.Create(assignedRequestView);
+        var objectRequest = await _service.Create(objectRequestView);
 
-        return Ok(assignedRequest);
+        return Ok(objectRequest);
     }
 
     [HttpPost("create/bulk")]
@@ -48,5 +48,5 @@ public class ObjectRequestController : ControllerBase
         var requests = await _service.GetByFilter(filter);
 
         return Ok(requests);
-    }
+    } */
 }

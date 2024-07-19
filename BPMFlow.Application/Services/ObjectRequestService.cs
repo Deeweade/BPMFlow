@@ -19,7 +19,7 @@ public class ObjectRequestService : IObjectRequestService
         _mapper = mapper;
     }
 
-    public async Task<ObjectRequestView> Create(ObjectRequestView objectRequestView)
+    /* public async Task<ObjectRequestView> Create(ObjectRequestView objectRequestView)
     {
         ArgumentNullException.ThrowIfNull(objectRequestView);
 
@@ -44,7 +44,7 @@ public class ObjectRequestService : IObjectRequestService
                 {
                     RequestStatusId = objectRequests.RequestStatusId,
                     ResponsibleEmployeeId = objectRequests.ResponsibleEmployeeId,
-                    EmployeeId = employeeId,
+                    EmployeeId = employeeId
                     PeriodId = objectRequests.PeriodId,
                     EntityStatusId = objectRequests.EntityStatusId
                 };
@@ -92,5 +92,5 @@ public class ObjectRequestService : IObjectRequestService
         var queries = await _unitOfWork.ObjectRequestRepository.GetByFilter(filterDto);
 
         return _mapper.Map<IEnumerable<ObjectRequestView>>(queries);
-    }
+    } */
 }

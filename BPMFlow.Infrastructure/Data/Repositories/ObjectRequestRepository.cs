@@ -34,7 +34,7 @@ public class ObjectRequestRepository : IObjectRequestRepository
             .FirstOrDefaultAsync(x => x.Id == requestId);
     }
 
-    public async Task<ObjectRequestDto> Create(ObjectRequestDto objectRequestDto)
+    /* public async Task<ObjectRequestDto> Create(ObjectRequestDto objectRequestDto)
     {
         ArgumentNullException.ThrowIfNull(objectRequestDto);
 
@@ -98,5 +98,5 @@ public class ObjectRequestRepository : IObjectRequestRepository
         }
 
         return query;
-    }
+    } */
 }

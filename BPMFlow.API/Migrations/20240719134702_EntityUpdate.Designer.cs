@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BPMFlow.API.Migrations
 {
     [DbContext(typeof(BPMFlowDbContext))]
-    [Migration("20240719095428_ChangeContext")]
-    partial class ChangeContext
+    [Migration("20240719134702_EntityUpdate")]
+    partial class EntityUpdate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -66,9 +66,6 @@ namespace BPMFlow.API.Migrations
 
                     b.Property<DateTime>("DateStart")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
 
                     b.Property<int>("EntityStatusId")
                         .HasColumnType("int");
@@ -160,7 +157,7 @@ namespace BPMFlow.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("IsNextStageTransition")
+                    b.Property<bool>("IsNextOrderTransition")
                         .HasColumnType("bit");
 
                     b.Property<int>("NextStatusOrder")

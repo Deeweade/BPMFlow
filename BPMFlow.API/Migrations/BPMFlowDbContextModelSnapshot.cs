@@ -64,9 +64,6 @@ namespace BPMFlow.API.Migrations
                     b.Property<DateTime>("DateStart")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
-
                     b.Property<int>("EntityStatusId")
                         .HasColumnType("int");
 
@@ -157,7 +154,7 @@ namespace BPMFlow.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("IsNextStageTransition")
+                    b.Property<bool>("IsNextOrderTransition")
                         .HasColumnType("bit");
 
                     b.Property<int>("NextStatusOrder")

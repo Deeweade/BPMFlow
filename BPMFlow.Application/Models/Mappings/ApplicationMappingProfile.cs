@@ -12,11 +12,12 @@ public class ApplicationMappingProfile : Profile
 {
     public ApplicationMappingProfile()
     {
-        CreateAssignedRequestMapping();
+        CreateObjectRequestMapping();
         CreateBusinessProcessMappings();
         CreateGroupRequestMappings();
         CreateRequestStatusMappings();
         CreateRequestStatusTransitionMappings();
+        CreateRequestStatusTriggerMappings();
 
         CreateActionMapping();
         CreateEmployeeRoleMappings();
@@ -28,7 +29,7 @@ public class ApplicationMappingProfile : Profile
     }
 
     #region BPMFlowMappings
-        private void CreateAssignedRequestMapping()
+        private void CreateObjectRequestMapping()
         {
             CreateMap<ObjectRequestView, ObjectRequestDto>();
             CreateMap<ObjectRequestDto, ObjectRequestView>();
@@ -60,6 +61,12 @@ public class ApplicationMappingProfile : Profile
         {
             CreateMap<RequestStatusTransitionView, RequestStatusTransitionDto>();
             CreateMap<RequestStatusTransitionDto, RequestStatusTransitionView>();
+        }
+
+        private void CreateRequestStatusTriggerMappings()
+        {
+            CreateMap<RequestStatusTriggerView, RequestStatusTriggerDto>();
+            CreateMap<RequestStatusTriggerDto, RequestStatusTriggerView>();
         }
     #endregion
 
