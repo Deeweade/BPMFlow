@@ -4,7 +4,6 @@ public class ObjectRequestDto : HistoryEntityDto
 {
     public int ObjectId { get; set; }
     public int AuthorEmployeeId { get; set; }
-    public int EmployeeId { get; set; }
     public int ResponsibleEmployeeId { get; set; }
     public int RequestStatusId { get; set; }
     public int RequestStatusTransitionId { get; set; }
