@@ -8,4 +8,5 @@ public interface IObjectRequestRepository
 {
     //Task<ObjectRequestDto> Create(ObjectRequestDto objectRequestDto);
     //Task<IEnumerable<ObjectRequestDto>> GetByFilter(ObjectRequestsFilterDto filterDto);
+    Task<ObjectRequestDto> ChangeStatus(ObjectRequestDto objectRequestDto, int nextStatusOrder);
 }

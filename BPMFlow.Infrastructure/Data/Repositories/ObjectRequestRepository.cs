@@ -99,4 +99,9 @@ public class ObjectRequestRepository : IObjectRequestRepository
 
         return query;
     } */
+
+    public async Task<ObjectRequestDto> ChangeStatus(ObjectRequestDto objectRequestDto, int nextStatusOrder)
+    {
+        
+    }
 }

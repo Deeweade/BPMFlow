@@ -23,7 +23,6 @@ public class ObjectRequestService : IObjectRequestService
     {
         ArgumentNullException.ThrowIfNull(objectRequestView);
 
-
         var objectRequestDto = _mapper.Map<ObjectRequestDto>(objectRequestView);
 
         var objectRequest = await _unitOfWork.ObjectRequestRepository.Create(objectRequestDto);
@@ -93,4 +92,13 @@ public class ObjectRequestService : IObjectRequestService
 
         return _mapper.Map<IEnumerable<ObjectRequestView>>(queries);
     } */
+
+    public async Task<ObjectRequestView> ChangeStatus(ObjectRequestView objectRequestView, int nextStatusOrder)
+    {
+        var objectRequestDto = _mapper.Map<ObjectRequestDto>(objectRequestView);
+
+        var objectRequest = await _unitOfWork.ObjectRequestRepository.ChangeStatus(objectRequestDto, nextStatusOrder);
+
+        return _mapper.Map<ObjectRequestView>(objectRequest);
+    }
 }
