@@ -1,7 +1,7 @@
 namespace BPMFlow.Domain.Dtos.Entities.BPMFlow;
 
-public class GroupRequestDto : BaseEntityDto
+public class RequestDto : BaseEntityDto
 {
-    public string Name { get; set; }
+    public string Title { get; set; }
     public int BusinessProcessId { get; set; }
 }

@@ -2,7 +2,7 @@ namespace BPMFlow.Domain.Interfaces.Repositories;
 
 public interface IUnitOfWork
 {
-    IAssignedRequestRepository AssignedRequestRepository { get; }
+    IObjectRequestRepository ObjectRequestRepository { get; }
     IPeriodRepository PeriodRepository { get; }
     IEmployeeRepository EmployeeRepository { get; }
     

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BPMFlow.API.Migrations
 {
     [DbContext(typeof(BPMFlowDbContext))]
-    [Migration("20240714144843_InitialCreate")]
+    [Migration("20240722101502_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -25,13 +25,38 @@ namespace BPMFlow.API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.AssignedRequest", b =>
+            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.BusinessProcess", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("SystemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SystemObjectId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BusinessProcesses");
+                });
+
+            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.ObjectRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AuthorEmployeeId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Code")
                         .HasColumnType("int");
@@ -42,17 +67,14 @@ namespace BPMFlow.API.Migrations
                     b.Property<DateTime>("DateStart")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
-
                     b.Property<int>("EntityStatusId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GroupRequestId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
+
+                    b.Property<int>("ObjectId")
+                        .HasColumnType("int");
 
                     b.Property<int>("PeriodId")
                         .HasColumnType("int");
@@ -60,35 +82,20 @@ namespace BPMFlow.API.Migrations
                     b.Property<int>("RequestStatusId")
                         .HasColumnType("int");
 
+                    b.Property<int>("RequestStatusTransitionId")
+                        .HasColumnType("int");
+
                     b.Property<int>("ResponsibleEmployeeId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GroupRequestId");
-
                     b.HasIndex("RequestStatusId");
 
-                    b.ToTable("AssignedRequests");
+                    b.ToTable("ObjectRequests");
                 });
 
-            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.BusinessProcesses", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BusinessProcesses");
-                });
-
-            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.GroupRequest", b =>
+            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.Request", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -99,14 +106,14 @@ namespace BPMFlow.API.Migrations
                     b.Property<int>("BusinessProcessId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BusinessProcessId");
 
-                    b.ToTable("GroupRequests");
+                    b.ToTable("Requests");
                 });
 
             modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatus", b =>
@@ -117,18 +124,27 @@ namespace BPMFlow.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("GroupRequestId")
-                        .HasColumnType("int");
+                    b.Property<bool>("IsFinalApproved")
+                        .HasColumnType("bit");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("IsFinalDenied")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("RequestId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ResponsibleRoleId")
                         .HasColumnType("int");
 
+                    b.Property<int>("StatusOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("GroupRequestId");
+                    b.HasIndex("RequestId");
 
                     b.ToTable("RequestStatuses");
                 });
@@ -141,16 +157,13 @@ namespace BPMFlow.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("IsNextStageTransition")
+                    b.Property<bool>("IsNextOrderTransition")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("NextStatusId")
+                    b.Property<int>("NextStatusOrder")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RequestStatusId")
+                    b.Property<int>("RequestId")
                         .HasColumnType("int");
 
                     b.Property<int>("ResponsibleRoleId")
@@ -159,17 +172,20 @@ namespace BPMFlow.API.Migrations
                     b.Property<bool>("SkipValidation")
                         .HasColumnType("bit");
 
-                    b.Property<int>("SourceStatusId")
+                    b.Property<int>("SourceStatusOrder")
                         .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RequestStatusId");
+                    b.HasIndex("RequestId");
 
                     b.ToTable("RequestStatusTransitions");
                 });
 
-            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatusesOrder", b =>
+            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatusTrigger", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -177,76 +193,99 @@ namespace BPMFlow.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("IsFinalStatus")
-                        .HasColumnType("bit");
-
                     b.Property<int>("RequestStatusId")
                         .HasColumnType("int");
 
-                    b.Property<int>("StatusOrder")
-                        .HasColumnType("int");
+                    b.Property<string>("Trigger")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("RequestStatusId");
 
-                    b.ToTable("RequestStatusesOrders");
+                    b.ToTable("RequestStatusTriggers");
                 });
 
-            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.AssignedRequest", b =>
+            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.System", b =>
                 {
-                    b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.GroupRequest", "GroupRequest")
-                        .WithMany("AssignedRequests")
-                        .HasForeignKey("GroupRequestId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Systems");
+                });
+
+            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.SystemObject", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SystemObjects");
+                });
+
+            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.ObjectRequest", b =>
+                {
                     b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatus", "RequestStatus")
-                        .WithMany("AssignedRequests")
+                        .WithMany("ObjectRequests")
                         .HasForeignKey("RequestStatusId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("GroupRequest");
-
                     b.Navigation("RequestStatus");
                 });
 
-            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.GroupRequest", b =>
+            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.Request", b =>
                 {
-                    b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.BusinessProcesses", "BusinessProcesses")
-                        .WithMany("GroupRequests")
+                    b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.BusinessProcess", "BusinessProcess")
+                        .WithMany("Requests")
                         .HasForeignKey("BusinessProcessId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("BusinessProcesses");
+                    b.Navigation("BusinessProcess");
                 });
 
             modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatus", b =>
                 {
-                    b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.GroupRequest", "GroupRequest")
+                    b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.Request", "Request")
                         .WithMany("RequestStatuses")
-                        .HasForeignKey("GroupRequestId")
+                        .HasForeignKey("RequestId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("GroupRequest");
+                    b.Navigation("Request");
                 });
 
             modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatusTransition", b =>
                 {
-                    b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatus", "RequestStatus")
+                    b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.Request", "Request")
                         .WithMany("RequestStatusTransitions")
-                        .HasForeignKey("RequestStatusId");
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("RequestStatus");
+                    b.Navigation("Request");
                 });
 
-            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatusesOrder", b =>
+            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatusTrigger", b =>
                 {
                     b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatus", "RequestStatus")
-                        .WithMany("RequestStatusesOrders")
+                        .WithMany("RequestStatusTriggers")
                         .HasForeignKey("RequestStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -254,25 +293,23 @@ namespace BPMFlow.API.Migrations
                     b.Navigation("RequestStatus");
                 });
 
-            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.BusinessProcesses", b =>
+            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.BusinessProcess", b =>
                 {
-                    b.Navigation("GroupRequests");
+                    b.Navigation("Requests");
                 });
 
-            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.GroupRequest", b =>
+            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.Request", b =>
                 {
-                    b.Navigation("AssignedRequests");
+                    b.Navigation("RequestStatusTransitions");
 
                     b.Navigation("RequestStatuses");
                 });
 
             modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatus", b =>
                 {
-                    b.Navigation("AssignedRequests");
+                    b.Navigation("ObjectRequests");
 
-                    b.Navigation("RequestStatusTransitions");
-
-                    b.Navigation("RequestStatusesOrders");
+                    b.Navigation("RequestStatusTriggers");
                 });
 #pragma warning restore 612, 618
         }

@@ -10,12 +10,14 @@ public class InfrastructureMappingProfile : Profile
 {
     public InfrastructureMappingProfile()
     {
-        CreateAssignedRequestMappings();
+        CreateObjectRequestMappings();
         CreateBusinessProcessMappings();
         CreateGroupRequestMappings();
         CreateRequestStatusMappings();
-        CreateRequestStatusesOrderMappings();
         CreateRequestStatusTransitionMappings();
+        CreateRequestStatusTriggerMappings();
+        CreateSystemMappings();
+        CreateSystemObjectMappings();
 
         CreateActionMapping();
         CreateEmployeeMappings();
@@ -28,10 +30,10 @@ public class InfrastructureMappingProfile : Profile
     }
 
     #region BPMFlowMappings
-        private void CreateAssignedRequestMappings()
+        private void CreateObjectRequestMappings()
         {
-            CreateMap<AssignedRequest, AssignedRequestDto>();
-            CreateMap<AssignedRequestDto, AssignedRequest>();
+            CreateMap<ObjectRequest, ObjectRequestDto>();
+            CreateMap<ObjectRequestDto, ObjectRequest>();
         }
 
         private void CreateBusinessProcessMappings()
@@ -42,8 +44,8 @@ public class InfrastructureMappingProfile : Profile
 
         private void CreateGroupRequestMappings()
         {
-            CreateMap<GroupRequest, GroupRequestDto>();
-            CreateMap<GroupRequestDto, GroupRequest>();
+            CreateMap<Request, RequestDto>();
+            CreateMap<RequestDto, Request>();
         }
 
         private void CreateRequestStatusMappings()
@@ -51,17 +53,29 @@ public class InfrastructureMappingProfile : Profile
             CreateMap<RequestStatus, RequestStatusDto>();
             CreateMap<RequestStatusDto, RequestStatus>();
         }
-        
-        private void CreateRequestStatusesOrderMappings()
-        {
-            CreateMap<RequestStatusesOrder, RequestStatusesOrderDto>();
-            CreateMap<RequestStatusesOrderDto, RequestStatusesOrder>();
-        }
 
         private void CreateRequestStatusTransitionMappings()
         {
             CreateMap<RequestStatusTransition, RequestStatusTransitionDto>();
             CreateMap<RequestStatusTransitionDto, RequestStatusTransition>();
+        }
+
+        private void CreateRequestStatusTriggerMappings()
+        {
+            CreateMap<RequestStatusTrigger, RequestStatusTriggerDto>();
+            CreateMap<RequestStatusTriggerDto, RequestStatusTrigger>();
+        }
+
+        private void CreateSystemMappings()
+        {
+            CreateMap<Domain.Models.Entities.BPMFlow.System, SystemDto>();
+            CreateMap<SystemDto, Domain.Models.Entities.BPMFlow.System>();
+        }
+
+        private void CreateSystemObjectMappings()
+        {
+            CreateMap<SystemObject, SystemObjectDto>();
+            CreateMap<SystemObjectDto, SystemObject>();
         }
     #endregion
 

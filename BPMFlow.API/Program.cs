@@ -83,7 +83,7 @@ builder.Services.AddDbContext<PerfManagement1DbContext>(options =>
 #region DependenciesInjection
 
 //services
-builder.Services.AddScoped<IAssignedRequestService, AssignedRequestService>();
+builder.Services.AddScoped<IObjectRequestService, ObjectRequestService>();
 
 //data
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

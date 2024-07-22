@@ -4,11 +4,13 @@ public class BusinessProcess : BaseEntity
 {
     public BusinessProcess()
     {
-        GroupRequests = new HashSet<GroupRequest>();
+        Requests = new HashSet<Request>();
     }
 
-    public string Name { get; set; }
+    public string Title { get; set; }
+    public int SystemId { get; set; }
+    public int SystemObjectId { get; set; }
 
-    // BusinessProcessType -> GroupRequest
-    public ICollection<GroupRequest> GroupRequests { get; set; }
+    // BusinessProcess -> Request
+    public ICollection<Request> Requests { get; set; }
 }

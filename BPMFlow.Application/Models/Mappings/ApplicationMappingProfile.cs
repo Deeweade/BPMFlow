@@ -12,12 +12,14 @@ public class ApplicationMappingProfile : Profile
 {
     public ApplicationMappingProfile()
     {
-        CreateAssignedRequestMapping();
+        CreateObjectRequestMapping();
         CreateBusinessProcessMappings();
         CreateGroupRequestMappings();
         CreateRequestStatusMappings();
-        CreateRequestStatusesOrderMappings();
         CreateRequestStatusTransitionMappings();
+        CreateRequestStatusTriggerMappings();
+        CreateSystemMappings();
+        CreateSystemObjectMappings();
 
         CreateActionMapping();
         CreateEmployeeRoleMappings();
@@ -29,14 +31,14 @@ public class ApplicationMappingProfile : Profile
     }
 
     #region BPMFlowMappings
-        private void CreateAssignedRequestMapping()
+        private void CreateObjectRequestMapping()
         {
-            CreateMap<AssignedRequestView, AssignedRequestDto>();
-            CreateMap<AssignedRequestDto, AssignedRequestView>();
+            CreateMap<ObjectRequestView, ObjectRequestDto>();
+            CreateMap<ObjectRequestDto, ObjectRequestView>();
 
             //filters
-            CreateMap<AssignedRequestsFilterView, AssignedRequestsFilterDto>();
-            CreateMap<AssignedRequestsFilterDto, AssignedRequestsFilterView>();
+            CreateMap<ObjectRequestsFilterView, ObjectRequestsFilterDto>();
+            CreateMap<ObjectRequestsFilterDto, ObjectRequestsFilterView>();
         }
 
         private void CreateBusinessProcessMappings()
@@ -47,8 +49,8 @@ public class ApplicationMappingProfile : Profile
 
         private void CreateGroupRequestMappings()
         {
-            CreateMap<GroupRequestView, GroupRequestDto>();
-            CreateMap<GroupRequestDto, GroupRequestView>();
+            CreateMap<RequestView, RequestDto>();
+            CreateMap<RequestDto, RequestView>();
         }
 
         private void CreateRequestStatusMappings()
@@ -56,17 +58,29 @@ public class ApplicationMappingProfile : Profile
             CreateMap<RequestStatusView, RequestStatusDto>();
             CreateMap<RequestStatusDto, RequestStatusView>();
         }
-        
-        private void CreateRequestStatusesOrderMappings()
-        {
-            CreateMap<RequestStatusesOrderView, RequestStatusesOrderDto>();
-            CreateMap<RequestStatusesOrderDto, RequestStatusesOrderView>();
-        }
 
         private void CreateRequestStatusTransitionMappings()
         {
             CreateMap<RequestStatusTransitionView, RequestStatusTransitionDto>();
             CreateMap<RequestStatusTransitionDto, RequestStatusTransitionView>();
+        }
+
+        private void CreateRequestStatusTriggerMappings()
+        {
+            CreateMap<RequestStatusTriggerView, RequestStatusTriggerDto>();
+            CreateMap<RequestStatusTriggerDto, RequestStatusTriggerView>();
+        }
+
+        private void CreateSystemMappings()
+        {
+            CreateMap<SystemView, SystemDto>();
+            CreateMap<SystemDto, SystemView>();
+        }
+
+        private void CreateSystemObjectMappings()
+        {
+            CreateMap<SystemObjectView, SystemObjectDto>();
+            CreateMap<SystemObjectDto, SystemObjectView>();
         }
     #endregion
 

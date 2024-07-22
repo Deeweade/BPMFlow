@@ -1,7 +1,7 @@
 namespace BPMFlow.Application.Models.Views.BPMFlow;
 
-public class GroupRequestView : BaseEntityView
+public class RequestView : BaseEntityView
 {
-    public string Name { get; set; }
+    public string Title { get; set; }
     public int BusinessProcessId { get; set; }
 }
