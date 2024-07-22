@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BPMFlow.API.Migrations
 {
     [DbContext(typeof(BPMFlowDbContext))]
-    [Migration("20240722075242_EntityUpdate")]
-    partial class EntityUpdate
+    [Migration("20240722101502_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
