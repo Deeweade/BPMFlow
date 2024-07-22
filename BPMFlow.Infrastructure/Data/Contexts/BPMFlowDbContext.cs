@@ -17,7 +17,8 @@ public class BPMFlowDbContext : DbContext
     public DbSet<RequestStatus> RequestStatuses { get; set; }
     public DbSet<BusinessProcess> BusinessProcesses { get; set; }
     public DbSet<RequestStatusTrigger> RequestStatusTriggers { get; set; }
-    
+    public DbSet<Domain.Models.Entities.BPMFlow.System> Systems { get; set; }
+    public DbSet<SystemObject> SystemObjects { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

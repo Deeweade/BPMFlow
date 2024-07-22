@@ -16,6 +16,8 @@ public class InfrastructureMappingProfile : Profile
         CreateRequestStatusMappings();
         CreateRequestStatusTransitionMappings();
         CreateRequestStatusTriggerMappings();
+        CreateSystemMappings();
+        CreateSystemObjectMappings();
 
         CreateActionMapping();
         CreateEmployeeMappings();
@@ -62,6 +64,18 @@ public class InfrastructureMappingProfile : Profile
         {
             CreateMap<RequestStatusTrigger, RequestStatusTriggerDto>();
             CreateMap<RequestStatusTriggerDto, RequestStatusTrigger>();
+        }
+
+        private void CreateSystemMappings()
+        {
+            CreateMap<Domain.Models.Entities.BPMFlow.System, SystemDto>();
+            CreateMap<SystemDto, Domain.Models.Entities.BPMFlow.System>();
+        }
+
+        private void CreateSystemObjectMappings()
+        {
+            CreateMap<SystemObject, SystemObjectDto>();
+            CreateMap<SystemObjectDto, SystemObject>();
         }
     #endregion
 

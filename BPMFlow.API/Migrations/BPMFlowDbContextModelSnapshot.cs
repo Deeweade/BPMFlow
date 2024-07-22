@@ -203,6 +203,38 @@ namespace BPMFlow.API.Migrations
                     b.ToTable("RequestStatusTriggers");
                 });
 
+            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.System", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Systems");
+                });
+
+            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.SystemObject", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SystemObjects");
+                });
+
             modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.ObjectRequest", b =>
                 {
                     b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatus", "RequestStatus")
