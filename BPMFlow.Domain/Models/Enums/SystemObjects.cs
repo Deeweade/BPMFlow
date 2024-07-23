@@ -1,6 +1,6 @@
 namespace BPMFlow.Domain.Models.Enums;
 
-public enum SystemObject
+public enum SystemObjects
 {
-    Test = 1
+    Employee = 1
 }

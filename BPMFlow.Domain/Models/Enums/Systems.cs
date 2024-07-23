@@ -1,6 +1,6 @@
 namespace BPMFlow.Domain.Models.Enums;
 
-public enum System
+public enum Systems
 {
     Test = 1
 }
