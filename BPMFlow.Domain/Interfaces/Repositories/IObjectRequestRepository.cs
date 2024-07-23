@@ -6,8 +6,7 @@ namespace BPMFlow.Domain.Interfaces.Repositories;
 
 public interface IObjectRequestRepository
 {
-    Task<ObjectRequestDto> Create(ObjectRequestDto objectRequestDto);
-    Task<IEnumerable<ObjectRequestDto>> GetBySystemObjectId();
-    Task<IEnumerable<ObjectRequestDto>> GetByFilter(ObjectRequestsFilterDto filterDto);
+    //Task<ObjectRequestDto> Create(ObjectRequestDto objectRequestDto);
+    //Task<IEnumerable<ObjectRequestDto>> GetByFilter(ObjectRequestsFilterDto filterDto);
     Task<ObjectRequestDto> ChangeStatus(ObjectRequestDto objectRequestDto, int nextStatusOrder);
 }

@@ -14,9 +14,4 @@ public class ObjectRequest : HistoryEntity
     // ObjectRequest -> RequestStatus
     public int RequestStatusId { get; set; }
     public virtual RequestStatus RequestStatus { get; set; }
-
-    public static implicit operator ObjectRequest(ObjectRequest v)
-    {
-        throw new NotImplementedException();
-    }
 }

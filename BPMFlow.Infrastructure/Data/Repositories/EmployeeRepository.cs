@@ -26,14 +26,4 @@ public class EmployeeRepository : IEmployeeRepository
                              .Select(e => e.Id)
                              .ToListAsync();
     }
-
-    public async Task<int> GetResponsibleEmployeeId(int responsibleRoleId)
-    {
-        return (int)await _perfManagement1DbContext.EmployeeRoles
-                            .AsNoTracking()
-                            .ProjectTo<EmployeeRoleDto>(_mapper.ConfigurationProvider)
-                            .Where(x => x.RoleId == responsibleRoleId)
-                            .Select(x => x.EmployeeId)
-                            .FirstOrDefaultAsync();
-    }
 }
