@@ -5,6 +5,7 @@ using BPMFlow.Application.Models.Views.BPMFlow;
 using BPMFlow.Domain.Dtos.Entities.BPMFlow;
 using BPMFlow.Domain.Dtos.Filters;
 using BPMFlow.Domain.Interfaces.Repositories;
+using BPMFlow.Domain.Models.Enums;
 
 namespace BPMFlow.Application.Services;
 
@@ -19,7 +20,7 @@ public class ObjectRequestService : IObjectRequestService
         _mapper = mapper;
     }
 
-    /* public async Task<ObjectRequestView> Create(ObjectRequestView objectRequestView)
+    public async Task<ObjectRequestView> Create(ObjectRequestView objectRequestView)
     {
         ArgumentNullException.ThrowIfNull(objectRequestView);
 
@@ -30,20 +31,20 @@ public class ObjectRequestService : IObjectRequestService
         return _mapper.Map<ObjectRequestView>(objectRequest);
     }
 
-    public async Task<IEnumerable<int>> BulkCreate(ICollection<int> employeeIds, ObjectRequestView objectRequests)
+    public async Task<IEnumerable<int>> BulkCreate(ICollection<int> objectIds, ObjectRequestView objectRequests)
     {
-        ArgumentNullException.ThrowIfNull(employeeIds);
+        ArgumentNullException.ThrowIfNull(objectIds);
         ArgumentNullException.ThrowIfNull(objectRequests);
 
         var codes = new List<int>();
 
-        foreach (var employeeId in employeeIds)
+        foreach (var objectId in objectIds)
         {
             var newRequest = new ObjectRequestView
                 {
                     RequestStatusId = objectRequests.RequestStatusId,
                     ResponsibleEmployeeId = objectRequests.ResponsibleEmployeeId,
-                    EmployeeId = employeeId
+                    ObjectId = objectId,
                     PeriodId = objectRequests.PeriodId,
                     EntityStatusId = objectRequests.EntityStatusId
                 };
@@ -81,17 +82,22 @@ public class ObjectRequestService : IObjectRequestService
 
         if (filterDto.WithSubordinates)
         {
-            var employeeIds = (await _unitOfWork.EmployeeRepository.GetSubordinateEmployeeIds(filterDto.EmployeeId!.Value)).ToList();
+            var requestByEmployee = await _unitOfWork.ObjectRequestRepository.GetBySystemObjectId();
 
-            filterDto.SubordinateEmployeeIds = employeeIds;
-            
-            filterDto.SubordinateEmployeeIds.Add(filterDto.EmployeeId!.Value);
+            if (requestByEmployee.Any())
+            {
+                var objectIds = (await _unitOfWork.EmployeeRepository.GetSubordinateEmployeeIds(filterDto.ObjectId!.Value)).ToList();
+
+                filterDto.SubordinateEmployeeIds = objectIds;
+                
+                filterDto.SubordinateEmployeeIds.Add(filterDto.ObjectId!.Value);
+            }
         }
 
         var queries = await _unitOfWork.ObjectRequestRepository.GetByFilter(filterDto);
 
         return _mapper.Map<IEnumerable<ObjectRequestView>>(queries);
-    } */
+    }
 
     public async Task<ObjectRequestView> ChangeStatus(ObjectRequestView objectRequestView, int nextStatusOrder)
     {
