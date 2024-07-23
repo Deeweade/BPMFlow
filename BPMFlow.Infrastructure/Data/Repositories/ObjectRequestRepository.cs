@@ -88,14 +88,13 @@ public class ObjectRequestRepository : IObjectRequestRepository
     {
         ArgumentNullException.ThrowIfNull(filterDto);
 
-        var query = await _bpmFlowContext.ObjectRequests
+        var query = _bpmFlowContext.ObjectRequests
             .AsNoTracking()
-            .ProjectTo<ObjectRequestDto>(_mapper.ConfigurationProvider)
-            .ToListAsync();
+            .ProjectTo<ObjectRequestDto>(_mapper.ConfigurationProvider);
 
         if (filterDto.ObjectId.HasValue && filterDto.ObjectId.Value != 0)
         {
-            query = query.Where(x => x.ObjectId == filterDto.ObjectId.Value).ToList();
+            query = query.Where(x => x.ObjectId == filterDto.ObjectId.Value);
         }
 
         if (filterDto.SystemId.HasValue && filterDto.SystemId.Value != 0)
@@ -113,8 +112,7 @@ public class ObjectRequestRepository : IObjectRequestRepository
                                 bp => bp.Id,
                                 (orsr, bp) => new { orsr.or, orsr.rs, orsr.r, bp })
                         .Where(result => result.bp.SystemId == filterDto.SystemId)
-                        .Select(result => result.or)
-                        .ToList();
+                        .Select(result => result.or);
         }
 
         if (filterDto.SystemObjectId.HasValue && filterDto.SystemObjectId.Value != 0)
@@ -132,29 +130,28 @@ public class ObjectRequestRepository : IObjectRequestRepository
                                 bp => bp.Id,
                                 (orsr, bp) => new { orsr.or, orsr.rs, orsr.r, bp })
                         .Where(result => result.bp.SystemObjectId == filterDto.SystemObjectId)
-                        .Select(result => result.or)
-                        .ToList();
+                        .Select(result => result.or);
         }
 
         if (filterDto.RequestStatusId.HasValue && filterDto.RequestStatusId.Value != 0)
         {
-            query = query.Where(x => x.RequestStatusId == filterDto.RequestStatusId.Value).ToList();
+            query = query.Where(x => x.RequestStatusId == filterDto.RequestStatusId.Value);
         }
 
         if (filterDto.PeriodIds is not null && filterDto.PeriodIds.Count != 0)
         {
-            query = query.Where(x => filterDto.PeriodIds.Contains(x.PeriodId)).ToList();
+            query = query.Where(x => filterDto.PeriodIds.Contains(x.PeriodId));
         }
 
         if (filterDto.SubordinateEmployeeIds != null && filterDto.SubordinateEmployeeIds.Count != 0)
         {
-            query = query.Where(x => filterDto.SubordinateEmployeeIds.Contains(x.ObjectId) || x.ResponsibleEmployeeId == filterDto.ObjectId).ToList();
+            query = query.Where(x => filterDto.SubordinateEmployeeIds.Contains(x.ObjectId) || x.ResponsibleEmployeeId == filterDto.ObjectId);
         }
         else if (filterDto.ObjectId.HasValue && filterDto.ObjectId.Value != 0)
         {
-            query = query.Where(x => x.ObjectId == filterDto.ObjectId.Value).ToList();
+            query = query.Where(x => x.ObjectId == filterDto.ObjectId.Value);
         }
 
-        return query;
+        return await query.ToListAsync();
     }
 }
