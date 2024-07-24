@@ -6,8 +6,11 @@ namespace BPMFlow.Domain.Interfaces.Repositories;
 
 public interface IObjectRequestRepository
 {
+    Task<ObjectRequestDto> GetById(int requestId);
     Task<ObjectRequestDto> Create(ObjectRequestDto objectRequestDto);
     Task<IEnumerable<ObjectRequestDto>> GetBySystemObjectId();
     Task<IEnumerable<ObjectRequestDto>> GetByFilter(ObjectRequestsFilterDto filterDto);
-    Task<ObjectRequestDto> ChangeStatus(ObjectRequestDto objectRequestDto, int nextStatusOrder);
+    Task CloseRequest(ObjectRequestDto objectRequestDto);
+    Task<IEnumerable<ObjectRequestDto>> GetParallelRequests(int code, int entityStatusId);
+    Task AddObjectRequest(ObjectRequestDto objectRequestDto);
 }

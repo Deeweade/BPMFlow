@@ -1,8 +1,6 @@
-using System.Reflection;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BPMFlow.Domain.Dtos.Entities.BPMFlow;
-using BPMFlow.Domain.Dtos.Entities.PerfManagement1;
 using BPMFlow.Domain.Dtos.Filters;
 using BPMFlow.Domain.Interfaces.Repositories;
 using BPMFlow.Domain.Models.Entities.BPMFlow;
@@ -15,13 +13,11 @@ namespace BPMFlow.Infrastructure.Data.Repositories;
 public class ObjectRequestRepository : IObjectRequestRepository
 {
     private readonly BPMFlowDbContext _bpmFlowContext;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public ObjectRequestRepository(BPMFlowDbContext bpmFlowContext, IUnitOfWork unitOfWork,IMapper mapper)
+    public ObjectRequestRepository(BPMFlowDbContext bpmFlowContext, IMapper mapper)
     {
         _bpmFlowContext = bpmFlowContext;
-        _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
 
@@ -57,32 +53,6 @@ public class ObjectRequestRepository : IObjectRequestRepository
                         .ToListAsync();
     }
 
-    public async Task<ObjectRequestDto> Create(ObjectRequestDto objectRequestDto)
-    {
-        ArgumentNullException.ThrowIfNull(objectRequestDto);
-
-        var maxCode = await _bpmFlowContext.ObjectRequests.AnyAsync()
-            ? await _bpmFlowContext.ObjectRequests.MaxAsync(x => x.Code)
-            : 0;
-
-        var request = new ObjectRequest
-        {
-            Code = ++maxCode,
-            RequestStatusId = objectRequestDto.RequestStatusId,
-            ObjectId = objectRequestDto.ObjectId,
-            PeriodId = objectRequestDto.PeriodId,
-            DateStart = DateTime.Now,
-            DateEnd = DateTime.MaxValue,
-            IsActive = true,
-            EntityStatusId = (int)EntityStatuses.ActiveDraft
-        };
-
-        _bpmFlowContext.ObjectRequests.Add(request);
-
-        await _bpmFlowContext.SaveChangesAsync();
-
-        return await GetById(request.Id);
-    }
 
     public async Task<IEnumerable<ObjectRequestDto>> GetByFilter(ObjectRequestsFilterDto filterDto)
     {
@@ -154,124 +124,66 @@ public class ObjectRequestRepository : IObjectRequestRepository
 
         return await query.ToListAsync();
     }
-
-    public async Task<ObjectRequestDto> ChangeStatus(ObjectRequestDto objectRequestDto, int nextStatusOrder)
+    
+    public async Task<ObjectRequestDto> Create(ObjectRequestDto objectRequestDto)
     {
         ArgumentNullException.ThrowIfNull(objectRequestDto);
 
-        var objectRequest = await _bpmFlowContext.ObjectRequests
-            .Include(or => or.RequestStatus)
-            .FirstOrDefaultAsync(or => or.Id == objectRequestDto.ObjectId);
+        var maxCode = await _bpmFlowContext.ObjectRequests.AnyAsync()
+            ? await _bpmFlowContext.ObjectRequests.MaxAsync(x => x.Code)
+            : 0;
 
-        ArgumentNullException.ThrowIfNull(objectRequest);
-        
-        // сценарии перехода
-        var transition = await _bpmFlowContext.RequestStatusTransitions
-            .FirstOrDefaultAsync(x => x.SourceStatusOrder == objectRequest.RequestStatus.StatusOrder &&
-                                    x.NextStatusOrder == nextStatusOrder &&
-                                    x.RequestId == objectRequest.RequestStatus.RequestId);
+        ArgumentNullException.ThrowIfNull(maxCode);
 
-        // закрываем текущую запись
-        CloseCurrentRequest(objectRequest, transition.Id);
-
-        // наличие параллельных этапов
-        var parallelRequests = await _bpmFlowContext.ObjectRequests
-            .Where(or => or.Code == objectRequest.Code && or.EntityStatusId == 1)
-            .ToListAsync();
-
-        if (parallelRequests.Count == 0)
+        var request = new ObjectRequest
         {
-            await TransitionToNextStatus(objectRequest, nextStatusOrder);
-        }
-        else
-        {
-            if (transition.SourceStatusOrder > transition.NextStatusOrder)
-            {
-                await HandleBackwardTransition(objectRequest, parallelRequests, nextStatusOrder);
-            }
-            else if (transition.SourceStatusOrder < transition.NextStatusOrder)
-            {
-                await HandleForwardTransition(objectRequest, parallelRequests, nextStatusOrder);
-            }
-        }
+            Code = ++maxCode,
+            RequestStatusId = objectRequestDto.RequestStatusId,
+            ObjectId = objectRequestDto.ObjectId,
+            PeriodId = objectRequestDto.PeriodId,
+            DateStart = DateTime.Now,
+            DateEnd = DateTime.MaxValue,
+            IsActive = true,
+            EntityStatusId = (int)EntityStatuses.ActiveDraft
+        };
+
+        _bpmFlowContext.ObjectRequests.Add(request);
 
         await _bpmFlowContext.SaveChangesAsync();
 
-        return _mapper.Map<ObjectRequestDto>(objectRequest);
+        return await GetById(request.Id);
     }
 
-    private static void CloseCurrentRequest(ObjectRequest objectRequest, int transitionId)
+    public async Task CloseRequest(ObjectRequestDto objectRequestDto)
     {
-        objectRequest.RequestStatusTransitionId = transitionId;
-        objectRequest.EntityStatusId = 2;
-        objectRequest.DateEnd = DateTime.Now;
+        ArgumentNullException.ThrowIfNull(objectRequestDto);
+
+        var entity = await _bpmFlowContext.ObjectRequests
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(or => or.Id == objectRequestDto.Id);
+
+        ArgumentNullException.ThrowIfNull(entity);
+            
+        _mapper.Map(objectRequestDto, entity);
+        _bpmFlowContext.ObjectRequests.Update(entity);
+    
+        await _bpmFlowContext.SaveChangesAsync();
     }
 
-    private async Task TransitionToNextStatus(ObjectRequest objectRequest, int nextStatusOrder)
+    public async Task<IEnumerable<ObjectRequestDto>> GetParallelRequests(int code, int entityStatusId)
     {
-        var nextStatuses = await _bpmFlowContext.RequestStatuses
-            .Where(rs => rs.StatusOrder == nextStatusOrder && rs.RequestId == objectRequest.RequestStatus.RequestId)
-            .ToListAsync();
-
-        foreach (var nextStatus in nextStatuses)
-        {
-            var newObjectRequest = new ObjectRequest
-            {
-                ObjectId = objectRequest.ObjectId,
-                AuthorEmployeeId = objectRequest.AuthorEmployeeId,
-                Code = objectRequest.Code,
-                RequestStatusId = nextStatus.Id,
-                ResponsibleEmployeeId = await _unitOfWork.EmployeeRepository.GetResponsibleEmployeeId(nextStatus.ResponsibleRoleId),
-                DateStart = DateTime.Now,
-                DateEnd = DateTime.MaxValue,
-                EntityStatusId = 1
-            };
-
-            _bpmFlowContext.ObjectRequests.Add(newObjectRequest);
-        }
+        return await _bpmFlowContext.ObjectRequests
+                .AsNoTracking()
+                .ProjectTo<ObjectRequestDto>(_mapper.ConfigurationProvider)
+                .Where(x => x.Code == code && x.EntityStatusId == entityStatusId)
+                .ToListAsync();
     }
 
-    private async Task HandleBackwardTransition(ObjectRequest objectRequest, List<ObjectRequest> parallelRequests, int nextStatusOrder)
+    public async Task AddObjectRequest(ObjectRequestDto objectRequestDto)
     {
-        foreach (var parallelRequest in parallelRequests)
-        {
-            parallelRequest.EntityStatusId = 2;
-            parallelRequest.DateEnd = DateTime.Now;
-        }
-
-        await TransitionToNextStatus(objectRequest, nextStatusOrder);
-    }
-
-    private async Task HandleForwardTransition(ObjectRequest objectRequest, List<ObjectRequest> parallelRequests, int nextStatusOrder)
-    {
-        var nextStatuses = await _bpmFlowContext.RequestStatuses
-            .Where(rs => rs.StatusOrder == nextStatusOrder && rs.RequestId == objectRequest.RequestStatus.RequestId)
-            .ToListAsync();
-
-        foreach (var nextStatus in nextStatuses)
-        {
-            if (nextStatus.IsFinalDenied)
-            {
-                foreach (var parallelRequest in parallelRequests)
-                {
-                    parallelRequest.EntityStatusId = 2;
-                    parallelRequest.DateEnd = DateTime.Now;
-                }
-
-                var newObjectRequest = new ObjectRequest
-                {
-                    ObjectId = objectRequest.ObjectId,
-                    AuthorEmployeeId = objectRequest.AuthorEmployeeId,
-                    Code = objectRequest.Code,
-                    RequestStatusId = nextStatus.Id,
-                    ResponsibleEmployeeId = await _unitOfWork.EmployeeRepository.GetResponsibleEmployeeId(nextStatus.ResponsibleRoleId),
-                    DateStart = DateTime.Now,
-                    DateEnd = DateTime.MaxValue,
-                    EntityStatusId = 3
-                };
-
-                _bpmFlowContext.ObjectRequests.Add(newObjectRequest);
-            }
-        }
+        var entity = _mapper.Map<ObjectRequest>(objectRequestDto);
+        
+        await _bpmFlowContext.ObjectRequests.AddAsync(entity);
+        await _bpmFlowContext.SaveChangesAsync();
     }
 }
