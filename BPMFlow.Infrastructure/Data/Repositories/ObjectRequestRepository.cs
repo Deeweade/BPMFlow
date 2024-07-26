@@ -160,35 +160,6 @@ public class ObjectRequestRepository : IObjectRequestRepository
 
         return await query.ToListAsync();
     }
-    
-    public async Task<ObjectRequestDto> Create(ObjectRequestDto objectRequestDto)
-    {
-        ArgumentNullException.ThrowIfNull(objectRequestDto);
-
-        var maxCode = await _bpmFlowContext.ObjectRequests.AnyAsync()
-            ? await _bpmFlowContext.ObjectRequests.MaxAsync(x => x.Code)
-            : 0;
-
-        ArgumentNullException.ThrowIfNull(maxCode);
-
-        var request = new ObjectRequest
-        {
-            Code = ++maxCode,
-            RequestStatusId = objectRequestDto.RequestStatusId,
-            ObjectId = objectRequestDto.ObjectId,
-            PeriodId = objectRequestDto.PeriodId,
-            DateStart = DateTime.Now,
-            DateEnd = DateTime.MaxValue,
-            IsActive = true,
-            EntityStatusId = (int)EntityStatuses.ActiveDraft
-        };
-
-        _bpmFlowContext.ObjectRequests.Add(request);
-
-        await _bpmFlowContext.SaveChangesAsync();
-
-        return await GetById(request.Id);
-    }
 
     public async Task CloseRequest(ObjectRequestDto objectRequestDto)
     {
