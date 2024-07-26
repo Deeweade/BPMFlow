@@ -20,7 +20,7 @@ public class ObjectRequestController : ControllerBase
         _service = service;
     }
 
-    /* [HttpPost("create")]
+    [HttpPost("create")]
     public async Task<IActionResult> Create(ObjectRequestView objectRequestView)
     {
         ArgumentNullException.ThrowIfNull(objectRequestView);
@@ -48,5 +48,15 @@ public class ObjectRequestController : ControllerBase
         var requests = await _service.GetByFilter(filter);
 
         return Ok(requests);
-    } */
+    }
+
+    [HttpPost("changeStatus")]
+    public async Task<IActionResult> ChangeStatus(ObjectRequestView objectRequestView, int nextStatusOrder)
+    {
+        ArgumentNullException.ThrowIfNull(objectRequestView);
+
+        var objectRequest = await _service.ChangeStatus(objectRequestView, nextStatusOrder);
+
+        return Ok(objectRequest);
+    }   
 }
