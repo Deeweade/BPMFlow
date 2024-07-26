@@ -25,4 +25,10 @@ public class RequestStatusTransitionRepository : IRequestStatusTransitionReposit
                 .ProjectTo<RequestStatusTransitionDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(x => x.SourceStatusOrder == sourceOrder && x.NextStatusOrder == nextOrder && x.RequestId == requestId);
     }
+
+    public async Task<RequestStatusTransitionDto> GetAvailableTransitionByUser(int code, string login)
+    {
+        ArgumentNullException.ThrowIfNull(code);
+        ArgumentNullException.ThrowIfNull(login);
+    }
 }

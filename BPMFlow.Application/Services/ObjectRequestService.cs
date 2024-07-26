@@ -1,4 +1,5 @@
 using AutoMapper;
+using AutoMapper.Configuration.Annotations;
 using BPMFlow.Application.Interfaces.Services;
 using BPMFlow.Application.Models.Filters;
 using BPMFlow.Application.Models.Views.BPMFlow;

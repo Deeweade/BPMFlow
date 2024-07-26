@@ -4,6 +4,7 @@ using BPMFlow.Domain.Dtos.Entities.BPMFlow;
 using BPMFlow.Domain.Dtos.Filters;
 using BPMFlow.Domain.Interfaces.Repositories;
 using BPMFlow.Domain.Models.Entities.BPMFlow;
+using BPMFlow.Domain.Models.Entities.PerfManagement1;
 using BPMFlow.Domain.Models.Enums;
 using BPMFlow.Infrastructure.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -31,7 +32,7 @@ public class ObjectRequestRepository : IObjectRequestRepository
             .FirstOrDefaultAsync(x => x.Id == requestId);
     }
 
-    public async Task<IEnumerable<ObjectRequestDto>> GetBySystemObjectId()
+    public async Task<IEnumerable<int>> GetBySystemObjectId()
     {
         return await _bpmFlowContext.ObjectRequests
                         .AsNoTracking()
@@ -49,7 +50,7 @@ public class ObjectRequestRepository : IObjectRequestRepository
                                 bp => bp.Id,
                                 (orsr, bp) => new { orsr.or, orsr.rs, orsr.r, bp })
                         .Where(result => result.bp.SystemId == (int)SystemObjects.Employee)
-                        .Select(result => result.or)
+                        .Select(result => result.or.Id)
                         .ToListAsync();
     }
 
@@ -115,7 +116,13 @@ public class ObjectRequestRepository : IObjectRequestRepository
 
         if (filterDto.SubordinateEmployeeIds != null && filterDto.SubordinateEmployeeIds.Count != 0)
         {
-            query = query.Where(x => filterDto.SubordinateEmployeeIds.Contains(x.ObjectId) || x.ResponsibleEmployeeId == filterDto.ObjectId);
+            var employees = await GetBySystemObjectId();
+
+            foreach (var employee in employees)
+            {
+                query = query.Where(x => filterDto.SubordinateEmployeeIds.Contains(employee) || x.ResponsibleEmployeeId == filterDto.ObjectId);
+            }
+
         }
         else if (filterDto.ObjectId.HasValue && filterDto.ObjectId.Value != 0)
         {

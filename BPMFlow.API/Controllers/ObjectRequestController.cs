@@ -58,5 +58,5 @@ public class ObjectRequestController : ControllerBase
         var objectRequest = await _service.ChangeStatus(objectRequestView, nextStatusOrder);
 
         return Ok(objectRequest);
-    }   
+    }
 }
