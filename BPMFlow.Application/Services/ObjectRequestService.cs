@@ -100,4 +100,108 @@ public class ObjectRequestService : IObjectRequestService
 
         return _mapper.Map<IEnumerable<ObjectRequestView>>(queries);
     }
+
+    public async Task<ObjectRequestView> ChangeStatus(ObjectRequestView objectRequestView, int nextStatusOrder)
+    {
+        ArgumentNullException.ThrowIfNull(objectRequestView);
+        
+        var objectRequestDto = _mapper.Map<ObjectRequestDto>(objectRequestView);
+
+        var objectRequest = await _unitOfWork.ObjectRequestRepository.GetById(objectRequestDto.Id); 
+        ArgumentNullException.ThrowIfNull(objectRequest);
+
+        var currentStatus = await _unitOfWork.RequestStatusRepository.GetById(objectRequest.RequestStatusId);
+        ArgumentNullException.ThrowIfNull(currentStatus);
+
+        var transition = await _unitOfWork.RequestStatusTransitionRepository.GetTransition(currentStatus.StatusOrder, nextStatusOrder, currentStatus.RequestId);
+        ArgumentNullException.ThrowIfNull(transition);
+
+        // close current ObjectRequest
+        objectRequest.EntityStatusId = 2;
+        objectRequest.DateEnd = DateTime.Now;
+        objectRequest.RequestStatusTransitionId = transition.Id;
+        await _unitOfWork.ObjectRequestRepository.CloseRequest(objectRequest);
+
+        var parallelRequests = await _unitOfWork.ObjectRequestRepository.GetParallelRequests(objectRequest.Code, 1);
+        
+        if (!parallelRequests.Any())
+        {
+            // no parallel statuses then move to next status
+            var nextStatuses = await _unitOfWork.RequestStatusRepository.GetByOrderAndRequestId(nextStatusOrder, currentStatus.RequestId);
+            
+            foreach (var nextStatus in nextStatuses)
+            {
+                var newObjectRequest = new ObjectRequestDto
+                {
+                    ObjectId = objectRequest.ObjectId,
+                    AuthorEmployeeId = objectRequest.AuthorEmployeeId,
+                    ResponsibleEmployeeId = await _unitOfWork.EmployeeRepository.GetResponsibleEmployeeId(nextStatus.ResponsibleRoleId),
+                    RequestStatusId = nextStatus.Id,
+                    EntityStatusId = 1,
+                    DateStart = DateTime.Now,
+                    DateEnd = DateTime.MaxValue
+                };
+
+                await _unitOfWork.ObjectRequestRepository.AddObjectRequest(newObjectRequest);
+            }
+        }
+        else
+        {
+            if (transition.SourceStatusOrder > transition.NextStatusOrder)
+            {
+                // move backward
+                foreach (var parallelRequest in parallelRequests)
+                {
+                    parallelRequest.EntityStatusId = 2;
+                    parallelRequest.DateEnd = DateTime.UtcNow;
+                    
+                    await _unitOfWork.ObjectRequestRepository.AddObjectRequest(parallelRequest);
+                }
+
+                var nextStatuses = await _unitOfWork.RequestStatusRepository.GetByOrderAndRequestId(nextStatusOrder, currentStatus.RequestId);
+                
+                foreach (var nextStatus in nextStatuses)
+                {
+                    var newObjectRequest = new ObjectRequestDto
+                    {
+                        ObjectId = objectRequest.ObjectId,
+                        AuthorEmployeeId = objectRequest.AuthorEmployeeId,
+                        ResponsibleEmployeeId = await _unitOfWork.EmployeeRepository.GetResponsibleEmployeeId(nextStatus.ResponsibleRoleId),
+                        RequestStatusId = nextStatus.Id,
+                        EntityStatusId = 1,
+                        DateStart = DateTime.Now,
+                        DateEnd = DateTime.MaxValue
+                    };
+
+                    await _unitOfWork.ObjectRequestRepository.AddObjectRequest(newObjectRequest);
+                }
+            }
+            else if (transition.SourceStatusOrder < transition.NextStatusOrder && currentStatus.IsFinalDenied)
+            {
+                // move forward and final denied
+                foreach (var parallelRequest in parallelRequests)
+                {
+                    parallelRequest.EntityStatusId = 2;
+                    parallelRequest.DateEnd = DateTime.Now;
+
+                    await _unitOfWork.ObjectRequestRepository.AddObjectRequest(parallelRequest);
+                }
+
+                var newObjectRequest = new ObjectRequestDto
+                {
+                    ObjectId = objectRequest.ObjectId,
+                    AuthorEmployeeId = objectRequest.AuthorEmployeeId,
+                    ResponsibleEmployeeId = await _unitOfWork.EmployeeRepository.GetResponsibleEmployeeId(currentStatus.ResponsibleRoleId),
+                    RequestStatusId = currentStatus.Id,
+                    EntityStatusId = 3,
+                    DateStart = DateTime.UtcNow,
+                    DateEnd = DateTime.MaxValue
+                };
+
+                await _unitOfWork.ObjectRequestRepository.AddObjectRequest(newObjectRequest);
+            }
+        }
+
+        return _mapper.Map<ObjectRequestView>(objectRequest);
+    }
 }

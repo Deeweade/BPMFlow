@@ -8,4 +8,5 @@ public interface IObjectRequestService
     Task<ObjectRequestView> Create(ObjectRequestView objectRequestView);
     Task<IEnumerable<int>> BulkCreate(ICollection<int> employeeIds, ObjectRequestView objectRequests);
     Task<IEnumerable<ObjectRequestView>> GetByFilter(ObjectRequestsFilterView filterView);
+    Task<ObjectRequestView> ChangeStatus(ObjectRequestView objectRequestView, int nextStatusOrder);
 }

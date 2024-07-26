@@ -49,4 +49,14 @@ public class ObjectRequestController : ControllerBase
 
         return Ok(requests);
     }
+
+    [HttpPost("changeStatus")]
+    public async Task<IActionResult> ChangeStatus(ObjectRequestView objectRequestView, int nextStatusOrder)
+    {
+        ArgumentNullException.ThrowIfNull(objectRequestView);
+
+        var objectRequest = await _service.ChangeStatus(objectRequestView, nextStatusOrder);
+
+        return Ok(objectRequest);
+    }   
 }

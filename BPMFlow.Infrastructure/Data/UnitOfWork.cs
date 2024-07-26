@@ -15,14 +15,18 @@ public class UnitOfWork : IUnitOfWork
         _bpmFlowDbContext = bpmFlowDbContext;
         _perfManagement1DbContext = perfManagement1DbContext;
 
-        ObjectRequestRepository = new ObjectRequestRepository(_bpmFlowDbContext, _perfManagement1DbContext, mapper);
+        ObjectRequestRepository = new ObjectRequestRepository(_bpmFlowDbContext, mapper);
         PeriodRepository = new PeriodRepository(_perfManagement1DbContext, mapper);
         EmployeeRepository = new EmployeeRepository(_perfManagement1DbContext, mapper);
+        RequestStatusRepository = new RequestStatusRepository(_bpmFlowDbContext, mapper);
+        RequestStatusTransitionRepository = new RequestStatusTransitionRepository(_bpmFlowDbContext, mapper);
     }
 
     public IObjectRequestRepository ObjectRequestRepository { get; }
     public IPeriodRepository PeriodRepository { get; }
     public IEmployeeRepository EmployeeRepository { get; }
+    public IRequestStatusRepository RequestStatusRepository { get; }
+    public IRequestStatusTransitionRepository RequestStatusTransitionRepository { get; }
 
     public async Task<int> SaveChangesAsync()
     {
