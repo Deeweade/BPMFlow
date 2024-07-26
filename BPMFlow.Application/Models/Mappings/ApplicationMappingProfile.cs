@@ -18,8 +18,6 @@ public class ApplicationMappingProfile : Profile
         CreateRequestStatusMappings();
         CreateRequestStatusTransitionMappings();
         CreateRequestStatusTriggerMappings();
-        CreateSystemMappings();
-        CreateSystemObjectMappings();
 
         CreateActionMapping();
         CreateEmployeeRoleMappings();
@@ -69,18 +67,6 @@ public class ApplicationMappingProfile : Profile
         {
             CreateMap<RequestStatusTriggerView, RequestStatusTriggerDto>();
             CreateMap<RequestStatusTriggerDto, RequestStatusTriggerView>();
-        }
-
-        private void CreateSystemMappings()
-        {
-            CreateMap<SystemView, SystemDto>();
-            CreateMap<SystemDto, SystemView>();
-        }
-
-        private void CreateSystemObjectMappings()
-        {
-            CreateMap<SystemObjectView, SystemObjectDto>();
-            CreateMap<SystemObjectDto, SystemObjectView>();
         }
     #endregion
 

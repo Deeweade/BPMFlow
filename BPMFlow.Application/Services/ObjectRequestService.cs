@@ -46,6 +46,8 @@ public class ObjectRequestService : IObjectRequestService
                     ResponsibleEmployeeId = objectRequests.ResponsibleEmployeeId,
                     ObjectId = objectId,
                     PeriodId = objectRequests.PeriodId,
+                    SystemId = objectRequests.SystemId,
+                    SystemObjectId = objectRequests.SystemObjectId,
                     EntityStatusId = objectRequests.EntityStatusId
                 };
 
@@ -82,7 +84,7 @@ public class ObjectRequestService : IObjectRequestService
 
         if (filterDto.WithSubordinates)
         {
-            var requestByEmployee = await _unitOfWork.ObjectRequestRepository.GetBySystemObjectId();
+            var requestByEmployee = await _unitOfWork.ObjectRequestRepository.GetBySystemObjectIdEmployee();
 
             if (requestByEmployee.Any())
             {
