@@ -74,6 +74,8 @@ public class ObjectRequestRepository : IObjectRequestRepository
             DateStart = DateTime.Now,
             DateEnd = DateTime.MaxValue,
             IsActive = true,
+            SystemId = objectRequestDto.SystemId,
+            SystemObjectId = objectRequestDto.SystemObjectId,
             EntityStatusId = (int)EntityStatuses.ActiveDraft
         };
 

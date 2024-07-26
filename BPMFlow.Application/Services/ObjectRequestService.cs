@@ -24,7 +24,6 @@ public class ObjectRequestService : IObjectRequestService
     {
         ArgumentNullException.ThrowIfNull(objectRequestView);
 
-
         var objectRequestDto = _mapper.Map<ObjectRequestDto>(objectRequestView);
 
         var objectRequest = await _unitOfWork.ObjectRequestRepository.Create(objectRequestDto);
@@ -47,6 +46,8 @@ public class ObjectRequestService : IObjectRequestService
                     ResponsibleEmployeeId = objectRequests.ResponsibleEmployeeId,
                     ObjectId = objectId,
                     PeriodId = objectRequests.PeriodId,
+                    SystemId = objectRequests.SystemId,
+                    SystemObjectId = objectRequests.SystemObjectId,
                     EntityStatusId = objectRequests.EntityStatusId
                 };
 
