@@ -35,9 +35,15 @@ public class ObjectRequestRepository : IObjectRequestRepository
             .FirstOrDefaultAsync(x => x.Id == requestId);
     }
 
-    public async Task<IEnumerable<ObjectRequestDto>> GetBySystemObjectId()
+    public async Task<IEnumerable<ObjectRequestDto>> GetBySystemObjectIdEmployee()
     {
         return await _bpmFlowContext.ObjectRequests
+                        .AsNoTracking()
+                        .ProjectTo<ObjectRequestDto>(_mapper.ConfigurationProvider)
+                        .Where(x => x.SystemObjectId == (int)SystemObjects.Employee)
+                        .ToListAsync();
+
+        /* return await _bpmFlowContext.ObjectRequests
                         .AsNoTracking()
                         .ProjectTo<ObjectRequestDto>(_mapper.ConfigurationProvider)
                         .Join(_bpmFlowContext.RequestStatuses,
@@ -54,7 +60,7 @@ public class ObjectRequestRepository : IObjectRequestRepository
                                 (orsr, bp) => new { orsr.or, orsr.rs, orsr.r, bp })
                         .Where(result => result.bp.SystemId == (int)SystemObjects.Employee)
                         .Select(result => result.or)
-                        .ToListAsync();
+                        .ToListAsync(); */
     }
 
     public async Task<ObjectRequestDto> Create(ObjectRequestDto objectRequestDto)
@@ -144,7 +150,7 @@ public class ObjectRequestRepository : IObjectRequestRepository
 
         if (filterDto.SubordinateEmployeeIds != null && filterDto.SubordinateEmployeeIds.Count != 0)
         {
-            var employees = query.Where(x => x.SystemObjectId == (int)SystemObjects.Employee);
+            var employees = await GetBySystemObjectIdEmployee();
             
             if (employees.Any())
             {
