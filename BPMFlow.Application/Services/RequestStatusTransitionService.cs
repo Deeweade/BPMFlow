@@ -8,19 +8,44 @@ namespace BPMFlow.Application.Services;
 
 public class RequestStatusTransitionService : IRequestStatusTransitionService
 {
-    private readonly IRequestStatusTransitionService _service;
+    private readonly IEmployeeRoleService _employeeRoleService;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
-    public RequestStatusTransitionService(IRequestStatusTransitionService service)
+    public RequestStatusTransitionService(IEmployeeRoleService employeeRoleService, IUnitOfWork unitOfWork, IMapper mapper)
     {
-        _service = service;
+        _employeeRoleService = employeeRoleService;
+        _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
-    public async Task<IEnumerable<RequestStatusTransitionView>> GetAvailableTransitionByUser(int code)
+    public async Task<IEnumerable<RequestStatusTransitionView>> GetAvailableTransition(int code, string login)
     {
         ArgumentNullException.ThrowIfNull(code);
+        ArgumentNullException.ThrowIfNull(login);
         
-        var transitions = await _service.GetAvailableTransitionByUser(code);
+        var requestByEmployee = await _unitOfWork.ObjectRequestRepository.GetBySystemObjectIdEmployee();
 
-        return transitions;
+        IEnumerable<RequestStatusTransitionDto> transitions = [];
+
+        if (requestByEmployee.Any())
+        {
+            var employee = await _unitOfWork.EmployeeRepository.GetByUserLogin(login);
+            ArgumentNullException.ThrowIfNull(employee);
+
+            var objectRequest = await _unitOfWork.ObjectRequestRepository.GetActiveByCode(code);
+            ArgumentNullException.ThrowIfNull(objectRequest);
+
+            var currentEmployeeRoleInRequest = await _employeeRoleService.GetRoleInRequest(employee.Id, objectRequest.ObjectId, objectRequest.Code);
+            var currentEmployeeRoleInOrgStructure = await _employeeRoleService.GetRoleInOrgStructure(employee.Id, objectRequest.ObjectId);
+
+            transitions = await _unitOfWork.RequestStatusTransitionRepository.GetAvailableTransition
+                                            (x => x.SourceStatusOrder == objectRequest.RequestStatusId
+                                            && (x.ResponsibleRoleId == (int)currentEmployeeRoleInRequest // пусто, потому что сравнивается с id
+                                            || x.ResponsibleRoleId == (int)currentEmployeeRoleInOrgStructure));
+
+        }
+            
+        return _mapper.Map<IEnumerable<RequestStatusTransitionView>>(transitions);
     }
 }

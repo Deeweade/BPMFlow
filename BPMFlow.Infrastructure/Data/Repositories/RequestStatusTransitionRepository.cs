@@ -1,6 +1,9 @@
+using System.Linq.Expressions;
+using System.Reflection.Metadata;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BPMFlow.Domain.Dtos.Entities.BPMFlow;
+using BPMFlow.Domain.Dtos.Entities.PerfManagement1;
 using BPMFlow.Domain.Interfaces.Repositories;
 using BPMFlow.Infrastructure.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -25,10 +28,13 @@ public class RequestStatusTransitionRepository : IRequestStatusTransitionReposit
                 .ProjectTo<RequestStatusTransitionDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(x => x.SourceStatusOrder == sourceOrder && x.NextStatusOrder == nextOrder && x.RequestId == requestId);
     }
-
-    public async Task<RequestStatusTransitionDto> GetAvailableTransitionByUser(int code, string login)
+    
+    public async Task<IEnumerable<RequestStatusTransitionDto>> GetAvailableTransition(Expression<Func<RequestStatusTransitionDto, bool>> predicate)
     {
-        ArgumentNullException.ThrowIfNull(code);
-        ArgumentNullException.ThrowIfNull(login);
+        return await _bpmFlowContext.RequestStatusTransitions
+            .AsNoTracking()
+            .ProjectTo<RequestStatusTransitionDto>(_mapper.ConfigurationProvider)
+            .Where(predicate)
+            .ToListAsync();
     }
 }

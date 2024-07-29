@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using BPMFlow.Domain.Dtos.Entities.BPMFlow;
 
 namespace BPMFlow.Domain.Interfaces.Repositories;
@@ -5,5 +6,5 @@ namespace BPMFlow.Domain.Interfaces.Repositories;
 public interface IRequestStatusTransitionRepository
 {
     Task<RequestStatusTransitionDto> GetTransition(int sourceOrder, int nextOrder, int requestId);
-    Task<IEnumerable<RequestStatusTransitionDto>> GetAvailableTransitionByUser(int code, string login);
+    Task<IEnumerable<RequestStatusTransitionDto>> GetAvailableTransition(Expression<Func<RequestStatusTransitionDto, bool>> predicate);
 }

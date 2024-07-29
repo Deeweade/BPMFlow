@@ -17,13 +17,14 @@ public class RequestStatusTransitionController : ControllerBase
         _service = service;
     }
 
-    [HttpPost("transition")]
-    public async Task<IActionResult> GetAvailableTransition(int code, string login)
+    [HttpPost("transition/{code}")]
+    public async Task<IActionResult> GetAvailableTransition(int code)
     {
         ArgumentNullException.ThrowIfNull(code);
-        ArgumentNullException.ThrowIfNull(login);
 
-        var objectRequest = await _service.GetAvailableTransitionByUser(code, login);
+        var login = User.Identity?.Name;
+
+        var objectRequest = await _service.GetAvailableTransition(code, login);
 
         return Ok(objectRequest);
     }
