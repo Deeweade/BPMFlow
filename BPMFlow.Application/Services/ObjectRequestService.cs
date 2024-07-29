@@ -47,6 +47,8 @@ public class ObjectRequestService : IObjectRequestService
                     ResponsibleEmployeeId = objectRequests.ResponsibleEmployeeId,
                     ObjectId = objectId,
                     PeriodId = objectRequests.PeriodId,
+                    SystemId = objectRequests.SystemId,
+                    SystemObjectId = objectRequests.SystemObjectId,
                     EntityStatusId = objectRequests.EntityStatusId
                 };
 
@@ -83,7 +85,7 @@ public class ObjectRequestService : IObjectRequestService
 
         if (filterDto.WithSubordinates)
         {
-            var requestByEmployee = await _unitOfWork.ObjectRequestRepository.GetBySystemObjectId();
+            var requestByEmployee = await _unitOfWork.ObjectRequestRepository.GetBySystemObjectIdEmployee();
 
             if (requestByEmployee.Any())
             {
@@ -116,12 +118,12 @@ public class ObjectRequestService : IObjectRequestService
         ArgumentNullException.ThrowIfNull(transition);
 
         // close current ObjectRequest
-        objectRequest.EntityStatusId = 2;
+        objectRequest.EntityStatusId = (int)EntityStatuses.InactiveDraft;
         objectRequest.DateEnd = DateTime.Now;
         objectRequest.RequestStatusTransitionId = transition.Id;
         await _unitOfWork.ObjectRequestRepository.CloseRequest(objectRequest);
 
-        var parallelRequests = await _unitOfWork.ObjectRequestRepository.GetParallelRequests(objectRequest.Code, 1);
+        var parallelRequests = await _unitOfWork.ObjectRequestRepository.GetParallelRequests(objectRequest.Code, (int)EntityStatuses.ActiveDraft);
         
         if (!parallelRequests.Any())
         {
@@ -136,7 +138,7 @@ public class ObjectRequestService : IObjectRequestService
                     AuthorEmployeeId = objectRequest.AuthorEmployeeId,
                     ResponsibleEmployeeId = await _unitOfWork.EmployeeRepository.GetResponsibleEmployeeId(nextStatus.ResponsibleRoleId),
                     RequestStatusId = nextStatus.Id,
-                    EntityStatusId = 1,
+                    EntityStatusId = (int)EntityStatuses.ActiveDraft,
                     DateStart = DateTime.Now,
                     DateEnd = DateTime.MaxValue
                 };
@@ -151,8 +153,8 @@ public class ObjectRequestService : IObjectRequestService
                 // move backward
                 foreach (var parallelRequest in parallelRequests)
                 {
-                    parallelRequest.EntityStatusId = 2;
-                    parallelRequest.DateEnd = DateTime.UtcNow;
+                    parallelRequest.EntityStatusId = (int)EntityStatuses.InactiveDraft;
+                    parallelRequest.DateEnd = DateTime.Now;
                     
                     await _unitOfWork.ObjectRequestRepository.AddObjectRequest(parallelRequest);
                 }
@@ -167,7 +169,7 @@ public class ObjectRequestService : IObjectRequestService
                         AuthorEmployeeId = objectRequest.AuthorEmployeeId,
                         ResponsibleEmployeeId = await _unitOfWork.EmployeeRepository.GetResponsibleEmployeeId(nextStatus.ResponsibleRoleId),
                         RequestStatusId = nextStatus.Id,
-                        EntityStatusId = 1,
+                        EntityStatusId = (int)EntityStatuses.ActiveDraft,
                         DateStart = DateTime.Now,
                         DateEnd = DateTime.MaxValue
                     };
@@ -180,7 +182,7 @@ public class ObjectRequestService : IObjectRequestService
                 // move forward and final denied
                 foreach (var parallelRequest in parallelRequests)
                 {
-                    parallelRequest.EntityStatusId = 2;
+                    parallelRequest.EntityStatusId = (int)EntityStatuses.InactiveDraft;
                     parallelRequest.DateEnd = DateTime.Now;
 
                     await _unitOfWork.ObjectRequestRepository.AddObjectRequest(parallelRequest);
@@ -192,8 +194,8 @@ public class ObjectRequestService : IObjectRequestService
                     AuthorEmployeeId = objectRequest.AuthorEmployeeId,
                     ResponsibleEmployeeId = await _unitOfWork.EmployeeRepository.GetResponsibleEmployeeId(currentStatus.ResponsibleRoleId),
                     RequestStatusId = currentStatus.Id,
-                    EntityStatusId = 3,
-                    DateStart = DateTime.UtcNow,
+                    EntityStatusId = (int)EntityStatuses.CompletedAndApproved,
+                    DateStart = DateTime.Now,
                     DateEnd = DateTime.MaxValue
                 };
 
