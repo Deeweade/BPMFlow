@@ -39,9 +39,12 @@ public class RequestStatusTransitionService : IRequestStatusTransitionService
             var currentEmployeeRoleInRequest = await _employeeRoleService.GetRoleInRequest(employee.Id, objectRequest.ObjectId, objectRequest.Code);
             var currentEmployeeRoleInOrgStructure = await _employeeRoleService.GetRoleInOrgStructure(employee.Id, objectRequest.ObjectId);
 
+            var requestStatus = await _unitOfWork.RequestStatusRepository.GetById(objectRequest.RequestStatusId);
+
             transitions = await _unitOfWork.RequestStatusTransitionRepository.GetAvailableTransition
-                                            (x => x.SourceStatusOrder == objectRequest.RequestStatusId
-                                            && (x.ResponsibleRoleId == (int)currentEmployeeRoleInRequest // пусто, потому что сравнивается с id
+                                            (x => x.RequestId == requestStatus.RequestId
+                                            && x.SourceStatusOrder == requestStatus.StatusOrder
+                                            && (x.ResponsibleRoleId == (int)currentEmployeeRoleInOrgStructure
                                             || x.ResponsibleRoleId == (int)currentEmployeeRoleInOrgStructure));
 
         }
