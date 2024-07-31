@@ -44,7 +44,7 @@ public class RequestStatusTransitionService : IRequestStatusTransitionService
             transitions = await _unitOfWork.RequestStatusTransitionRepository.GetAvailableTransition
                                             (x => x.RequestId == requestStatus.RequestId
                                             && x.SourceStatusOrder == requestStatus.StatusOrder
-                                            && (x.ResponsibleRoleId == (int)currentEmployeeRoleInOrgStructure
+                                            && (x.ResponsibleRoleId == (int)currentEmployeeRoleInRequest
                                             || x.ResponsibleRoleId == (int)currentEmployeeRoleInOrgStructure));
 
         }

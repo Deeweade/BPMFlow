@@ -47,8 +47,6 @@ public class ObjectRequestService : IObjectRequestService
                     ResponsibleEmployeeId = objectRequests.ResponsibleEmployeeId,
                     ObjectId = objectId,
                     PeriodId = objectRequests.PeriodId,
-                    SystemId = objectRequests.SystemId,
-                    SystemObjectId = objectRequests.SystemObjectId,
                     EntityStatusId = objectRequests.EntityStatusId
                 };
 
