@@ -34,4 +34,22 @@ public class RequestStatusRepository : IRequestStatusRepository
                 .Where(x => x.StatusOrder == order && x.RequestId == requestId)
                 .ToListAsync();
     }
+
+    public async Task<IEnumerable<RequestStatusDto>> GetByRequestId(int requestId)
+    {
+        return await _bpmFlowDbContext.RequestStatuses
+                .AsNoTracking()
+                .ProjectTo<RequestStatusDto>(_mapper.ConfigurationProvider)
+                .Where(x => x.RequestId == requestId)
+                .ToListAsync();
+    }
+
+    public async Task<int> GetResponsibleRoleIdByStatusId(int requestStatusId)
+    {
+        var requestStatus = await _bpmFlowDbContext.RequestStatuses
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == requestStatusId);
+
+        return requestStatus.ResponsibleRoleId;
+    }
 }
