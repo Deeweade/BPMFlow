@@ -28,20 +28,16 @@ public class EmployeeRoleService : IEmployeeRoleService
                 {
                     var responsibleRoleId = request.RequestStatus.ResponsibleRoleId;
 
-                return responsibleRoleId switch
-                {
-                    (int)Roles.Myself => Roles.Myself,
-                    (int)Roles.DirectManager => Roles.DirectManager,
-                    (int)Roles.HigherManager => Roles.HigherManager,
-                    (int)Roles.Peer => Roles.Peer,
-                    (int)Roles.ResponsiblePeer => Roles.ResponsiblePeer,
-                    _ => throw new ArgumentOutOfRangeException(nameof(responsibleRoleId),
-                                               $"There is no employee role with id: {responsibleRoleId}"),
-                };
-            }
-                else
-                {
-                    return await GetRoleInOrgStructure(currentEmployeeId, objectId);
+                    return responsibleRoleId switch
+                    {
+                        (int)Roles.Myself => Roles.Myself,
+                        (int)Roles.DirectManager => Roles.DirectManager,
+                        (int)Roles.HigherManager => Roles.HigherManager,
+                        (int)Roles.Peer => Roles.Peer,
+                        (int)Roles.ResponsiblePeer => Roles.ResponsiblePeer,
+                        _ => throw new ArgumentOutOfRangeException(nameof(responsibleRoleId),
+                                                    $"There is no employee role with id: {responsibleRoleId}"),
+                    };
                 }
             }
 
