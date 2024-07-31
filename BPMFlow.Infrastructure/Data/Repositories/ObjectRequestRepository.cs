@@ -110,6 +110,7 @@ public class ObjectRequestRepository : IObjectRequestRepository
         var request = new ObjectRequest
         {
             Code = ++maxCode,
+            RequestId = objectRequestDto.RequestId,
             RequestStatusId = objectRequestDto.RequestStatusId,
             ObjectId = objectRequestDto.ObjectId,
             PeriodId = objectRequestDto.PeriodId,

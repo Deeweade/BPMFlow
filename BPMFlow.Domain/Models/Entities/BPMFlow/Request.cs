@@ -6,6 +6,7 @@ public class Request : BaseEntity
     {
         RequestStatusTransitions = new HashSet<RequestStatusTransition>();
         RequestStatuses = new HashSet<RequestStatus>();
+        ObjectRequests = new HashSet<ObjectRequest>();
     }
 
     public string Title { get; set; }
@@ -19,4 +20,7 @@ public class Request : BaseEntity
 
     // Request -> RequestStatus
     public virtual ICollection<RequestStatus> RequestStatuses { get; set; }
+
+    // Request -> ObjectRequest
+    public virtual ICollection<ObjectRequest> ObjectRequests { get; set; }
 }
