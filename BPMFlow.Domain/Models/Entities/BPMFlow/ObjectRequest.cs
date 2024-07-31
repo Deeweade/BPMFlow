@@ -14,4 +14,8 @@ public class ObjectRequest : HistoryEntity
     // ObjectRequest -> RequestStatus
     public int RequestStatusId { get; set; }
     public virtual RequestStatus RequestStatus { get; set; }
+
+    // ObjectRequest -> Request
+    public int RequestId { get; set; }
+    public virtual Request Request { get; set; }
 }

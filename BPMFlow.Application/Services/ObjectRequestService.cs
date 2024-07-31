@@ -1,5 +1,4 @@
 using AutoMapper;
-using AutoMapper.Configuration.Annotations;
 using BPMFlow.Application.Interfaces.Services;
 using BPMFlow.Application.Models.Filters;
 using BPMFlow.Application.Models.Views.BPMFlow;
@@ -43,6 +42,7 @@ public class ObjectRequestService : IObjectRequestService
         {
             var newRequest = new ObjectRequestView
                 {
+                    RequestId = objectRequests.RequestId,
                     RequestStatusId = objectRequests.RequestStatusId,
                     ResponsibleEmployeeId = objectRequests.ResponsibleEmployeeId,
                     ObjectId = objectId,
@@ -135,6 +135,7 @@ public class ObjectRequestService : IObjectRequestService
                     ObjectId = objectRequest.ObjectId,
                     AuthorEmployeeId = objectRequest.AuthorEmployeeId,
                     ResponsibleEmployeeId = await _unitOfWork.EmployeeRepository.GetResponsibleEmployeeId(nextStatus.ResponsibleRoleId),
+                    RequestId = objectRequest.RequestId,
                     RequestStatusId = nextStatus.Id,
                     EntityStatusId = (int)EntityStatuses.ActiveDraft,
                     DateStart = DateTime.Now,
@@ -144,6 +145,7 @@ public class ObjectRequestService : IObjectRequestService
                 await _unitOfWork.ObjectRequestRepository.AddObjectRequest(newObjectRequest);
             }
         }
+
         else
         {
             if (transition.SourceStatusOrder > transition.NextStatusOrder)

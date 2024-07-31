@@ -8,7 +8,7 @@ namespace BPMFlow.Domain.Interfaces.Repositories;
 public interface IObjectRequestRepository
 {
     Task<ObjectRequestDto> GetById(int requestId);
-    Task<ObjectRequest> GetActiveByCode(int code);
+    Task<ObjectRequestDto> GetActiveByCode(int code);
     Task<IEnumerable<ObjectRequestDto>> GetBySystemObjectIdEmployee();
     Task<IEnumerable<ObjectRequestDto>> GetByFilter(ObjectRequestsFilterDto filterDto);
     Task<ObjectRequestDto> Create(ObjectRequestDto objectRequestDto);
