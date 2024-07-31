@@ -31,61 +31,26 @@ public class ObjectRequestRepository : IObjectRequestRepository
             .FirstOrDefaultAsync(x => x.Id == requestId);
     }
 
-    public async Task<IEnumerable<ObjectRequestDto>> GetBySystemObjectIdEmployee()
+    public async Task<ObjectRequest> GetActiveByCode(int code)
     {
-        return await _bpmFlowContext.ObjectRequests
-                        .AsNoTracking()
-                        .ProjectTo<ObjectRequestDto>(_mapper.ConfigurationProvider)
-                        .Where(x => x.SystemObjectId == (int)SystemObjects.Employee)
-                        .ToListAsync();
+        ArgumentNullException.ThrowIfNull(code);
 
-        /* return await _bpmFlowContext.ObjectRequests
-                        .AsNoTracking()
-                        .ProjectTo<ObjectRequestDto>(_mapper.ConfigurationProvider)
-                        .Join(_bpmFlowContext.RequestStatuses,
-                                or => or.RequestStatusId,
-                                rs => rs.Id,
-                                (or, rs) => new { or, rs })
-                        .Join(_bpmFlowContext.Requests,
-                                ors => ors.rs.RequestId,
-                                r => r.Id,
-                                (ors, r) => new { ors.or, ors.rs, r })
-                        .Join(_bpmFlowContext.BusinessProcesses,
-                                orsr => orsr.r.BusinessProcessId,
-                                bp => bp.Id,
-                                (orsr, bp) => new { orsr.or, orsr.rs, orsr.r, bp })
-                        .Where(result => result.bp.SystemId == (int)SystemObjects.Employee)
-                        .Select(result => result.or)
-                        .ToListAsync(); */
+        return await _bpmFlowContext.ObjectRequests
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Code == code 
+                && x.IsActive 
+                && (x.EntityStatusId == (int)EntityStatuses.ActiveDraft
+                    || x.EntityStatusId == (int)EntityStatuses.CompletedAndApproved));
     }
 
-    public async Task<ObjectRequestDto> Create(ObjectRequestDto objectRequestDto)
+    public async Task<IEnumerable<ObjectRequestDto>> GetBySystemObjectIdEmployee()
     {
-        ArgumentNullException.ThrowIfNull(objectRequestDto);
+        var objectRequests = await _bpmFlowContext.ObjectRequests
+                                .AsNoTracking()
+                                .Where(x => x.RequestStatus.Request.BusinessProcess.SystemObjectId == (int)SystemObjects.Employee)
+                                .ToListAsync();
 
-        var maxCode = await _bpmFlowContext.ObjectRequests.AnyAsync()
-            ? await _bpmFlowContext.ObjectRequests.MaxAsync(x => x.Code)
-            : 0;
-
-        var request = new ObjectRequest
-        {
-            Code = ++maxCode,
-            RequestStatusId = objectRequestDto.RequestStatusId,
-            ObjectId = objectRequestDto.ObjectId,
-            PeriodId = objectRequestDto.PeriodId,
-            DateStart = DateTime.Now,
-            DateEnd = DateTime.MaxValue,
-            IsActive = true,
-            SystemId = objectRequestDto.SystemId,
-            SystemObjectId = objectRequestDto.SystemObjectId,
-            EntityStatusId = (int)EntityStatuses.ActiveDraft
-        };
-
-        _bpmFlowContext.ObjectRequests.Add(request);
-
-        await _bpmFlowContext.SaveChangesAsync();
-
-        return await GetById(request.Id);
+        return _mapper.Map<IEnumerable<ObjectRequestDto>>(objectRequests);
     }
 
     public async Task<IEnumerable<ObjectRequestDto>> GetByFilter(ObjectRequestsFilterDto filterDto)
@@ -93,45 +58,16 @@ public class ObjectRequestRepository : IObjectRequestRepository
         ArgumentNullException.ThrowIfNull(filterDto);
 
         var query = _bpmFlowContext.ObjectRequests
-            .AsNoTracking()
-            .ProjectTo<ObjectRequestDto>(_mapper.ConfigurationProvider);
+            .AsNoTracking();
 
         if (filterDto.SystemId.HasValue && filterDto.SystemId.Value != 0)
         {
-            query = query.Where(x => x.SystemId == filterDto.SystemId);
-            /* query = query.Join(_bpmFlowContext.RequestStatuses,
-                                or => or.RequestStatusId,
-                                rs => rs.Id,
-                                (or, rs) => new { or, rs })
-                        .Join(_bpmFlowContext.Requests,
-                                ors => ors.rs.RequestId,
-                                r => r.Id,
-                                (ors, r) => new { ors.or, ors.rs, r })
-                        .Join(_bpmFlowContext.BusinessProcesses,
-                                orsr => orsr.r.BusinessProcessId,
-                                bp => bp.Id,
-                                (orsr, bp) => new { orsr.or, orsr.rs, orsr.r, bp })
-                        .Where(result => result.bp.SystemId == filterDto.SystemId)
-                        .Select(result => result.or); */
+            query = query.Where(x => x.RequestStatus.Request.BusinessProcess.SystemObjectId == filterDto.SystemId);
         }
 
         if (filterDto.SystemObjectId.HasValue && filterDto.SystemObjectId.Value != 0)
         {
-            query = query.Where(x => x.SystemObjectId == filterDto.SystemObjectId);
-            /* query = query.Join(_bpmFlowContext.RequestStatuses,
-                                or => or.RequestStatusId,
-                                rs => rs.Id,
-                                (or, rs) => new { or, rs })
-                        .Join(_bpmFlowContext.Requests,
-                                ors => ors.rs.RequestId,
-                                r => r.Id,
-                                (ors, r) => new { ors.or, ors.rs, r })
-                        .Join(_bpmFlowContext.BusinessProcesses,
-                                orsr => orsr.r.BusinessProcessId,
-                                bp => bp.Id,
-                                (orsr, bp) => new { orsr.or, orsr.rs, orsr.r, bp })
-                        .Where(result => result.bp.SystemObjectId == filterDto.SystemObjectId)
-                        .Select(result => result.or); */
+            query = query.Where(x => x.RequestStatus.Request.BusinessProcess.SystemObjectId == filterDto.SystemObjectId);
         }
 
         if (filterDto.RequestStatusId.HasValue && filterDto.RequestStatusId.Value != 0)
@@ -155,10 +91,39 @@ public class ObjectRequestRepository : IObjectRequestRepository
         }
         else if (filterDto.ObjectId.HasValue && filterDto.ObjectId.Value != 0)
         {
-            query = query.Where(x => x.ObjectId == filterDto.ObjectId.Value);
+            query.Where(x => x.ObjectId == filterDto.ObjectId.Value);
         }
 
-        return await query.ToListAsync();
+        var result = await query.ToListAsync();
+
+        return _mapper.Map<IEnumerable<ObjectRequestDto>>(result);
+    }
+
+    public async Task<ObjectRequestDto> Create(ObjectRequestDto objectRequestDto)
+    {
+        ArgumentNullException.ThrowIfNull(objectRequestDto);
+
+        var maxCode = await _bpmFlowContext.ObjectRequests.AnyAsync()
+            ? await _bpmFlowContext.ObjectRequests.MaxAsync(x => x.Code)
+            : 0;
+
+        var request = new ObjectRequest
+        {
+            Code = ++maxCode,
+            RequestStatusId = objectRequestDto.RequestStatusId,
+            ObjectId = objectRequestDto.ObjectId,
+            PeriodId = objectRequestDto.PeriodId,
+            DateStart = DateTime.Now,
+            DateEnd = DateTime.MaxValue,
+            IsActive = true,
+            EntityStatusId = (int)EntityStatuses.ActiveDraft
+        };
+
+        _bpmFlowContext.ObjectRequests.Add(request);
+
+        await _bpmFlowContext.SaveChangesAsync();
+
+        return await GetById(request.Id);
     }
 
     public async Task CloseRequest(ObjectRequestDto objectRequestDto)

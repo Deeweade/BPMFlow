@@ -41,7 +41,7 @@ namespace BPMFlow.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BusinessProcesses");
+                    b.ToTable("BusinessProcesses", (string)null);
                 });
 
             modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.ObjectRequest", b =>
@@ -85,17 +85,11 @@ namespace BPMFlow.API.Migrations
                     b.Property<int>("ResponsibleEmployeeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("SystemId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SystemObjectId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("RequestStatusId");
 
-                    b.ToTable("ObjectRequests");
+                    b.ToTable("ObjectRequests", (string)null);
                 });
 
             modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.Request", b =>
@@ -116,7 +110,7 @@ namespace BPMFlow.API.Migrations
 
                     b.HasIndex("BusinessProcessId");
 
-                    b.ToTable("Requests");
+                    b.ToTable("Requests", (string)null);
                 });
 
             modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatus", b =>
@@ -149,7 +143,7 @@ namespace BPMFlow.API.Migrations
 
                     b.HasIndex("RequestId");
 
-                    b.ToTable("RequestStatuses");
+                    b.ToTable("RequestStatuses", (string)null);
                 });
 
             modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatusTransition", b =>
@@ -185,7 +179,7 @@ namespace BPMFlow.API.Migrations
 
                     b.HasIndex("RequestId");
 
-                    b.ToTable("RequestStatusTransitions");
+                    b.ToTable("RequestStatusTransitions", (string)null);
                 });
 
             modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatusTrigger", b =>
@@ -206,7 +200,7 @@ namespace BPMFlow.API.Migrations
 
                     b.HasIndex("RequestStatusId");
 
-                    b.ToTable("RequestStatusTriggers");
+                    b.ToTable("RequestStatusTriggers", (string)null);
                 });
 
             modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.System", b =>
@@ -222,7 +216,7 @@ namespace BPMFlow.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Systems");
+                    b.ToTable("Systems", (string)null);
                 });
 
             modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.SystemObject", b =>
@@ -238,7 +232,7 @@ namespace BPMFlow.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SystemObjects");
+                    b.ToTable("SystemObjects", (string)null);
                 });
 
             modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.ObjectRequest", b =>

@@ -9,8 +9,6 @@ public class ObjectRequest : HistoryEntity
     public int ResponsibleEmployeeId { get; set; }
     public int RequestStatusTransitionId { get; set; }
     public int PeriodId { get; set; }
-    public int SystemId { get; set; }
-    public int SystemObjectId { get; set; }
     public int EntityStatusId { get; set; }
 
     // ObjectRequest -> RequestStatus

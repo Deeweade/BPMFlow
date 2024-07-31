@@ -1,4 +1,5 @@
 using AutoMapper;
+using AutoMapper.Configuration.Annotations;
 using BPMFlow.Application.Interfaces.Services;
 using BPMFlow.Application.Models.Filters;
 using BPMFlow.Application.Models.Views.BPMFlow;
@@ -46,8 +47,6 @@ public class ObjectRequestService : IObjectRequestService
                     ResponsibleEmployeeId = objectRequests.ResponsibleEmployeeId,
                     ObjectId = objectId,
                     PeriodId = objectRequests.PeriodId,
-                    SystemId = objectRequests.SystemId,
-                    SystemObjectId = objectRequests.SystemObjectId,
                     EntityStatusId = objectRequests.EntityStatusId
                 };
 

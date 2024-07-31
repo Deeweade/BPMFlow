@@ -17,6 +17,15 @@ public class EmployeeRepository : IEmployeeRepository
         _mapper = mapper;
     }
 
+    public async Task<EmployeeDto> GetById(int employeeId)
+    {
+        return await _perfManagement1DbContext.Employees
+                            .AsNoTracking()
+                            .ProjectTo<EmployeeDto>(_mapper.ConfigurationProvider)
+                            .Where(x => x.Id == employeeId)
+                            .FirstOrDefaultAsync();
+    }
+
     public async Task<IEnumerable<int>> GetSubordinateEmployeeIds(int employeeId)
     {
         return await _perfManagement1DbContext.Employees
@@ -34,6 +43,15 @@ public class EmployeeRepository : IEmployeeRepository
                             .ProjectTo<EmployeeRoleDto>(_mapper.ConfigurationProvider)
                             .Where(x => x.RoleId == responsibleRoleId)
                             .Select(x => x.EmployeeId)
+                            .FirstOrDefaultAsync();
+    }
+
+    public async Task<EmployeeDto> GetByUserLogin(string login)
+    {
+        return await _perfManagement1DbContext.Employees
+                            .AsNoTracking()
+                            .ProjectTo<EmployeeDto>(_mapper.ConfigurationProvider)
+                            .Where(x => x.Login == login)
                             .FirstOrDefaultAsync();
     }
 }
