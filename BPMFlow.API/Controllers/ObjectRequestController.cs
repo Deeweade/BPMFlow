@@ -13,11 +13,13 @@ namespace BPMFlow.API.Controllers;
 
 public class ObjectRequestController : ControllerBase
 {
-    private readonly IObjectRequestService _service;
+    private readonly IObjectRequestService _orService;
+    private readonly IRequestStatusTransitionService _rstService;
 
-    public ObjectRequestController(IObjectRequestService service)
+    public ObjectRequestController(IObjectRequestService orService, IRequestStatusTransitionService rstService)
     {
-        _service = service;
+        _orService = orService;
+        _rstService = rstService;
     }
 
     [HttpPost("create")]
@@ -25,7 +27,7 @@ public class ObjectRequestController : ControllerBase
     {
         ArgumentNullException.ThrowIfNull(objectRequestView);
 
-        var objectRequest = await _service.Create(objectRequestView);
+        var objectRequest = await _orService.Create(objectRequestView);
 
         return Ok(objectRequest);
     }
@@ -35,7 +37,7 @@ public class ObjectRequestController : ControllerBase
     {
         if (view.EmployeeIds is null || view.ObjectRequests is null) throw new ArgumentNullException(nameof(view));
 
-        var codes = await _service.BulkCreate(view.EmployeeIds, view.ObjectRequests);
+        var codes = await _orService.BulkCreate(view.EmployeeIds, view.ObjectRequests);
 
         return Ok(codes);
     }
@@ -45,17 +47,19 @@ public class ObjectRequestController : ControllerBase
     {
         ArgumentNullException.ThrowIfNull(filter);
 
-        var requests = await _service.GetByFilter(filter);
+        var requests = await _orService.GetByFilter(filter);
 
         return Ok(requests);
     }
 
-    [HttpPost("changeStatus/{nextStatusOrder}")]
-    public async Task<IActionResult> ChangeStatus(ObjectRequestView objectRequestView, int nextStatusOrder)
+    [HttpPost("changeStatus")]
+    public async Task<IActionResult> ChangeStatus(ObjectRequestView objectRequestView)
     {
         ArgumentNullException.ThrowIfNull(objectRequestView);
 
-        var objectRequest = await _service.ChangeStatus(objectRequestView, nextStatusOrder);
+        var requestStatusTransition = await _rstService.GetById(objectRequestView.RequestStatusTransitionId);
+
+        var objectRequest = await _orService.ChangeStatus(objectRequestView, requestStatusTransition.NextStatusOrder);
 
         return Ok(objectRequest);
     }

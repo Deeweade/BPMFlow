@@ -19,6 +19,15 @@ public class RequestStatusTransitionRepository : IRequestStatusTransitionReposit
         _mapper = mapper;
     }
 
+    public async Task<RequestStatusTransitionDto> GetById(int requestStatusTransitionId)
+    {
+        return await _bpmFlowContext.RequestStatusTransitions
+                .AsNoTracking()
+                .ProjectTo<RequestStatusTransitionDto>(_mapper.ConfigurationProvider)
+                .Where(x => x.Id == requestStatusTransitionId)
+                .FirstOrDefaultAsync();
+    }
+
     public async Task<RequestStatusTransitionDto> GetTransition(int sourceOrder, int nextOrder, int requestId)
     {
         return await _bpmFlowContext.RequestStatusTransitions

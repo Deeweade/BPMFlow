@@ -139,7 +139,7 @@ public class ObjectRequestService : IObjectRequestService
         
         var objectRequestDto = _mapper.Map<ObjectRequestDto>(objectRequestView);
 
-        var objectRequest = await _unitOfWork.ObjectRequestRepository.GetById(objectRequestDto.Id); 
+        var objectRequest = await _unitOfWork.ObjectRequestRepository.GetById(objectRequestDto.Id);
         ArgumentNullException.ThrowIfNull(objectRequest);
 
         var currentStatus = await _unitOfWork.RequestStatusRepository.GetById((int)objectRequest.RequestStatusId);
