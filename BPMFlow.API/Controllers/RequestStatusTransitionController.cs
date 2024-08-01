@@ -8,14 +8,9 @@ namespace BPMFlow.API.Controllers;
 [Route("api/[controller]")]
 [Authorize(Policy = "RequireAuthenticatedUser")]
 
-public class RequestStatusTransitionController : ControllerBase
+public class RequestStatusTransitionController(IRequestStatusTransitionService service) : ControllerBase
 {
-    private readonly IRequestStatusTransitionService _service;
-
-    public RequestStatusTransitionController(IRequestStatusTransitionService service)
-    {
-        _service = service;
-    }
+    private readonly IRequestStatusTransitionService _service = service;
 
     [HttpPost("transition/{code}")]
     public async Task<IActionResult> GetAvailableTransition(int code)

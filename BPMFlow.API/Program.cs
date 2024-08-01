@@ -87,6 +87,7 @@ builder.Services.AddDbContext<PerfManagement1DbContext>(options =>
 builder.Services.AddScoped<IObjectRequestService, ObjectRequestService>();
 builder.Services.AddScoped<IRequestStatusTransitionService, RequestStatusTransitionService>();
 builder.Services.AddScoped<IEmployeeRoleService, EmployeeRoleService>();
+builder.Services.AddScoped<IRequestStatusService, RequestStatusService>();
 
 //data
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
