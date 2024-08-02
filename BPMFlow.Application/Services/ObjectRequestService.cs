@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.IO.Compression;
 using AutoMapper;
 using BPMFlow.Application.Interfaces.Services;
 using BPMFlow.Application.Models.Filters;
@@ -26,7 +28,38 @@ public class ObjectRequestService : IObjectRequestService
 
         var objectRequestDto = _mapper.Map<ObjectRequestDto>(objectRequestView);
 
-        var objectRequest = await _unitOfWork.ObjectRequestRepository.Create(objectRequestDto);
+        ObjectRequestDto objectRequest = null;
+
+        if (objectRequestView.RequestStatusId == null)
+        {
+            var requestStatuses = await _unitOfWork.RequestStatusRepository.GetByRequestId(objectRequestDto.RequestId);
+
+            if (requestStatuses.Any())
+            {
+                var minStatusOrder = requestStatuses.Min(x => x.StatusOrder);
+                var initialStatuses = requestStatuses.Where(x => x.StatusOrder == minStatusOrder).ToList();
+
+                foreach (var status in initialStatuses)
+                {
+                    var newObjectRequest = new ObjectRequestDto
+                    {
+                        RequestId = objectRequestView.RequestId,
+                        ResponsibleEmployeeId = objectRequestDto.ResponsibleEmployeeId,
+                        RequestStatusId = status.Id,
+                        ObjectId = objectRequestDto.ObjectId,
+                        PeriodId = objectRequestDto.PeriodId,
+                        EntityStatusId = objectRequestDto.EntityStatusId
+                    };
+
+                    objectRequest = await _unitOfWork.ObjectRequestRepository.Create(newObjectRequest);
+                }
+            }
+        }
+        
+        else
+        {
+            objectRequest = await _unitOfWork.ObjectRequestRepository.Create(objectRequestDto);
+        }
 
         return _mapper.Map<ObjectRequestView>(objectRequest);
     }
@@ -109,7 +142,7 @@ public class ObjectRequestService : IObjectRequestService
         var objectRequest = await _unitOfWork.ObjectRequestRepository.GetById(objectRequestDto.Id); 
         ArgumentNullException.ThrowIfNull(objectRequest);
 
-        var currentStatus = await _unitOfWork.RequestStatusRepository.GetById(objectRequest.RequestStatusId);
+        var currentStatus = await _unitOfWork.RequestStatusRepository.GetById((int)objectRequest.RequestStatusId);
         ArgumentNullException.ThrowIfNull(currentStatus);
 
         var transition = await _unitOfWork.RequestStatusTransitionRepository.GetTransition(currentStatus.StatusOrder, nextStatusOrder, currentStatus.RequestId);

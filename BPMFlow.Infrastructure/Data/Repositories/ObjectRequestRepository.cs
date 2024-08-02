@@ -112,7 +112,7 @@ public class ObjectRequestRepository : IObjectRequestRepository
         {
             Code = ++maxCode,
             RequestId = objectRequestDto.RequestId,
-            RequestStatusId = objectRequestDto.RequestStatusId,
+            RequestStatusId = (int)objectRequestDto.RequestStatusId,
             ObjectId = objectRequestDto.ObjectId,
             PeriodId = objectRequestDto.PeriodId,
             DateStart = DateTime.Now,

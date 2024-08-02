@@ -26,7 +26,7 @@ public class EmployeeRoleService : IEmployeeRoleService
 
                 if (currentEmployeeId == request.ResponsibleEmployeeId)
                 {
-                    var responsibleRoleId = request.RequestStatus.ResponsibleRoleId;
+                    var responsibleRoleId = await _unitOfWork.RequestStatusRepository.GetResponsibleRoleIdByStatusId((int)request.RequestStatusId);
 
                     return responsibleRoleId switch
                     {
