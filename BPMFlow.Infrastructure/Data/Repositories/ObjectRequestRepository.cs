@@ -61,6 +61,11 @@ public class ObjectRequestRepository : IObjectRequestRepository
         var query = _bpmFlowContext.ObjectRequests
             .AsNoTracking();
 
+        if (filterDto.RequestId.HasValue && filterDto.RequestId.Value != 0)
+        {
+            query = query.Where(x => x.RequestId == filterDto.RequestId.Value);
+        }
+
         if (filterDto.SystemId.HasValue && filterDto.SystemId.Value != 0)
         {
             query = query.Where(x => x.RequestStatus.Request.BusinessProcess.SystemObjectId == filterDto.SystemId);
