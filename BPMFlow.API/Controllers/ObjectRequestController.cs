@@ -11,16 +11,10 @@ namespace BPMFlow.API.Controllers;
 [Route("api/[controller]")]
 [Authorize(Policy = "RequireAuthenticatedUser")]
 
-public class ObjectRequestController : ControllerBase
+public class ObjectRequestController(IObjectRequestService orService, IRequestStatusTransitionService rstService) : ControllerBase
 {
-    private readonly IObjectRequestService _orService;
-    private readonly IRequestStatusTransitionService _rstService;
-
-    public ObjectRequestController(IObjectRequestService orService, IRequestStatusTransitionService rstService)
-    {
-        _orService = orService;
-        _rstService = rstService;
-    }
+    private readonly IObjectRequestService _orService = orService;
+    private readonly IRequestStatusTransitionService _rstService = rstService;
 
     [HttpPost("create")]
     public async Task<IActionResult> Create(ObjectRequestView objectRequestView)
