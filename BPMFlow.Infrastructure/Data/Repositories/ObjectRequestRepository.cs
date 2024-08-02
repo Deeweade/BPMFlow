@@ -31,12 +31,13 @@ public class ObjectRequestRepository : IObjectRequestRepository
             .FirstOrDefaultAsync(x => x.Id == requestId);
     }
 
-    public async Task<ObjectRequest> GetActiveByCode(int code)
+    public async Task<ObjectRequestDto> GetActiveByCode(int code)
     {
         ArgumentNullException.ThrowIfNull(code);
 
         return await _bpmFlowContext.ObjectRequests
             .AsNoTracking()
+            .ProjectTo<ObjectRequestDto>(_mapper.ConfigurationProvider)
             .FirstOrDefaultAsync(x => x.Code == code 
                 && x.IsActive 
                 && (x.EntityStatusId == (int)EntityStatuses.ActiveDraft
@@ -47,7 +48,7 @@ public class ObjectRequestRepository : IObjectRequestRepository
     {
         var objectRequests = await _bpmFlowContext.ObjectRequests
                                 .AsNoTracking()
-                                .Where(x => x.RequestStatus.Request.BusinessProcess.SystemObjectId == (int)SystemObjects.Employee)
+                                .Where(x => x.Request.BusinessProcess.SystemObjectId == (int)SystemObjects.Employee)
                                 .ToListAsync();
 
         return _mapper.Map<IEnumerable<ObjectRequestDto>>(objectRequests);
@@ -110,6 +111,7 @@ public class ObjectRequestRepository : IObjectRequestRepository
         var request = new ObjectRequest
         {
             Code = ++maxCode,
+            RequestId = objectRequestDto.RequestId,
             RequestStatusId = objectRequestDto.RequestStatusId,
             ObjectId = objectRequestDto.ObjectId,
             PeriodId = objectRequestDto.PeriodId,
