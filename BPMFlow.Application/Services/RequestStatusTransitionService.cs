@@ -19,6 +19,15 @@ public class RequestStatusTransitionService : IRequestStatusTransitionService
         _mapper = mapper;
     }
 
+    public async Task<RequestStatusTransitionView> GetById(int requestStatusTransitionId)
+    {
+        ArgumentNullException.ThrowIfNull(requestStatusTransitionId);
+
+        var requestStatusTransition = await _unitOfWork.RequestStatusTransitionRepository.GetById(requestStatusTransitionId);
+
+        return _mapper.Map<RequestStatusTransitionView>(requestStatusTransition);
+    }
+
     public async Task<IEnumerable<RequestStatusTransitionView>> GetAvailableTransition(int code, string login)
     {
         ArgumentNullException.ThrowIfNull(code);
