@@ -26,7 +26,7 @@ public class RequestStatusRepository : IRequestStatusRepository
                 .FirstOrDefaultAsync(x => x.Id == requestStatusId);
     }
 
-    public async Task<IEnumerable<RequestStatusDto>> GetStatusByRequest(int requestId)
+    public async Task<IEnumerable<RequestStatusDto>> GetStatusesByRequestId(int requestId)
     {
         return await _bpmFlowDbContext.RequestStatuses
                 .AsNoTracking()
@@ -44,21 +44,21 @@ public class RequestStatusRepository : IRequestStatusRepository
                 .ToListAsync();
     }
 
-    public async Task<IEnumerable<RequestStatusDto>> GetByRequestId(int requestId)
+    public async Task<int> GetResponsibleRoleIdByStatusId(int requestStatusId)
+    {
+        return await _bpmFlowDbContext.RequestStatuses
+                .AsNoTracking()
+                .Where(x => x.Id == requestStatusId)
+                .Select(x => x.ResponsibleRoleId)
+                .FirstOrDefaultAsync();
+    }
+
+    public async Task<IEnumerable<RequestStatusDto>> GetStatusesByCode(int requestStatusId)
     {
         return await _bpmFlowDbContext.RequestStatuses
                 .AsNoTracking()
                 .ProjectTo<RequestStatusDto>(_mapper.ConfigurationProvider)
-                .Where(x => x.RequestId == requestId)
+                .Where(x => x.Id == requestStatusId)
                 .ToListAsync();
-    }
-
-    public async Task<int> GetResponsibleRoleIdByStatusId(int requestStatusId)
-    {
-        var requestStatus = await _bpmFlowDbContext.RequestStatuses
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == requestStatusId);
-
-        return requestStatus.ResponsibleRoleId;
     }
 }

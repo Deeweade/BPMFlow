@@ -17,8 +17,18 @@ public class RequestStatusController(IRequestStatusService service) : Controller
     {
         ArgumentNullException.ThrowIfNull(requestId);
 
-        var objectRequest = await _service.GetStatusByRequest(requestId);
+        var objectRequest = await _service.GetStatusesByRequest(requestId);
 
         return Ok(objectRequest);
+    }
+
+    [HttpPost("getStatusesByCode/{code}")]
+    public async Task<IActionResult> GetStatusesByCode(int code)
+    {
+        ArgumentNullException.ThrowIfNull(code);
+
+        var statuses = await _service.GetStatusesByCode(code);
+
+        return Ok(statuses);
     }
 }
