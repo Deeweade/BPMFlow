@@ -16,6 +16,16 @@ public class ObjectRequestController(IObjectRequestService orService, IRequestSt
     private readonly IObjectRequestService _orService = orService;
     private readonly IRequestStatusTransitionService _rstService = rstService;
 
+    [HttpPost("getActiveByCode/{code}")]
+    public async Task<IActionResult> GetActiveByCode(int code)
+    {
+        ArgumentNullException.ThrowIfNull(code);
+
+        var objectRequest = await _orService.GetActiveByCode(code);
+        
+        return Ok(objectRequest);
+    }
+    
     [HttpPost("create")]
     public async Task<IActionResult> Create(ObjectRequestView objectRequestView)
     {

@@ -96,6 +96,15 @@ public class ObjectRequestService : IObjectRequestService
         return codes;
     }
 
+    public async Task<ObjectRequestView> GetActiveByCode(int code)
+    {
+        ArgumentNullException.ThrowIfNull(code);
+
+        var objectRequest = await _unitOfWork.ObjectRequestRepository.GetActiveByCode(code);
+
+        return _mapper.Map<ObjectRequestView>(objectRequest);
+    }
+
     public async Task<IEnumerable<ObjectRequestView>> GetByFilter(ObjectRequestsFilterView filterView)
     {
         ArgumentNullException.ThrowIfNull(filterView);
