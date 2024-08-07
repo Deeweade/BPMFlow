@@ -12,8 +12,8 @@ public class RequestStatusController(IRequestStatusService service) : Controller
 {
     private readonly IRequestStatusService _service = service;
 
-    [HttpPost("getStatusByRequest/{requestId}")]
-    public async Task<IActionResult> GetStatusByRequest(int requestId)
+    [HttpGet("byRequestId/{requestId}")]
+    public async Task<IActionResult> GetStatusesByRequest(int requestId)
     {
         ArgumentNullException.ThrowIfNull(requestId);
 
@@ -22,7 +22,7 @@ public class RequestStatusController(IRequestStatusService service) : Controller
         return Ok(objectRequest);
     }
 
-    [HttpPost("getStatusesByCode/{code}")]
+    [HttpGet("byCode/{code}")]
     public async Task<IActionResult> GetStatusesByCode(int code)
     {
         ArgumentNullException.ThrowIfNull(code);
