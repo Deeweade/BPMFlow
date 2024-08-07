@@ -16,7 +16,7 @@ public class ObjectRequestController(IObjectRequestService orService, IRequestSt
     private readonly IObjectRequestService _orService = orService;
     private readonly IRequestStatusTransitionService _rstService = rstService;
 
-    [HttpPost("getActiveByCode/{code}")]
+    [HttpPost("byCode/{code}")]
     public async Task<IActionResult> GetActiveByCode(int code)
     {
         ArgumentNullException.ThrowIfNull(code);
