@@ -21,7 +21,9 @@ public class ObjectRequestController(IObjectRequestService orService, IRequestSt
     {
         ArgumentNullException.ThrowIfNull(objectRequestView);
 
-        var objectRequest = await _orService.Create(objectRequestView);
+        var login = User.Identity?.Name;
+
+        var objectRequest = await _orService.Create(objectRequestView, login);
 
         return Ok(objectRequest);
     }
@@ -31,7 +33,9 @@ public class ObjectRequestController(IObjectRequestService orService, IRequestSt
     {
         if (view.EmployeeIds is null || view.ObjectRequests is null) throw new ArgumentNullException(nameof(view));
 
-        var codes = await _orService.BulkCreate(view.EmployeeIds, view.ObjectRequests);
+        var login = User.Identity?.Name;
+
+        var codes = await _orService.BulkCreate(view.EmployeeIds, view.ObjectRequests, login);
 
         return Ok(codes);
     }

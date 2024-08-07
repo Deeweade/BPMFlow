@@ -20,13 +20,15 @@ public class ObjectRequestService : IObjectRequestService
         _mapper = mapper;
     }
 
-    public async Task<ObjectRequestView> Create(ObjectRequestView objectRequestView)
+    public async Task<ObjectRequestView> Create(ObjectRequestView objectRequestView, string login)
     {
         ArgumentNullException.ThrowIfNull(objectRequestView);
 
         var objectRequestDto = _mapper.Map<ObjectRequestDto>(objectRequestView);
 
         ObjectRequestDto objectRequest = null;
+
+        var authorEmployee = await _unitOfWork.EmployeeRepository.GetByUserLogin(login);
 
         if (objectRequestView.RequestStatusId == null)
         {
@@ -45,24 +47,25 @@ public class ObjectRequestService : IObjectRequestService
                         ResponsibleEmployeeId = objectRequestDto.ResponsibleEmployeeId,
                         RequestStatusId = status.Id,
                         ObjectId = objectRequestDto.ObjectId,
+                        AuthorEmployeeId = authorEmployee.Id,
                         PeriodId = objectRequestDto.PeriodId,
                         EntityStatusId = objectRequestDto.EntityStatusId
                     };
 
-                    objectRequest = await _unitOfWork.ObjectRequestRepository.Create(newObjectRequest);
+                    objectRequest = await _unitOfWork.ObjectRequestRepository.Create(newObjectRequest, authorEmployee.Id);
                 }
             }
         }
         
         else
         {
-            objectRequest = await _unitOfWork.ObjectRequestRepository.Create(objectRequestDto);
+            objectRequest = await _unitOfWork.ObjectRequestRepository.Create(objectRequestDto, authorEmployee.Id);
         }
 
         return _mapper.Map<ObjectRequestView>(objectRequest);
     }
 
-    public async Task<IEnumerable<int>> BulkCreate(ICollection<int> objectIds, ObjectRequestView objectRequests)
+    public async Task<IEnumerable<int>> BulkCreate(ICollection<int> objectIds, ObjectRequestView objectRequests, string login)
     {
         ArgumentNullException.ThrowIfNull(objectIds);
         ArgumentNullException.ThrowIfNull(objectRequests);
@@ -77,11 +80,12 @@ public class ObjectRequestService : IObjectRequestService
                     RequestStatusId = objectRequests.RequestStatusId,
                     ResponsibleEmployeeId = objectRequests.ResponsibleEmployeeId,
                     ObjectId = objectId,
+                    AuthorEmployeeId = objectRequests.AuthorEmployeeId,
                     PeriodId = objectRequests.PeriodId,
                     EntityStatusId = objectRequests.EntityStatusId
                 };
 
-            var createdRequest = await Create(newRequest);
+            var createdRequest = await Create(newRequest, login);
             
             if (createdRequest != null)
             {
