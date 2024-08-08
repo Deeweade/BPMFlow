@@ -119,6 +119,7 @@ public class ObjectRequestRepository : IObjectRequestRepository
             RequestId = objectRequestDto.RequestId,
             RequestStatusId = (int)objectRequestDto.RequestStatusId,
             ObjectId = objectRequestDto.ObjectId,
+            AuthorEmployeeId = objectRequestDto.AuthorEmployeeId,
             PeriodId = objectRequestDto.PeriodId,
             DateStart = DateTime.Now,
             DateEnd = DateTime.MaxValue,
