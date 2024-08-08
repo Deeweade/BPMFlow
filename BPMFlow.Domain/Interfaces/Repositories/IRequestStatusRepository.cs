@@ -8,5 +8,5 @@ public interface IRequestStatusRepository
     Task<IEnumerable<RequestStatusDto>> GetStatusesByRequestId(int requestId);
     Task<IEnumerable<RequestStatusDto>> GetByOrderAndRequestId(int order, int requestId);
     Task<int> GetResponsibleRoleIdByStatusId(int requestStatusId);
-    Task<IEnumerable<RequestStatusDto>> GetStatusesByCode(int requestStatusId);
+    Task<RequestStatusDto> GetStatusesByRequestStatusId(int requestStatusId);
 }
