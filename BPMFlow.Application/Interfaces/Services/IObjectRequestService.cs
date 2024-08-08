@@ -5,9 +5,10 @@ namespace BPMFlow.Application.Interfaces.Services;
 
 public interface IObjectRequestService
 {
-    Task<ObjectRequestView> Create(ObjectRequestView objectRequestView, string login);
-    Task<IEnumerable<int>> BulkCreate(ICollection<int> employeeIds, ObjectRequestView objectRequests, string login);
-    Task<ObjectRequestView> GetActiveByCode(int code);
+    /// <param name="authorLogin"> employee's login who is the author of the request </param>
+
+    Task<ObjectRequestView> Create(ObjectRequestView objectRequestView, string authorLogin);
+    Task<IEnumerable<int>> BulkCreate(ICollection<int> employeeIds, ObjectRequestView objectRequests, string authorLogin);
     Task<IEnumerable<ObjectRequestView>> GetByFilter(ObjectRequestsFilterView filterView);
     Task<ObjectRequestView> ChangeStatus(ObjectRequestView objectRequestView, int nextStatusOrder);
 }
