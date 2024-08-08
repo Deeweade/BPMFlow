@@ -12,7 +12,7 @@ public class RequestStatusTransitionController(IRequestStatusTransitionService s
 {
     private readonly IRequestStatusTransitionService _service = service;
 
-    [HttpPost("transition/{code}")]
+    [HttpGet("transition/{code}")]
     public async Task<IActionResult> GetAvailableTransition(int code)
     {
         ArgumentNullException.ThrowIfNull(code);
