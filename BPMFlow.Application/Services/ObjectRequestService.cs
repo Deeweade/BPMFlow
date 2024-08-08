@@ -52,14 +52,16 @@ public class ObjectRequestService : IObjectRequestService
                         EntityStatusId = objectRequestDto.EntityStatusId
                     };
 
-                    objectRequest = await _unitOfWork.ObjectRequestRepository.Create(newObjectRequest, authorEmployee.Id);
+                    objectRequest = await _unitOfWork.ObjectRequestRepository.Create(newObjectRequest);
                 }
             }
         }
         
         else
         {
-            objectRequest = await _unitOfWork.ObjectRequestRepository.Create(objectRequestDto, authorEmployee.Id);
+            objectRequestDto.AuthorEmployeeId = authorEmployee.Id;
+            
+            objectRequest = await _unitOfWork.ObjectRequestRepository.Create(objectRequestDto);
         }
 
         return _mapper.Map<ObjectRequestView>(objectRequest);

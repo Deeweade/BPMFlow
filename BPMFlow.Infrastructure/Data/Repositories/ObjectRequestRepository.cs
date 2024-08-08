@@ -105,7 +105,7 @@ public class ObjectRequestRepository : IObjectRequestRepository
         return _mapper.Map<IEnumerable<ObjectRequestDto>>(result);
     }
 
-    public async Task<ObjectRequestDto> Create(ObjectRequestDto objectRequestDto, int authorId)
+    public async Task<ObjectRequestDto> Create(ObjectRequestDto objectRequestDto)
     {
         ArgumentNullException.ThrowIfNull(objectRequestDto);
 
@@ -119,7 +119,7 @@ public class ObjectRequestRepository : IObjectRequestRepository
             RequestId = objectRequestDto.RequestId,
             RequestStatusId = (int)objectRequestDto.RequestStatusId,
             ObjectId = objectRequestDto.ObjectId,
-            AuthorEmployeeId = authorId,
+            AuthorEmployeeId = objectRequestDto.AuthorEmployeeId,
             PeriodId = objectRequestDto.PeriodId,
             DateStart = DateTime.Now,
             DateEnd = DateTime.MaxValue,
