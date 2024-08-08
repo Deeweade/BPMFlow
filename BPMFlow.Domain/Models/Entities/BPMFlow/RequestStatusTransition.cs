@@ -12,4 +12,7 @@ public class RequestStatusTransition : BaseEntity
     // RequestStatusTransition -> Request
     public int RequestId { get; set; }
     public virtual Request Request { get; set; }
+
+    // RequestStatusTransition -> ObjectRequest
+    public virtual ICollection<ObjectRequest> ObjectRequests { get; set; }
 }

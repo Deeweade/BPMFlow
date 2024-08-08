@@ -2,12 +2,6 @@ namespace BPMFlow.Domain.Models.Entities.BPMFlow;
 
 public class Request : BaseEntity
 {
-    public Request()
-    {
-        RequestStatusTransitions = new HashSet<RequestStatusTransition>();
-        RequestStatuses = new HashSet<RequestStatus>();
-    }
-
     public string Title { get; set; }
 
     // Request -> BusinessProcess
