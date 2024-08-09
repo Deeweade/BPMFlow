@@ -45,6 +45,66 @@ public class BPMFlowDbContext : DbContext
             .HasForeignKey(rs => rs.RequestId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<BusinessProcess>()
+            .HasOne(bp => bp.SystemObject)
+            .WithMany(so => so.BusinessProcesses)
+            .HasForeignKey(bp => bp.SystemObjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<BusinessProcess>()
+            .HasOne(bp => bp.System)
+            .WithMany(s => s.BusinessProcesses)
+            .HasForeignKey(bp => bp.SystemId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<SystemObject>()
+            .HasOne(so => so.System)
+            .WithMany(s => s.SystemObjects)
+            .HasForeignKey(so => so.SystemId)
+            .OnDelete(DeleteBehavior.Restrict);
+            
+        modelBuilder.Entity<ObjectRequest>()
+            .HasOne(or => or.RequestStatus)
+            .WithMany(rs => rs.ObjectRequests)
+            .HasForeignKey(or => or.RequestStatusId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<ObjectRequest>()
+            .HasOne(or => or.Request)
+            .WithMany(r => r.ObjectRequests)
+            .HasForeignKey(or => or.RequestId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<ObjectRequest>()
+            .HasOne(or => or.RequestStatusTransition)
+            .WithMany(rst => rst.ObjectRequests)
+            .HasForeignKey(or => or.RequestStatusTransitionId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<RequestStatusTransition>()
+            .HasOne(rst => rst.Request)
+            .WithMany(r => r.RequestStatusTransitions)
+            .HasForeignKey(rst => rst.RequestId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Request>()
+            .HasOne(r => r.BusinessProcess)
+            .WithMany(bp => bp.Requests)
+            .HasForeignKey(r => r.BusinessProcessId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<RequestStatus>()
+            .HasOne(rs => rs.Request)
+            .WithMany(r => r.RequestStatuses)
+            .HasForeignKey(rs => rs.RequestId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<RequestStatus>()
+            .HasMany(rs => rs.RequestStatusTriggers)
+            .WithOne(rst => rst.RequestStatus)
+            .HasForeignKey(rs => rs.RequestStatusId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         base.OnModelCreating(modelBuilder);
     }
 
