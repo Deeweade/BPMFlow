@@ -15,5 +15,5 @@ public class Request : BaseEntity
     public virtual ICollection<RequestStatus> RequestStatuses { get; set; }
 
     // Request -> ObjectRequest
-    public virtual  ICollection<ObjectRequest> ObjectRequests { get; set; }
+    public virtual ICollection<ObjectRequest> ObjectRequests { get; set; }
 }

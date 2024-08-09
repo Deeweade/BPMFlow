@@ -11,11 +11,11 @@ public class ObjectRequest : HistoryEntity
     public int EntityStatusId { get; set; }
 
     // ObjectRequest -> RequestStatus
-    public int RequestStatusId { get; set; }
+    public int? RequestStatusId { get; set; }
     public virtual RequestStatus RequestStatus { get; set; }
 
     // ObjectRequest -> Request
-    public int RequestId { get; set; }
+    public int? RequestId { get; set; }
     public virtual Request Request { get; set; }
     
     // ObjectRequest -> RequestStatusTransition

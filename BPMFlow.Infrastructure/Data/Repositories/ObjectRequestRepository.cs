@@ -68,12 +68,12 @@ public class ObjectRequestRepository : IObjectRequestRepository
 
         if (filterDto.SystemId.HasValue && filterDto.SystemId.Value != 0)
         {
-            query = query.Where(x => x.RequestStatus.Request.BusinessProcess.SystemObjectId == filterDto.SystemId);
+            //query = query.Where(x => x.RequestStatus.Request.BusinessProcess.SystemObjectId == filterDto.SystemId);
         }
 
         if (filterDto.SystemObjectId.HasValue && filterDto.SystemObjectId.Value != 0)
         {
-            query = query.Where(x => x.RequestStatus.Request.BusinessProcess.SystemObjectId == filterDto.SystemObjectId);
+            //query = query.Where(x => x.RequestStatus.Request.BusinessProcess.SystemObjectId == filterDto.SystemObjectId);
         }
 
         if (filterDto.RequestStatusId.HasValue && filterDto.RequestStatusId.Value != 0)
