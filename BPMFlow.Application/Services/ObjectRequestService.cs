@@ -90,7 +90,7 @@ public class ObjectRequestService : IObjectRequestService
 
         if (objectRequestView.RequestStatusId == null)
         {
-            var requestStatuses = await _unitOfWork.RequestStatusRepository.GetByRequestId(objectRequestDto.RequestId);
+            var requestStatuses = await _unitOfWork.RequestStatusRepository.GetStatusesByRequestId(objectRequestDto.RequestId);
 
             if (requestStatuses.Any())
             {
