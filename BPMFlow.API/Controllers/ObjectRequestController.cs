@@ -37,6 +37,16 @@ public class ObjectRequestController(IObjectRequestService orService, IRequestSt
 
         return Ok(objectRequests);
     }
+
+    [HttpPost("getFiltered")]
+    public async Task<IActionResult> GetFiltered(ObjectRequestsFilterView filter)
+    {
+        ArgumentNullException.ThrowIfNull(filter);
+
+        var requests = await _orService.GetByFilter(filter);
+
+        return Ok(requests);
+    }
     
     [HttpPost("create")]
     public async Task<IActionResult> Create(ObjectRequestView objectRequestView)
@@ -60,16 +70,6 @@ public class ObjectRequestController(IObjectRequestService orService, IRequestSt
         var codes = await _orService.BulkCreate(view.EmployeeIds, view.ObjectRequests, login);
 
         return Ok(codes);
-    }
-
-    [HttpPost("getFiltered")]
-    public async Task<IActionResult> GetFiltered(ObjectRequestsFilterView filter)
-    {
-        ArgumentNullException.ThrowIfNull(filter);
-
-        var requests = await _orService.GetByFilter(filter);
-
-        return Ok(requests);
     }
 
     [HttpPost("changeStatus")]

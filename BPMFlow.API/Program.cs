@@ -88,6 +88,7 @@ builder.Services.AddScoped<IObjectRequestService, ObjectRequestService>();
 builder.Services.AddScoped<IRequestStatusTransitionService, RequestStatusTransitionService>();
 builder.Services.AddScoped<IEmployeeRoleService, EmployeeRoleService>();
 builder.Services.AddScoped<IRequestStatusService, RequestStatusService>();
+builder.Services.AddScoped<IRequestService, RequestService>();
 
 //data
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
