@@ -8,8 +8,9 @@ public class RequestStatus : BaseEntity
     public bool IsFinalApproved { get; set; }
     public bool IsFinalDenied { get; set; }
 
-    // public int RequestId { get; set; }
-    // public virtual Request Request { get; set; }
+    // RequestStatus -> Request
+    public int RequestId { get; set; }
+    public virtual Request Request { get; set; }
     
     // RequestStatus -> ObjectRequest
     public virtual ICollection<ObjectRequest> ObjectRequests { get; set; }

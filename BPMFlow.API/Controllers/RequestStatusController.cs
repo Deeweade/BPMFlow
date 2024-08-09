@@ -12,12 +12,12 @@ public class RequestStatusController(IRequestStatusService service) : Controller
 {
     private readonly IRequestStatusService _service = service;
 
-    [HttpGet("byRequestId/{requestId}")]
-    public async Task<IActionResult> GetStatusesByRequest(int requestId)
+    [HttpGet("byRequestId/{requestStatusId}")]
+    public async Task<IActionResult> GetStatusesByRequest(int requestStatusId)
     {
-        ArgumentNullException.ThrowIfNull(requestId);
+        ArgumentNullException.ThrowIfNull(requestStatusId);
 
-        var objectRequest = await _service.GetStatusesByRequest(requestId);
+        var objectRequest = await _service.GetStatusesByRequestStatus(requestStatusId);
 
         return Ok(objectRequest);
     }

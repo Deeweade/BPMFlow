@@ -17,11 +17,11 @@ public class RequestStatusService : IRequestStatusService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<RequestStatusView>> GetStatusesByRequest(int requestId)
+    public async Task<IEnumerable<RequestStatusView>> GetStatusesByRequestStatus(int requestStatusId)
     {
-        ArgumentNullException.ThrowIfNull(requestId);
+        ArgumentNullException.ThrowIfNull(requestStatusId);
 
-        var requestStatuses = await _unitOfWork.RequestStatusRepository.GetStatusesByRequestId(requestId);
+        var requestStatuses = await _unitOfWork.RequestStatusRepository.GetStatusesByRequestStatusId(requestStatusId);
 
         return _mapper.Map<IEnumerable<RequestStatusView>>(requestStatuses);
     }

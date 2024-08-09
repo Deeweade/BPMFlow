@@ -32,7 +32,7 @@ public class ObjectRequestService : IObjectRequestService
 
         if (objectRequestView.RequestStatusId == null)
         {
-            var requestStatuses = await _unitOfWork.RequestStatusRepository.GetStatusesByRequestId(objectRequestDto.RequestId);
+            var requestStatuses = await _unitOfWork.RequestStatusRepository.GetStatusesByRequestStatusId((int)objectRequestDto.RequestStatusId);
 
             if (requestStatuses.Any())
             {
@@ -43,7 +43,6 @@ public class ObjectRequestService : IObjectRequestService
                 {
                     var newObjectRequest = new ObjectRequestDto
                     {
-                        RequestId = objectRequestView.RequestId,
                         ResponsibleEmployeeId = objectRequestDto.ResponsibleEmployeeId,
                         RequestStatusId = status.Id,
                         ObjectId = objectRequestDto.ObjectId,
@@ -179,7 +178,6 @@ public class ObjectRequestService : IObjectRequestService
                     ObjectId = objectRequest.ObjectId,
                     AuthorEmployeeId = objectRequest.AuthorEmployeeId,
                     ResponsibleEmployeeId = await _unitOfWork.EmployeeRepository.GetResponsibleEmployeeId(nextStatus.ResponsibleRoleId),
-                    RequestId = objectRequest.RequestId,
                     RequestStatusId = nextStatus.Id,
                     EntityStatusId = (int)EntityStatuses.ActiveDraft,
                     DateStart = DateTime.Now,

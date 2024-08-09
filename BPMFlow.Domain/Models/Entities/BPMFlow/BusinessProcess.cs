@@ -6,10 +6,6 @@ public class BusinessProcess : BaseEntity
 
     // BusinessProcess -> Request
     public virtual ICollection<Request> Requests { get; set; }
-
-    // BusinessProcess -> System
-    // public int SystemId { get; set; }
-    // public virtual System System { get; set; }
     
     // BusinessProcess -> SystemObject
     public int SystemObjectId { get; set; }

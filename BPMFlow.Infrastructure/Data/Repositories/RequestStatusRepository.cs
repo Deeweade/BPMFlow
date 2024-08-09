@@ -26,12 +26,12 @@ public class RequestStatusRepository : IRequestStatusRepository
                 .FirstOrDefaultAsync(x => x.Id == requestStatusId);
     }
 
-    public async Task<IEnumerable<RequestStatusDto>> GetStatusesByRequestId(int requestId)
+    public async Task<IEnumerable<RequestStatusDto>> GetStatusesByRequestStatusId(int requestStatusId)
     {
         return await _bpmFlowDbContext.RequestStatuses
                 .AsNoTracking()
                 .ProjectTo<RequestStatusDto>(_mapper.ConfigurationProvider)
-                .Where(x => x.RequestId == requestId)
+                .Where(x => x.Id == requestStatusId)
                 .ToListAsync();
     }
 

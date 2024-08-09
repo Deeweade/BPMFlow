@@ -48,7 +48,7 @@ public class ObjectRequestRepository : IObjectRequestRepository
     {
         var objectRequests = await _bpmFlowContext.ObjectRequests
                                 .AsNoTracking()
-                                .Where(x => x.Request.BusinessProcess.SystemObjectId == (int)SystemObjects.Employee)
+                                .Where(x => x.RequestStatus.Request.BusinessProcess.SystemObjectId == (int)SystemObjects.Employee)
                                 .ToListAsync();
 
         return _mapper.Map<IEnumerable<ObjectRequestDto>>(objectRequests);
@@ -63,17 +63,17 @@ public class ObjectRequestRepository : IObjectRequestRepository
 
         if (filterDto.RequestId.HasValue && filterDto.RequestId.Value != 0)
         {
-            query = query.Where(x => x.RequestId == filterDto.RequestId.Value);
+            query = query.Where(x => x.RequestStatus.RequestId == filterDto.RequestId.Value);
         }
 
         if (filterDto.SystemId.HasValue && filterDto.SystemId.Value != 0)
         {
-            //query = query.Where(x => x.RequestStatus.Request.BusinessProcess.SystemObjectId == filterDto.SystemId);
+            query = query.Where(x => x.RequestStatus.Request.BusinessProcess.SystemObjectId == filterDto.SystemId);
         }
 
         if (filterDto.SystemObjectId.HasValue && filterDto.SystemObjectId.Value != 0)
         {
-            //query = query.Where(x => x.RequestStatus.Request.BusinessProcess.SystemObjectId == filterDto.SystemObjectId);
+            query = query.Where(x => x.RequestStatus.Request.BusinessProcess.SystemObjectId == filterDto.SystemObjectId);
         }
 
         if (filterDto.RequestStatusId.HasValue && filterDto.RequestStatusId.Value != 0)
@@ -116,7 +116,6 @@ public class ObjectRequestRepository : IObjectRequestRepository
         var request = new ObjectRequest
         {
             Code = ++maxCode,
-            RequestId = objectRequestDto.RequestId,
             RequestStatusId = (int)objectRequestDto.RequestStatusId,
             ObjectId = objectRequestDto.ObjectId,
             AuthorEmployeeId = authorId,
