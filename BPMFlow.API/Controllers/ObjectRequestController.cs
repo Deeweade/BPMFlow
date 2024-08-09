@@ -25,6 +25,18 @@ public class ObjectRequestController(IObjectRequestService orService, IRequestSt
         
         return Ok(objectRequest);
     }
+
+    [HttpGet("responsibleInByLogin")]
+    public async Task<IActionResult> GetResponsibleInByLogin()
+    {
+        var login = User.Identity?.Name;
+
+        ArgumentNullException.ThrowIfNull(login);
+
+        var objectRequests = await _orService.GetResponsibleInByLogin(login);
+
+        return Ok(objectRequests);
+    }
     
     [HttpPost("create")]
     public async Task<IActionResult> Create(ObjectRequestView objectRequestView)

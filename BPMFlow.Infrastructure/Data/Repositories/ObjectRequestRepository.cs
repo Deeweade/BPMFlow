@@ -44,6 +44,17 @@ public class ObjectRequestRepository : IObjectRequestRepository
                     || x.EntityStatusId == (int)EntityStatuses.CompletedAndApproved));
     }
 
+    public async Task<IEnumerable<ObjectRequestDto>> GetResponsibleInByEmployeeId(int employeeId)
+    {
+        ArgumentNullException.ThrowIfNull(employeeId);
+
+        return await _bpmFlowContext.ObjectRequests
+                .AsNoTracking()
+                .ProjectTo<ObjectRequestDto>(_mapper.ConfigurationProvider)
+                .Where(x => x.ResponsibleEmployeeId == employeeId)
+                .ToListAsync();
+    }
+
     public async Task<IEnumerable<ObjectRequestDto>> GetBySystemObjectIdEmployee()
     {
         var objectRequests = await _bpmFlowContext.ObjectRequests
