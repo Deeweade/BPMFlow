@@ -10,16 +10,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BPMFlow.Infrastructure.Data.Repositories;
 
-public class ObjectRequestRepository : IObjectRequestRepository
+public class ObjectRequestRepository(BPMFlowDbContext bpmFlowContext, IMapper mapper) : IObjectRequestRepository
 {
-    private readonly BPMFlowDbContext _bpmFlowContext;
-    private readonly IMapper _mapper;
-
-    public ObjectRequestRepository(BPMFlowDbContext bpmFlowContext, IMapper mapper)
-    {
-        _bpmFlowContext = bpmFlowContext;
-        _mapper = mapper;
-    }
+    private readonly BPMFlowDbContext _bpmFlowContext = bpmFlowContext;
+    private readonly IMapper _mapper = mapper;
 
     public async Task<ObjectRequestDto> GetById(int requestId)
     {
@@ -48,7 +42,7 @@ public class ObjectRequestRepository : IObjectRequestRepository
     {
         var objectRequests = await _bpmFlowContext.ObjectRequests
                                 .AsNoTracking()
-                                .Where(x => x.RequestStatus.Request.BusinessProcess.SystemObjectId == (int)SystemObjects.Employee)
+                                .Where(x => x.RequestStatusTransition.Request.BusinessProcess.SystemObjectId == (int)SystemObjects.Employee)
                                 .ToListAsync();
 
         return _mapper.Map<IEnumerable<ObjectRequestDto>>(objectRequests);
@@ -63,17 +57,17 @@ public class ObjectRequestRepository : IObjectRequestRepository
 
         if (filterDto.RequestId.HasValue && filterDto.RequestId.Value != 0)
         {
-            query = query.Where(x => x.RequestStatus.RequestId == filterDto.RequestId.Value);
+            query = query.Where(x => x.RequestStatusTransition.RequestId == filterDto.RequestId.Value);
         }
 
         if (filterDto.SystemId.HasValue && filterDto.SystemId.Value != 0)
         {
-            query = query.Where(x => x.RequestStatus.Request.BusinessProcess.SystemObjectId == filterDto.SystemId);
+            query = query.Where(x => x.RequestStatusTransition.Request.BusinessProcess.SystemObjectId == filterDto.SystemId);
         }
 
         if (filterDto.SystemObjectId.HasValue && filterDto.SystemObjectId.Value != 0)
         {
-            query = query.Where(x => x.RequestStatus.Request.BusinessProcess.SystemObjectId == filterDto.SystemObjectId);
+            query = query.Where(x => x.RequestStatusTransition.Request.BusinessProcess.SystemObjectId == filterDto.SystemObjectId);
         }
 
         if (filterDto.RequestStatusId.HasValue && filterDto.RequestStatusId.Value != 0)
@@ -123,9 +117,7 @@ public class ObjectRequestRepository : IObjectRequestRepository
             DateStart = DateTime.Now,
             DateEnd = DateTime.MaxValue,
             IsActive = true,
-            EntityStatusId = (int)EntityStatuses.ActiveDraft,
-            RequestStatusTransitionId = 1,
-            ResponsibleEmployeeId = 1
+            EntityStatusId = (int)EntityStatuses.ActiveDraft
         };
 
         _bpmFlowContext.ObjectRequests.Add(request);

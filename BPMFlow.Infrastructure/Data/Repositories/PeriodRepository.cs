@@ -7,16 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BPMFlow.Infrastructure.Data.Repositories;
 
-public class PeriodRepository : IPeriodRepository
+public class PeriodRepository(PerfManagement1DbContext perfManagement1DbContext, IMapper mapper) : IPeriodRepository
 {
-     private readonly PerfManagement1DbContext _perfManagement1DbContext;
-    private readonly IMapper _mapper;
-    
-    public PeriodRepository(PerfManagement1DbContext perfManagement1DbContext, IMapper mapper)
-    {
-        _perfManagement1DbContext = perfManagement1DbContext;
-        _mapper = mapper;
-    }
+     private readonly PerfManagement1DbContext _perfManagement1DbContext = perfManagement1DbContext;
+    private readonly IMapper _mapper = mapper;
 
     public async Task<PeriodDto> GetById(int periodId)
     {

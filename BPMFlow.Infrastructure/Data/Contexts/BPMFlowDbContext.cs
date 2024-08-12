@@ -29,5 +29,4 @@ public class BPMFlowDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
     }
-
 }

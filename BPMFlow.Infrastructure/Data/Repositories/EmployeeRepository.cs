@@ -7,15 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BPMFlow.Infrastructure.Data.Repositories;
 
-public class EmployeeRepository : IEmployeeRepository
+public class EmployeeRepository(PerfManagement1DbContext perfManagement1DbContext, IMapper mapper) : IEmployeeRepository
 {
-    private readonly PerfManagement1DbContext _perfManagement1DbContext;
-    private readonly IMapper _mapper;
-    public EmployeeRepository(PerfManagement1DbContext perfManagement1DbContext, IMapper mapper)
-    {
-        _perfManagement1DbContext = perfManagement1DbContext;
-        _mapper = mapper;
-    }
+    private readonly PerfManagement1DbContext _perfManagement1DbContext = perfManagement1DbContext;
+    private readonly IMapper _mapper = mapper;
 
     public async Task<EmployeeDto> GetById(int employeeId)
     {

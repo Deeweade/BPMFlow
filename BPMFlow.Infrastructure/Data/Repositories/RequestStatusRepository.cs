@@ -8,16 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BPMFlow.Infrastructure.Data.Repositories;
 
-public class RequestStatusRepository : IRequestStatusRepository
+public class RequestStatusRepository(BPMFlowDbContext bpmFlowDbContext, IMapper mapper) : IRequestStatusRepository
 {
-    private readonly BPMFlowDbContext _bpmFlowDbContext;
-    private readonly IMapper _mapper;
-
-    public RequestStatusRepository(BPMFlowDbContext bpmFlowDbContext, IMapper mapper)
-    {
-        _bpmFlowDbContext = bpmFlowDbContext;
-        _mapper = mapper;
-    }
+    private readonly BPMFlowDbContext _bpmFlowDbContext = bpmFlowDbContext;
+    private readonly IMapper _mapper = mapper;
 
     public async Task<RequestStatusDto> GetById(int requestStatusId)
     {
@@ -61,5 +55,15 @@ public class RequestStatusRepository : IRequestStatusRepository
                 .ProjectTo<RequestStatusDto>(_mapper.ConfigurationProvider)
                 .Where(x => x.Id == requestStatusId)
                 .ToListAsync();
+    }
+
+    public async Task<int> GetRequestId(int requestStatusId)
+    {
+        return await _bpmFlowDbContext.RequestStatuses
+                .AsNoTracking()
+                .ProjectTo<RequestStatusDto>(_mapper.ConfigurationProvider)
+                .Where(x => x.Id == requestStatusId)
+                .Select(x => x.RequestId)
+                .FirstOrDefaultAsync();
     }
 }

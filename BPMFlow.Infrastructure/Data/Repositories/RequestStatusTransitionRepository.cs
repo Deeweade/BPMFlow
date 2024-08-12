@@ -8,16 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BPMFlow.Infrastructure.Data.Repositories;
 
-public class RequestStatusTransitionRepository : IRequestStatusTransitionRepository
+public class RequestStatusTransitionRepository(BPMFlowDbContext bPMFlowDbContext, IMapper mapper) : IRequestStatusTransitionRepository
 {
-    private readonly BPMFlowDbContext _bpmFlowContext;
-    private readonly IMapper _mapper;
-
-    public RequestStatusTransitionRepository(BPMFlowDbContext bPMFlowDbContext, IMapper mapper)
-    {
-        _bpmFlowContext = bPMFlowDbContext;
-        _mapper = mapper;
-    }
+    private readonly BPMFlowDbContext _bpmFlowContext = bPMFlowDbContext;
+    private readonly IMapper _mapper = mapper;
 
     public async Task<RequestStatusTransitionDto> GetById(int requestStatusTransitionId)
     {

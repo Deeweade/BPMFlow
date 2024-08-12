@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BPMFlow.API.Migrations
 {
     [DbContext(typeof(BPMFlowDbContext))]
-    [Migration("20240809111846_InitialCreate")]
+    [Migration("20240812092801_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -78,7 +78,7 @@ namespace BPMFlow.API.Migrations
                     b.Property<int>("PeriodId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RequestStatusId")
+                    b.Property<int>("RequestStatusId")
                         .HasColumnType("int");
 
                     b.Property<int>("RequestStatusTransitionId")
@@ -257,17 +257,17 @@ namespace BPMFlow.API.Migrations
 
             modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.ObjectRequest", b =>
                 {
-                    b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatus", "RequestStatus")
+                    b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatus", null)
                         .WithMany("ObjectRequests")
-                        .HasForeignKey("RequestStatusId");
+                        .HasForeignKey("RequestStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatusTransition", "RequestStatusTransition")
                         .WithMany("ObjectRequests")
                         .HasForeignKey("RequestStatusTransitionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("RequestStatus");
 
                     b.Navigation("RequestStatusTransition");
                 });

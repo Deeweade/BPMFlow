@@ -30,9 +30,11 @@ public class ObjectRequestService : IObjectRequestService
 
         var authorEmployee = await _unitOfWork.EmployeeRepository.GetByUserLogin(login);
 
+        var requestId = await _unitOfWork.RequestStatusRepository.GetRequestId((int)objectRequestView.RequestStatusId);
+
         if (objectRequestView.RequestStatusId == null || objectRequestView.RequestStatusId == 0)
         {
-            var statuses = await _unitOfWork.RequestStatusRepository.GetStatusesByRequestId(objectRequestView.RequestId);
+            var statuses = await _unitOfWork.RequestStatusRepository.GetStatusesByRequestId(requestId);
 
             if (statuses.Any())
             {
@@ -44,7 +46,6 @@ public class ObjectRequestService : IObjectRequestService
                     var newObjectRequest = new ObjectRequestDto
                     {
                         ResponsibleEmployeeId = objectRequestDto.ResponsibleEmployeeId,
-                        RequestId = objectRequestDto.RequestId,
                         RequestStatusId = status.Id,
                         ObjectId = objectRequestDto.ObjectId,
                         AuthorEmployeeId = authorEmployee.Id,
@@ -79,7 +80,6 @@ public class ObjectRequestService : IObjectRequestService
                     ObjectId = objectId,
                     AuthorEmployeeId = objectRequest.AuthorEmployeeId,
                     ResponsibleEmployeeId = objectRequest.ResponsibleEmployeeId,
-                    RequestId = objectRequest.RequestId,
                     RequestStatusId = objectRequest.RequestStatusId,
                     PeriodId = objectRequest.PeriodId,
                     EntityStatusId = objectRequest.EntityStatusId
