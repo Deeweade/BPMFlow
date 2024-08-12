@@ -10,11 +10,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BPMFlow.Infrastructure.Data.Repositories;
 
-/// <summary>
-/// В методе Create RequestStatusTransitionId = 1 и ResponsibleEmployeeId = 1 для возможности тестирования
-/// Ожидается, что будут созданы методы для их вычисления
-/// </summary>
-
 public class ObjectRequestRepository(BPMFlowDbContext bpmFlowContext, IMapper mapper) : IObjectRequestRepository
 {
     private readonly BPMFlowDbContext _bpmFlowContext = bpmFlowContext;
@@ -124,8 +119,6 @@ public class ObjectRequestRepository(BPMFlowDbContext bpmFlowContext, IMapper ma
             DateEnd = DateTime.MaxValue,
             IsActive = true,
             EntityStatusId = (int)EntityStatuses.ActiveDraft,
-            RequestStatusTransitionId = 1,
-            ResponsibleEmployeeId = 1
         };
 
         _bpmFlowContext.ObjectRequests.Add(request);
