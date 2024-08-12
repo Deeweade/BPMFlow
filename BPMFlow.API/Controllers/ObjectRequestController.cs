@@ -25,6 +25,28 @@ public class ObjectRequestController(IObjectRequestService orService, IRequestSt
         
         return Ok(objectRequest);
     }
+
+    [HttpGet("responsibleInByLogin")]
+    public async Task<IActionResult> GetResponsibleInByLogin()
+    {
+        var login = User.Identity?.Name;
+
+        ArgumentNullException.ThrowIfNull(login);
+
+        var objectRequests = await _orService.GetResponsibleInByLogin(login);
+
+        return Ok(objectRequests);
+    }
+
+    [HttpPost("getFiltered")]
+    public async Task<IActionResult> GetFiltered(ObjectRequestsFilterView filter)
+    {
+        ArgumentNullException.ThrowIfNull(filter);
+
+        var requests = await _orService.GetByFilter(filter);
+
+        return Ok(requests);
+    }
     
     [HttpPost("create")]
     public async Task<IActionResult> Create(ObjectRequestView objectRequestView)
@@ -48,16 +70,6 @@ public class ObjectRequestController(IObjectRequestService orService, IRequestSt
         var codes = await _orService.BulkCreate(view.EmployeeIds, view.ObjectRequests, login);
 
         return Ok(codes);
-    }
-
-    [HttpPost("getFiltered")]
-    public async Task<IActionResult> GetFiltered(ObjectRequestsFilterView filter)
-    {
-        ArgumentNullException.ThrowIfNull(filter);
-
-        var requests = await _orService.GetByFilter(filter);
-
-        return Ok(requests);
     }
 
     [HttpPost("changeStatus")]
