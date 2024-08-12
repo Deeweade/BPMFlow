@@ -30,9 +30,9 @@ public class RequestStatusService(IUnitOfWork unitOfWork, IMapper mapper) : IReq
 
         foreach (var parallelRequest in parallelRequests)
         {
-            var statuses = await _unitOfWork.RequestStatusRepository.GetStatusesByCode((int)parallelRequest.RequestStatusId);
+            var status = await _unitOfWork.RequestStatusRepository.GetStatusesByRequestStatusId((int)parallelRequest.RequestStatusId);
 
-            allStatuses.AddRange(statuses);
+            allStatuses.Add(status);
         }
 
         return _mapper.Map<IEnumerable<RequestStatusView>>(allStatuses);
