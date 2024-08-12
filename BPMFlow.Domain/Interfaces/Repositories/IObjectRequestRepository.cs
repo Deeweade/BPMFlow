@@ -9,7 +9,7 @@ public interface IObjectRequestRepository
 {
     Task<ObjectRequestDto> GetById(int requestId);
     Task<ObjectRequestDto> GetActiveByCode(int code);
-    Task<IEnumerable<ObjectRequestDto>> GetResponsibleInByEmployeeId(int employeeId);
+    Task<IEnumerable<ObjectRequestDto>> GetResponsibleByEmployeeId(int employeeId);
     Task<IEnumerable<ObjectRequestDto>> GetBySystemObjectIdEmployee();
     Task<IEnumerable<ObjectRequestDto>> GetByFilter(ObjectRequestsFilterDto filterDto);
     Task<ObjectRequestDto> Create(ObjectRequestDto objectRequestDto);

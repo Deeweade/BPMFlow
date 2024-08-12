@@ -29,13 +29,13 @@ public class ObjectRequestService : IObjectRequestService
         return _mapper.Map<ObjectRequestView>(objectRequest);
     }
 
-    public async Task<IEnumerable<ObjectRequestView>> GetResponsibleInByLogin(string login)
+    public async Task<IEnumerable<ObjectRequestView>> GetResponsibleByLogin(string login)
     {
         ArgumentNullException.ThrowIfNull(login);
 
-        var employeeId = await _unitOfWork.EmployeeRepository.GetByUserLogin(login);
+        var employee = await _unitOfWork.EmployeeRepository.GetByUserLogin(login);
 
-        var objectRequests = await _unitOfWork.ObjectRequestRepository.GetResponsibleInByEmployeeId(employeeId.Id);
+        var objectRequests = await _unitOfWork.ObjectRequestRepository.GetResponsibleByEmployeeId(employee.Id);
 
         return _mapper.Map<IEnumerable<ObjectRequestView>>(objectRequests);
     }
