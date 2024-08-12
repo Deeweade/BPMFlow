@@ -162,9 +162,9 @@ namespace BPMFlow.API.Migrations
                     ObjectId = table.Column<int>(type: "int", nullable: false),
                     AuthorEmployeeId = table.Column<int>(type: "int", nullable: false),
                     ResponsibleEmployeeId = table.Column<int>(type: "int", nullable: false),
+                    RequestStatusId = table.Column<int>(type: "int", nullable: false),
                     PeriodId = table.Column<int>(type: "int", nullable: false),
                     EntityStatusId = table.Column<int>(type: "int", nullable: false),
-                    RequestStatusId = table.Column<int>(type: "int", nullable: false),
                     RequestStatusTransitionId = table.Column<int>(type: "int", nullable: false),
                     Code = table.Column<int>(type: "int", nullable: false),
                     DateStart = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -178,8 +178,12 @@ namespace BPMFlow.API.Migrations
                         name: "FK_ObjectRequests_RequestStatusTransitions_RequestStatusTransitionId",
                         column: x => x.RequestStatusTransitionId,
                         principalTable: "RequestStatusTransitions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ObjectRequests_RequestStatuses_RequestStatusId",
+                        column: x => x.RequestStatusId,
+                        principalTable: "RequestStatuses",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(

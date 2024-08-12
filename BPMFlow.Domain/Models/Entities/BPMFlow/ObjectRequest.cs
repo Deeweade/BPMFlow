@@ -10,6 +10,8 @@ public class ObjectRequest : HistoryEntity
     public int EntityStatusId { get; set; }
     
     // ObjectRequest -> RequestStatusTransition
+
+    public virtual RequestStatus RequestStatus { get; set; }
     public int RequestStatusTransitionId { get; set; }
     public virtual RequestStatusTransition RequestStatusTransition { get; set; }
 }

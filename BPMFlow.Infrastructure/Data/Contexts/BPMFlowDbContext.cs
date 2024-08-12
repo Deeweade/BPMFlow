@@ -27,6 +27,18 @@ public class BPMFlowDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ObjectRequest>()
+            .HasOne(or => or.RequestStatus)
+            .WithMany(rs => rs.ObjectRequests)
+            .HasForeignKey(or => or.RequestStatusId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<ObjectRequest>()
+            .HasOne(or => or.RequestStatusTransition)
+            .WithMany(rs => rs.ObjectRequests)
+            .HasForeignKey(or => or.RequestStatusTransitionId)
+            .OnDelete(DeleteBehavior.NoAction);
+        
         base.OnModelCreating(modelBuilder);
     }
 }

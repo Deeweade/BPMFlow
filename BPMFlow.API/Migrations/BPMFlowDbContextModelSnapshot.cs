@@ -254,17 +254,19 @@ namespace BPMFlow.API.Migrations
 
             modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.ObjectRequest", b =>
                 {
-                    b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatus", null)
+                    b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatus", "RequestStatus")
                         .WithMany("ObjectRequests")
                         .HasForeignKey("RequestStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatusTransition", "RequestStatusTransition")
                         .WithMany("ObjectRequests")
                         .HasForeignKey("RequestStatusTransitionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.Navigation("RequestStatus");
 
                     b.Navigation("RequestStatusTransition");
                 });
