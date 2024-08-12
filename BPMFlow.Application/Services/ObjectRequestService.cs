@@ -10,17 +10,70 @@ using BPMFlow.Domain.Models.Enums;
 
 namespace BPMFlow.Application.Services;
 
-public class ObjectRequestService : IObjectRequestService
+public class ObjectRequestService(IUnitOfWork unitOfWork, IMapper mapper) : IObjectRequestService
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly IMapper _mapper = mapper;
 
-    public ObjectRequestService(IUnitOfWork unitOfWork, IMapper mapper)
+    public async Task<ObjectRequestView> GetActiveByCode(int code)
     {
-        _unitOfWork = unitOfWork;
-        _mapper = mapper;
+        ArgumentNullException.ThrowIfNull(code);
+
+        var objectRequest = await _unitOfWork.ObjectRequestRepository.GetActiveByCode(code);
+
+        return _mapper.Map<ObjectRequestView>(objectRequest);
     }
 
+    public async Task<IEnumerable<ObjectRequestView>> GetResponsibleInByLogin(string login)
+    {
+        ArgumentNullException.ThrowIfNull(login);
+
+        var employeeId = await _unitOfWork.EmployeeRepository.GetByUserLogin(login);
+
+        var objectRequests = await _unitOfWork.ObjectRequestRepository.GetResponsibleInByEmployeeId(employeeId.Id);
+
+        return _mapper.Map<IEnumerable<ObjectRequestView>>(objectRequests);
+    }
+
+    public async Task<IEnumerable<ObjectRequestView>> GetByFilter(ObjectRequestsFilterView filterView)
+    {
+        ArgumentNullException.ThrowIfNull(filterView);
+
+        var filterDto = _mapper.Map<ObjectRequestsFilterDto>(filterView);
+
+        if (filterDto.PeriodId.HasValue && filterDto.PeriodId.Value != 0)
+        {
+            var period =  await _unitOfWork.PeriodRepository.GetById(filterDto.PeriodId!.Value);
+            
+            if (period is not null && period.IsYear == 1)
+            {
+                var childPeriodIds = (await _unitOfWork.PeriodRepository.GetChildPeriodIds(filterDto.PeriodId.Value)).ToList();
+
+                filterDto.PeriodIds = childPeriodIds;
+                
+                filterDto.PeriodIds.Add(filterDto.PeriodId.Value);
+            }
+        }
+
+        if (filterDto.WithSubordinates)
+        {
+            var requestByEmployee = await _unitOfWork.ObjectRequestRepository.GetBySystemObjectIdEmployee();
+
+            if (requestByEmployee.Any())
+            {
+                var objectIds = (await _unitOfWork.EmployeeRepository.GetSubordinateEmployeeIds(filterDto.ObjectId!.Value)).ToList();
+
+                filterDto.SubordinateEmployeeIds = objectIds;
+                
+                filterDto.SubordinateEmployeeIds.Add(filterDto.ObjectId!.Value);
+            }
+        }
+
+        var queries = await _unitOfWork.ObjectRequestRepository.GetByFilter(filterDto);
+
+        return _mapper.Map<IEnumerable<ObjectRequestView>>(queries);
+    }
+    
     public async Task<ObjectRequestView> Create(ObjectRequestView objectRequestView, string login)
     {
         ArgumentNullException.ThrowIfNull(objectRequestView);
@@ -97,53 +150,6 @@ public class ObjectRequestService : IObjectRequestService
         return codes;
     }
 
-    public async Task<ObjectRequestView> GetActiveByCode(int code)
-    {
-        ArgumentNullException.ThrowIfNull(code);
-
-        var objectRequest = await _unitOfWork.ObjectRequestRepository.GetActiveByCode(code);
-
-        return _mapper.Map<ObjectRequestView>(objectRequest);
-    }
-
-    public async Task<IEnumerable<ObjectRequestView>> GetByFilter(ObjectRequestsFilterView filterView)
-    {
-        ArgumentNullException.ThrowIfNull(filterView);
-
-        var filterDto = _mapper.Map<ObjectRequestsFilterDto>(filterView);
-
-        if (filterDto.PeriodId.HasValue && filterDto.PeriodId.Value != 0)
-        {
-            var period =  await _unitOfWork.PeriodRepository.GetById(filterDto.PeriodId!.Value);
-            
-            if (period is not null && period.IsYear == 1)
-            {
-                var childPeriodIds = (await _unitOfWork.PeriodRepository.GetChildPeriodIds(filterDto.PeriodId.Value)).ToList();
-
-                filterDto.PeriodIds = childPeriodIds;
-                
-                filterDto.PeriodIds.Add(filterDto.PeriodId.Value);
-            }
-        }
-
-        if (filterDto.WithSubordinates)
-        {
-            var requestByEmployee = await _unitOfWork.ObjectRequestRepository.GetBySystemObjectIdEmployee();
-
-            if (requestByEmployee.Any())
-            {
-                var objectIds = (await _unitOfWork.EmployeeRepository.GetSubordinateEmployeeIds(filterDto.ObjectId!.Value)).ToList();
-
-                filterDto.SubordinateEmployeeIds = objectIds;
-                
-                filterDto.SubordinateEmployeeIds.Add(filterDto.ObjectId!.Value);
-            }
-        }
-
-        var queries = await _unitOfWork.ObjectRequestRepository.GetByFilter(filterDto);
-
-        return _mapper.Map<IEnumerable<ObjectRequestView>>(queries);
-    }
 
     public async Task<ObjectRequestView> ChangeStatus(ObjectRequestView objectRequestView, int nextStatusOrder)
     {

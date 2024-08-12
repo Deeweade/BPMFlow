@@ -10,16 +10,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BPMFlow.Infrastructure.Data.Repositories;
 
-public class ObjectRequestRepository(BPMFlowDbContext bpmFlowContext, IMapper mapper) : IObjectRequestRepository
+public class ObjectRequestRepository(BPMFlowDbContext bpmFlowDbContext, IMapper mapper) : IObjectRequestRepository
 {
-    private readonly BPMFlowDbContext _bpmFlowContext = bpmFlowContext;
+    private readonly BPMFlowDbContext _bpmFlowDbContext = bpmFlowDbContext;
     private readonly IMapper _mapper = mapper;
 
     public async Task<ObjectRequestDto> GetById(int requestId)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(requestId);
 
-        return await _bpmFlowContext.ObjectRequests
+        return await _bpmFlowDbContext.ObjectRequests
             .AsNoTracking()
             .ProjectTo<ObjectRequestDto>(_mapper.ConfigurationProvider)
             .FirstOrDefaultAsync(x => x.Id == requestId);
@@ -29,7 +29,7 @@ public class ObjectRequestRepository(BPMFlowDbContext bpmFlowContext, IMapper ma
     {
         ArgumentNullException.ThrowIfNull(code);
 
-        return await _bpmFlowContext.ObjectRequests
+        return await _bpmFlowDbContext.ObjectRequests
             .AsNoTracking()
             .ProjectTo<ObjectRequestDto>(_mapper.ConfigurationProvider)
             .FirstOrDefaultAsync(x => x.Code == code 
@@ -38,9 +38,20 @@ public class ObjectRequestRepository(BPMFlowDbContext bpmFlowContext, IMapper ma
                     || x.EntityStatusId == (int)EntityStatuses.CompletedAndApproved));
     }
 
+    public async Task<IEnumerable<ObjectRequestDto>> GetResponsibleInByEmployeeId(int employeeId)
+    {
+        ArgumentNullException.ThrowIfNull(employeeId);
+
+        return await _bpmFlowDbContext.ObjectRequests
+                .AsNoTracking()
+                .ProjectTo<ObjectRequestDto>(_mapper.ConfigurationProvider)
+                .Where(x => x.ResponsibleEmployeeId == employeeId)
+                .ToListAsync();
+    }
+
     public async Task<IEnumerable<ObjectRequestDto>> GetBySystemObjectIdEmployee()
     {
-        var objectRequests = await _bpmFlowContext.ObjectRequests
+        var objectRequests = await _bpmFlowDbContext.ObjectRequests
                                 .AsNoTracking()
                                 .Where(x => x.RequestStatusTransition.Request.BusinessProcess.SystemObjectId == (int)SystemObjects.Employee)
                                 .ToListAsync();
@@ -52,7 +63,7 @@ public class ObjectRequestRepository(BPMFlowDbContext bpmFlowContext, IMapper ma
     {
         ArgumentNullException.ThrowIfNull(filterDto);
 
-        var query = _bpmFlowContext.ObjectRequests
+        var query = _bpmFlowDbContext.ObjectRequests
             .AsNoTracking();
 
         if (filterDto.RequestId.HasValue && filterDto.RequestId.Value != 0)
@@ -103,8 +114,8 @@ public class ObjectRequestRepository(BPMFlowDbContext bpmFlowContext, IMapper ma
     {
         ArgumentNullException.ThrowIfNull(objectRequestDto);
 
-        var maxCode = await _bpmFlowContext.ObjectRequests.AnyAsync()
-            ? await _bpmFlowContext.ObjectRequests.MaxAsync(x => x.Code)
+        var maxCode = await _bpmFlowDbContext.ObjectRequests.AnyAsync()
+            ? await _bpmFlowDbContext.ObjectRequests.MaxAsync(x => x.Code)
             : 0;
 
         var request = new ObjectRequest
@@ -121,9 +132,9 @@ public class ObjectRequestRepository(BPMFlowDbContext bpmFlowContext, IMapper ma
             EntityStatusId = (int)EntityStatuses.ActiveDraft,
         };
 
-        _bpmFlowContext.ObjectRequests.Add(request);
+        _bpmFlowDbContext.ObjectRequests.Add(request);
 
-        await _bpmFlowContext.SaveChangesAsync();
+        await _bpmFlowDbContext.SaveChangesAsync();
 
         return await GetById(request.Id);
     }
@@ -132,21 +143,21 @@ public class ObjectRequestRepository(BPMFlowDbContext bpmFlowContext, IMapper ma
     {
         ArgumentNullException.ThrowIfNull(objectRequestDto);
 
-        var entity = await _bpmFlowContext.ObjectRequests
+        var entity = await _bpmFlowDbContext.ObjectRequests
                     .AsNoTracking()
                     .FirstOrDefaultAsync(or => or.Id == objectRequestDto.Id);
 
         ArgumentNullException.ThrowIfNull(entity);
             
         _mapper.Map(objectRequestDto, entity);
-        _bpmFlowContext.ObjectRequests.Update(entity);
+        _bpmFlowDbContext.ObjectRequests.Update(entity);
     
-        await _bpmFlowContext.SaveChangesAsync();
+        await _bpmFlowDbContext.SaveChangesAsync();
     }
 
     public async Task<IEnumerable<ObjectRequestDto>> GetParallelRequests(int code, int entityStatusId)
     {
-        return await _bpmFlowContext.ObjectRequests
+        return await _bpmFlowDbContext.ObjectRequests
                 .AsNoTracking()
                 .ProjectTo<ObjectRequestDto>(_mapper.ConfigurationProvider)
                 .Where(x => x.Code == code && x.EntityStatusId == entityStatusId)
@@ -157,7 +168,7 @@ public class ObjectRequestRepository(BPMFlowDbContext bpmFlowContext, IMapper ma
     {
         var entity = _mapper.Map<ObjectRequest>(objectRequestDto);
         
-        await _bpmFlowContext.ObjectRequests.AddAsync(entity);
-        await _bpmFlowContext.SaveChangesAsync();
+        await _bpmFlowDbContext.ObjectRequests.AddAsync(entity);
+        await _bpmFlowDbContext.SaveChangesAsync();
     }
 }
