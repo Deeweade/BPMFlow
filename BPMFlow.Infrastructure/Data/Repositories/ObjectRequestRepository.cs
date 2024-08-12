@@ -44,7 +44,7 @@ public class ObjectRequestRepository : IObjectRequestRepository
                     || x.EntityStatusId == (int)EntityStatuses.CompletedAndApproved));
     }
 
-    public async Task<IEnumerable<ObjectRequestDto>> GetResponsibleByEmployeeId(int employeeId)
+    public async Task<IEnumerable<ObjectRequestDto>> GetByResponsibleEmployeeId(int employeeId)
     {
         ArgumentNullException.ThrowIfNull(employeeId);
 
