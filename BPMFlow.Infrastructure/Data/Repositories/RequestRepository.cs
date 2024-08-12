@@ -24,7 +24,7 @@ public class RequestRepository(BPMFlowDbContext bpmFlowDbContext, IMapper mapper
         if (filterDto.EmployeeId.HasValue)
         {
             query = query.Where(r => r.ObjectRequests.Any(or => 
-                or.AuthorEmployeeId == filterDto.EmployeeId || 
+                or.ObjectId == filterDto.EmployeeId || 
                 or.ResponsibleEmployeeId == filterDto.EmployeeId));
         }
 
@@ -35,8 +35,8 @@ public class RequestRepository(BPMFlowDbContext bpmFlowDbContext, IMapper mapper
 
         if (filterDto.SubordinateEmployeeIds.Count != 0)
         {
-            query = query.Where(r => r.ObjectRequests.Any(or => filterDto.SubordinateEmployeeIds.Contains(or.AuthorEmployeeId)
-                                                            || filterDto.SubordinateEmployeeIds.Contains(or.ResponsibleEmployeeId)));
+            query = query.Where(r => r.ObjectRequests.Any(or => filterDto.SubordinateEmployeeIds.Contains(or.ObjectId)
+                                                        || filterDto.SubordinateEmployeeIds.Contains(or.ResponsibleEmployeeId)));
         }
 
         query = query.Where(r => r.ObjectRequests.Any(or => or.IsActive && 

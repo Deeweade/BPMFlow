@@ -18,9 +18,10 @@ public class RequestService(IUnitOfWork unitOfWork, IMapper mapper) : IRequestSe
 
         var filterDto = _mapper.Map<RequestFilterDto>(filterView);
 
+        var requestByEmployee = await _unitOfWork.ObjectRequestRepository.GetBySystemObjectIdEmployee();
+        
         if (filterDto.WithSubordinates && filterDto.EmployeeId.HasValue)
         {
-            var requestByEmployee = await _unitOfWork.ObjectRequestRepository.GetBySystemObjectIdEmployee();
 
             if (requestByEmployee.Any())
             {
