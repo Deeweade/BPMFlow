@@ -9,16 +9,10 @@ using BPMFlow.Domain.Models.Enums;
 
 namespace BPMFlow.Application.Services;
 
-public class ObjectRequestService : IObjectRequestService
+public class ObjectRequestService(IUnitOfWork unitOfWork, IMapper mapper) : IObjectRequestService
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
-
-    public ObjectRequestService(IUnitOfWork unitOfWork, IMapper mapper)
-    {
-        _unitOfWork = unitOfWork;
-        _mapper = mapper;
-    }
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly IMapper _mapper = mapper;
 
     public async Task<ObjectRequestView> GetActiveByCode(int code)
     {
@@ -78,6 +72,7 @@ public class ObjectRequestService : IObjectRequestService
 
         return _mapper.Map<IEnumerable<ObjectRequestView>>(queries);
     }
+    
     public async Task<ObjectRequestView> Create(ObjectRequestView objectRequestView, string login)
     {
         ArgumentNullException.ThrowIfNull(objectRequestView);
