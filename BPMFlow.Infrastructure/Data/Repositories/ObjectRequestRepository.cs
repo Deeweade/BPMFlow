@@ -10,6 +10,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BPMFlow.Infrastructure.Data.Repositories;
 
+/// <summary>
+/// В методе Create RequestStatusTransitionId = 1 и ResponsibleEmployeeId = 1 для возможности тестирования
+/// Ожидается, что будут созданы методы для их вычисления
+/// </summary>
+
 public class ObjectRequestRepository(BPMFlowDbContext bpmFlowContext, IMapper mapper) : IObjectRequestRepository
 {
     private readonly BPMFlowDbContext _bpmFlowContext = bpmFlowContext;
@@ -57,17 +62,17 @@ public class ObjectRequestRepository(BPMFlowDbContext bpmFlowContext, IMapper ma
 
         if (filterDto.RequestId.HasValue && filterDto.RequestId.Value != 0)
         {
-            query = query.Where(x => x.RequestStatusTransition.RequestId == filterDto.RequestId.Value);
+            query = query.Where(x => x.RequestStatus.RequestId == filterDto.RequestId.Value);
         }
 
         if (filterDto.SystemId.HasValue && filterDto.SystemId.Value != 0)
         {
-            query = query.Where(x => x.RequestStatusTransition.Request.BusinessProcess.SystemObjectId == filterDto.SystemId);
+            query = query.Where(x => x.RequestStatus.Request.BusinessProcess.SystemObject.SystemId == filterDto.SystemId);
         }
 
         if (filterDto.SystemObjectId.HasValue && filterDto.SystemObjectId.Value != 0)
         {
-            query = query.Where(x => x.RequestStatusTransition.Request.BusinessProcess.SystemObjectId == filterDto.SystemObjectId);
+            query = query.Where(x => x.RequestStatus.Request.BusinessProcess.SystemObjectId == filterDto.SystemObjectId);
         }
 
         if (filterDto.RequestStatusId.HasValue && filterDto.RequestStatusId.Value != 0)
@@ -99,7 +104,7 @@ public class ObjectRequestRepository(BPMFlowDbContext bpmFlowContext, IMapper ma
         return _mapper.Map<IEnumerable<ObjectRequestDto>>(result);
     }
 
-    public async Task<ObjectRequestDto> Create(ObjectRequestDto objectRequestDto, int authorId)
+    public async Task<ObjectRequestDto> Create(ObjectRequestDto objectRequestDto)
     {
         ArgumentNullException.ThrowIfNull(objectRequestDto);
 
@@ -110,14 +115,17 @@ public class ObjectRequestRepository(BPMFlowDbContext bpmFlowContext, IMapper ma
         var request = new ObjectRequest
         {
             Code = ++maxCode,
+            RequestId = objectRequestDto.RequestId,
             RequestStatusId = (int)objectRequestDto.RequestStatusId,
             ObjectId = objectRequestDto.ObjectId,
-            AuthorEmployeeId = authorId,
+            AuthorEmployeeId = objectRequestDto.AuthorEmployeeId,
             PeriodId = objectRequestDto.PeriodId,
             DateStart = DateTime.Now,
             DateEnd = DateTime.MaxValue,
             IsActive = true,
-            EntityStatusId = (int)EntityStatuses.ActiveDraft
+            EntityStatusId = (int)EntityStatuses.ActiveDraft,
+            RequestStatusTransitionId = 1,
+            ResponsibleEmployeeId = 1
         };
 
         _bpmFlowContext.ObjectRequests.Add(request);

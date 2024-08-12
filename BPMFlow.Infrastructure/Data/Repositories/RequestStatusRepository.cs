@@ -56,14 +56,4 @@ public class RequestStatusRepository(BPMFlowDbContext bpmFlowDbContext, IMapper 
                 .Where(x => x.Id == requestStatusId)
                 .ToListAsync();
     }
-
-    public async Task<int> GetRequestId(int requestStatusId)
-    {
-        return await _bpmFlowDbContext.RequestStatuses
-                .AsNoTracking()
-                .ProjectTo<RequestStatusDto>(_mapper.ConfigurationProvider)
-                .Where(x => x.Id == requestStatusId)
-                .Select(x => x.RequestId)
-                .FirstOrDefaultAsync();
-    }
 }

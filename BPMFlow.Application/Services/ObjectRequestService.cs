@@ -1,3 +1,4 @@
+using System.Formats.Asn1;
 using AutoMapper;
 using BPMFlow.Application.Interfaces.Services;
 using BPMFlow.Application.Models.Filters;
@@ -28,13 +29,11 @@ public class ObjectRequestService : IObjectRequestService
 
         ObjectRequestDto objectRequest = null;
 
-        var authorEmployee = await _unitOfWork.EmployeeRepository.GetByUserLogin(login);
-
-        var requestId = await _unitOfWork.RequestStatusRepository.GetRequestId((int)objectRequestView.RequestStatusId);
+        objectRequest.AuthorEmployeeId = _unitOfWork.EmployeeRepository.GetByUserLogin(login).Id;
 
         if (objectRequestView.RequestStatusId == null || objectRequestView.RequestStatusId == 0)
         {
-            var statuses = await _unitOfWork.RequestStatusRepository.GetStatusesByRequestId(requestId);
+            var statuses = await _unitOfWork.RequestStatusRepository.GetStatusesByRequestId(objectRequestDto.RequestId);
 
             if (statuses.Any())
             {
@@ -46,21 +45,22 @@ public class ObjectRequestService : IObjectRequestService
                     var newObjectRequest = new ObjectRequestDto
                     {
                         ResponsibleEmployeeId = objectRequestDto.ResponsibleEmployeeId,
+                        RequestId = objectRequestDto.RequestId,
                         RequestStatusId = status.Id,
                         ObjectId = objectRequestDto.ObjectId,
-                        AuthorEmployeeId = authorEmployee.Id,
+                        AuthorEmployeeId = objectRequest.AuthorEmployeeId,
                         PeriodId = objectRequestDto.PeriodId,
                         EntityStatusId = objectRequestDto.EntityStatusId
                     };
 
-                    objectRequest = await _unitOfWork.ObjectRequestRepository.Create(newObjectRequest, authorEmployee.Id);
+                    objectRequest = await _unitOfWork.ObjectRequestRepository.Create(newObjectRequest);
                 }
             }
         }
         
         else
         {
-            objectRequest = await _unitOfWork.ObjectRequestRepository.Create(objectRequestDto, authorEmployee.Id);
+            objectRequest = await _unitOfWork.ObjectRequestRepository.Create(objectRequestDto);
         }
 
         return _mapper.Map<ObjectRequestView>(objectRequest);
@@ -80,6 +80,7 @@ public class ObjectRequestService : IObjectRequestService
                     ObjectId = objectId,
                     AuthorEmployeeId = objectRequest.AuthorEmployeeId,
                     ResponsibleEmployeeId = objectRequest.ResponsibleEmployeeId,
+                    RequestId = objectRequest.RequestId,
                     RequestStatusId = objectRequest.RequestStatusId,
                     PeriodId = objectRequest.PeriodId,
                     EntityStatusId = objectRequest.EntityStatusId

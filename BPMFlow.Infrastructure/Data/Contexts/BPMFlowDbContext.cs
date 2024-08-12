@@ -34,10 +34,17 @@ public class BPMFlowDbContext : DbContext
             .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<ObjectRequest>()
+            .HasOne(or => or.Request)
+            .WithMany(r => r.ObjectRequests)
+            .HasForeignKey(or => or.RequestId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<ObjectRequest>()
             .HasOne(or => or.RequestStatusTransition)
             .WithMany(rs => rs.ObjectRequests)
             .HasForeignKey(or => or.RequestStatusTransitionId)
             .OnDelete(DeleteBehavior.NoAction);
+
         
         base.OnModelCreating(modelBuilder);
     }
