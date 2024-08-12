@@ -5,6 +5,6 @@ namespace BPMFlow.Application.Interfaces.Services;
 
 public interface IRequestStatusService
 {
-    Task<IEnumerable<RequestStatusView>> GetStatusesByRequestStatus(int requestId);
-    Task<IEnumerable<RequestStatusView>> GetStatusesByCode(int requestStatusId);
+    Task<IEnumerable<RequestStatusView>> GetStatusesByRequestId(int requestId); 
+    Task<IEnumerable<RequestStatusView>> GetStatusesByCode(int code);
 }

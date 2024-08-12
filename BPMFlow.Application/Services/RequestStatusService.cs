@@ -6,22 +6,16 @@ using BPMFlow.Domain.Interfaces.Repositories;
 
 namespace BPMFlow.Application.Services;
 
-public class RequestStatusService : IRequestStatusService
+public class RequestStatusService(IUnitOfWork unitOfWork, IMapper mapper) : IRequestStatusService
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly IMapper _mapper = mapper;
 
-    public RequestStatusService(IUnitOfWork unitOfWork, IMapper mapper)
+    public async Task<IEnumerable<RequestStatusView>> GetStatusesByRequestId(int requestId)
     {
-        _unitOfWork = unitOfWork;
-        _mapper = mapper;
-    }
+        ArgumentNullException.ThrowIfNull(requestId);
 
-    public async Task<IEnumerable<RequestStatusView>> GetStatusesByRequestStatus(int requestStatusId)
-    {
-        ArgumentNullException.ThrowIfNull(requestStatusId);
-
-        var requestStatuses = await _unitOfWork.RequestStatusRepository.GetStatusesByRequestStatusId(requestStatusId);
+        var requestStatuses = await _unitOfWork.RequestStatusRepository.GetStatusesByRequestId(requestId);
 
         return _mapper.Map<IEnumerable<RequestStatusView>>(requestStatuses);
     }

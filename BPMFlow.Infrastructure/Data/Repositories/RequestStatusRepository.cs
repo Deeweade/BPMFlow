@@ -1,3 +1,4 @@
+using System.Xml.Schema;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BPMFlow.Domain.Dtos.Entities.BPMFlow;
@@ -26,12 +27,12 @@ public class RequestStatusRepository : IRequestStatusRepository
                 .FirstOrDefaultAsync(x => x.Id == requestStatusId);
     }
 
-    public async Task<IEnumerable<RequestStatusDto>> GetStatusesByRequestStatusId(int requestStatusId)
+    public async Task<IEnumerable<RequestStatusDto>> GetStatusesByRequestId(int requestId)
     {
         return await _bpmFlowDbContext.RequestStatuses
                 .AsNoTracking()
                 .ProjectTo<RequestStatusDto>(_mapper.ConfigurationProvider)
-                .Where(x => x.Id == requestStatusId)
+                .Where(x => x.RequestId == requestId)
                 .ToListAsync();
     }
 

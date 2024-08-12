@@ -123,7 +123,9 @@ public class ObjectRequestRepository : IObjectRequestRepository
             DateStart = DateTime.Now,
             DateEnd = DateTime.MaxValue,
             IsActive = true,
-            EntityStatusId = (int)EntityStatuses.ActiveDraft
+            EntityStatusId = (int)EntityStatuses.ActiveDraft,
+            RequestStatusTransitionId = 1,
+            ResponsibleEmployeeId = 1
         };
 
         _bpmFlowContext.ObjectRequests.Add(request);
