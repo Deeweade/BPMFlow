@@ -26,14 +26,12 @@ public class ObjectRequestController(IObjectRequestService orService, IRequestSt
         return Ok(objectRequest);
     }
 
-    [HttpGet("responsibleInByLogin")]
-    public async Task<IActionResult> GetResponsibleInByLogin()
+    [HttpGet("byResponsibleLogin/{login}")]
+    public async Task<IActionResult> GetByResponsibleLogin(string login)
     {
-        var login = User.Identity?.Name;
-
         ArgumentNullException.ThrowIfNull(login);
 
-        var objectRequests = await _orService.GetResponsibleInByLogin(login);
+        var objectRequests = await _orService.GetByResponsibleLogin(login);
 
         return Ok(objectRequests);
     }

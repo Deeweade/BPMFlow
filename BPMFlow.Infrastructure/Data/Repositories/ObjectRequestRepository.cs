@@ -38,7 +38,7 @@ public class ObjectRequestRepository(BPMFlowDbContext bpmFlowDbContext, IMapper 
                     || x.EntityStatusId == (int)EntityStatuses.CompletedAndApproved));
     }
 
-    public async Task<IEnumerable<ObjectRequestDto>> GetResponsibleInByEmployeeId(int employeeId)
+    public async Task<IEnumerable<ObjectRequestDto>> GetByResponsibleEmployeeId(int employeeId)
     {
         ArgumentNullException.ThrowIfNull(employeeId);
 
