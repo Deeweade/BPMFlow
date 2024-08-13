@@ -162,9 +162,10 @@ namespace BPMFlow.API.Migrations
                     ObjectId = table.Column<int>(type: "int", nullable: false),
                     AuthorEmployeeId = table.Column<int>(type: "int", nullable: false),
                     ResponsibleEmployeeId = table.Column<int>(type: "int", nullable: false),
-                    RequestStatusId = table.Column<int>(type: "int", nullable: false),
                     PeriodId = table.Column<int>(type: "int", nullable: false),
                     EntityStatusId = table.Column<int>(type: "int", nullable: false),
+                    RequestId = table.Column<int>(type: "int", nullable: false),
+                    RequestStatusId = table.Column<int>(type: "int", nullable: false),
                     RequestStatusTransitionId = table.Column<int>(type: "int", nullable: false),
                     Code = table.Column<int>(type: "int", nullable: false),
                     DateStart = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -184,12 +185,22 @@ namespace BPMFlow.API.Migrations
                         column: x => x.RequestStatusId,
                         principalTable: "RequestStatuses",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ObjectRequests_Requests_RequestId",
+                        column: x => x.RequestId,
+                        principalTable: "Requests",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_BusinessProcesses_SystemObjectId",
                 table: "BusinessProcesses",
                 column: "SystemObjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ObjectRequests_RequestId",
+                table: "ObjectRequests",
+                column: "RequestId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ObjectRequests_RequestStatusId",

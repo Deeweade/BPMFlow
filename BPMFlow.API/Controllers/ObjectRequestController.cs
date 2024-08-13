@@ -4,6 +4,7 @@ using BPMFlow.Application.Models.Filters;
 using BPMFlow.Application.Models.Views.BPMFlow;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace BPMFlow.API.Controllers;
 
@@ -80,5 +81,13 @@ public class ObjectRequestController(IObjectRequestService orService, IRequestSt
         var objectRequest = await _orService.ChangeStatus(objectRequestView, requestStatusTransition.NextStatusOrder);
 
         return Ok(objectRequest);
+    }
+
+    [HttpPost("changeResponsibleEmployee/{newResponsibleEmployeeId}")]
+    public async Task<IActionResult> ChangeResponsibleEmployee([FromBody] int[] requestCodes, int newResponsibleEmployeeId)
+    {
+        var objectRequests = await _orService.ChangeResponsibleEmployee(requestCodes, newResponsibleEmployeeId);
+
+        return Ok(objectRequests);
     }
 }

@@ -24,6 +24,15 @@ public class ObjectRequestService(IUnitOfWork unitOfWork, IMapper mapper) : IObj
         return _mapper.Map<ObjectRequestView>(objectRequest);
     }
 
+    public async Task<IEnumerable<ObjectRequestView>> GetManyActiveByCode(int[] codes)
+    {
+        ArgumentNullException.ThrowIfNull(codes);
+
+        var objectRequests = await _unitOfWork.ObjectRequestRepository.GetManyActiveByCode(codes);
+
+        return _mapper.Map<IEnumerable<ObjectRequestView>>(objectRequests);
+    }
+
     public async Task<IEnumerable<ObjectRequestView>> GetByResponsibleLogin(string login)
     {
         ArgumentNullException.ThrowIfNull(login);
@@ -82,7 +91,7 @@ public class ObjectRequestService(IUnitOfWork unitOfWork, IMapper mapper) : IObj
 
         ObjectRequestDto objectRequest = null;
 
-        objectRequest.AuthorEmployeeId = _unitOfWork.EmployeeRepository.GetByUserLogin(login).Id;
+        var authorEmployeeId = await _unitOfWork.EmployeeRepository.GetByUserLogin(login);
 
         if (objectRequestView.RequestStatusId == null || objectRequestView.RequestStatusId == 0)
         {
@@ -101,7 +110,7 @@ public class ObjectRequestService(IUnitOfWork unitOfWork, IMapper mapper) : IObj
                         RequestId = objectRequestDto.RequestId,
                         RequestStatusId = status.Id,
                         ObjectId = objectRequestDto.ObjectId,
-                        AuthorEmployeeId = objectRequest.AuthorEmployeeId,
+                        AuthorEmployeeId = authorEmployeeId.Id,
                         PeriodId = objectRequestDto.PeriodId,
                         EntityStatusId = objectRequestDto.EntityStatusId
                     };
@@ -150,7 +159,6 @@ public class ObjectRequestService(IUnitOfWork unitOfWork, IMapper mapper) : IObj
         return codes;
     }
 
-
     public async Task<ObjectRequestView> ChangeStatus(ObjectRequestView objectRequestView, int nextStatusOrder)
     {
         ArgumentNullException.ThrowIfNull(objectRequestView);
@@ -158,13 +166,10 @@ public class ObjectRequestService(IUnitOfWork unitOfWork, IMapper mapper) : IObj
         var objectRequestDto = _mapper.Map<ObjectRequestDto>(objectRequestView);
 
         var objectRequest = await _unitOfWork.ObjectRequestRepository.GetById(objectRequestDto.Id);
-        ArgumentNullException.ThrowIfNull(objectRequest);
 
         var currentStatus = await _unitOfWork.RequestStatusRepository.GetById((int)objectRequest.RequestStatusId);
-        ArgumentNullException.ThrowIfNull(currentStatus);
 
         var transition = await _unitOfWork.RequestStatusTransitionRepository.GetTransition(currentStatus.StatusOrder, nextStatusOrder, currentStatus.RequestId);
-        ArgumentNullException.ThrowIfNull(transition);
 
         // close current ObjectRequest
         objectRequest.EntityStatusId = (int)EntityStatuses.InactiveDraft;
@@ -254,5 +259,23 @@ public class ObjectRequestService(IUnitOfWork unitOfWork, IMapper mapper) : IObj
         }
 
         return _mapper.Map<ObjectRequestView>(objectRequest);
+    }
+
+    public async Task<IEnumerable<ObjectRequestView>> ChangeResponsibleEmployee(int[] requestCodes, int newResponsibleEmployeeId)
+    {
+        ArgumentNullException.ThrowIfNull(requestCodes);
+
+        var activeRequests = await GetManyActiveByCode(requestCodes);
+
+        ArgumentNullException.ThrowIfNull(activeRequests);
+
+        foreach (var activeRequest in activeRequests)
+        {
+            activeRequest.ResponsibleEmployeeId = newResponsibleEmployeeId;
+        }
+
+        var objectRequests = await _unitOfWork.ObjectRequestRepository.UpdateObjectRequests(_mapper.Map<List<ObjectRequestDto>>(activeRequests));
+
+        return _mapper.Map<IEnumerable<ObjectRequestView>>(objectRequests);
     }
 }

@@ -7,6 +7,7 @@ public interface IObjectRequestService
 {
 
     Task<ObjectRequestView> GetActiveByCode(int code);
+    Task<IEnumerable<ObjectRequestView>> GetManyActiveByCode(int[] codes);
     Task<IEnumerable<ObjectRequestView>> GetByResponsibleLogin(string login);
     
     /// <summary>
@@ -27,4 +28,5 @@ public interface IObjectRequestService
 
     Task<IEnumerable<ObjectRequestView>> GetByFilter(ObjectRequestsFilterView filterView);
     Task<ObjectRequestView> ChangeStatus(ObjectRequestView objectRequestView, int nextStatusOrder);
+    Task<IEnumerable<ObjectRequestView>> ChangeResponsibleEmployee(int[] requestCodes, int newResponsibleEmployeeId);
 }

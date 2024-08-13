@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BPMFlow.API.Migrations
 {
     [DbContext(typeof(BPMFlowDbContext))]
-    [Migration("20240812111912_InitialCreate")]
+    [Migration("20240813095938_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -78,6 +78,9 @@ namespace BPMFlow.API.Migrations
                     b.Property<int>("PeriodId")
                         .HasColumnType("int");
 
+                    b.Property<int>("RequestId")
+                        .HasColumnType("int");
+
                     b.Property<int>("RequestStatusId")
                         .HasColumnType("int");
 
@@ -88,6 +91,8 @@ namespace BPMFlow.API.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RequestId");
 
                     b.HasIndex("RequestStatusId");
 
@@ -257,6 +262,12 @@ namespace BPMFlow.API.Migrations
 
             modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.ObjectRequest", b =>
                 {
+                    b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.Request", "Request")
+                        .WithMany("ObjectRequests")
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatus", "RequestStatus")
                         .WithMany("ObjectRequests")
                         .HasForeignKey("RequestStatusId")
@@ -268,6 +279,8 @@ namespace BPMFlow.API.Migrations
                         .HasForeignKey("RequestStatusTransitionId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.Navigation("Request");
 
                     b.Navigation("RequestStatus");
 
@@ -336,6 +349,8 @@ namespace BPMFlow.API.Migrations
 
             modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.Request", b =>
                 {
+                    b.Navigation("ObjectRequests");
+
                     b.Navigation("RequestStatusTransitions");
 
                     b.Navigation("RequestStatuses");
