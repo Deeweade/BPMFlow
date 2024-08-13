@@ -27,8 +27,6 @@ public class ObjectRequestRepository(BPMFlowDbContext bpmFlowDbContext, IMapper 
 
     public async Task<ObjectRequestDto> GetActiveByCode(int code)
     {
-        ArgumentNullException.ThrowIfNull(code);
-
         return await _bpmFlowDbContext.ObjectRequests
             .AsNoTracking()
             .ProjectTo<ObjectRequestDto>(_mapper.ConfigurationProvider)
@@ -38,10 +36,20 @@ public class ObjectRequestRepository(BPMFlowDbContext bpmFlowDbContext, IMapper 
                     || x.EntityStatusId == (int)EntityStatuses.CompletedAndApproved));
     }
 
+    public async Task<IEnumerable<ObjectRequestDto>> GetManyActiveByCode(int[] codes)
+    {
+        return await _bpmFlowDbContext.ObjectRequests
+            .AsNoTracking()
+            .ProjectTo<ObjectRequestDto>(_mapper.ConfigurationProvider)
+            .Where(x => codes.Contains(x.Code)
+                && x.IsActive 
+                && (x.EntityStatusId == (int)EntityStatuses.ActiveDraft
+                    || x.EntityStatusId == (int)EntityStatuses.CompletedAndApproved))
+            .ToListAsync();
+    }
+
     public async Task<IEnumerable<ObjectRequestDto>> GetByResponsibleEmployeeId(int employeeId)
     {
-        ArgumentNullException.ThrowIfNull(employeeId);
-
         return await _bpmFlowDbContext.ObjectRequests
                 .AsNoTracking()
                 .ProjectTo<ObjectRequestDto>(_mapper.ConfigurationProvider)
@@ -172,15 +180,15 @@ public class ObjectRequestRepository(BPMFlowDbContext bpmFlowDbContext, IMapper 
         await _bpmFlowDbContext.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<ObjectRequestDto>> UpdateObjectRequests(List<ObjectRequestDto> newRequests)
+    public async Task<IEnumerable<ObjectRequestDto>> UpdateObjectRequests(List<ObjectRequestDto> activeRequests)
     {   
-        foreach(var newRequest in newRequests)
+        foreach(var activeRequest in activeRequests)
         {
-            _bpmFlowDbContext.ObjectRequests.Update(_mapper.Map<ObjectRequest>(newRequest));
+            _bpmFlowDbContext.ObjectRequests.Update(_mapper.Map<ObjectRequest>(activeRequest));
         }
 
         await _bpmFlowDbContext.SaveChangesAsync();
 
-        return newRequests;
+        return activeRequests;
     }
 }

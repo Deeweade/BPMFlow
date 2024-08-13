@@ -7,6 +7,7 @@ public interface IObjectRequestRepository
 {
     Task<ObjectRequestDto> GetById(int requestId);
     Task<ObjectRequestDto> GetActiveByCode(int code);
+    Task<IEnumerable<ObjectRequestDto>> GetManyActiveByCode(int[] codes);
     Task<IEnumerable<ObjectRequestDto>> GetByResponsibleEmployeeId(int employeeId);
     Task<IEnumerable<ObjectRequestDto>> GetBySystemObjectIdEmployee();
     Task<IEnumerable<ObjectRequestDto>> GetByFilter(ObjectRequestsFilterDto filterDto);
@@ -14,5 +15,5 @@ public interface IObjectRequestRepository
     Task CloseRequest(ObjectRequestDto objectRequestDto);
     Task<IEnumerable<ObjectRequestDto>> GetParallelRequests(int code, int entityStatusId);
     Task AddObjectRequest(ObjectRequestDto objectRequestDto);
-    Task<IEnumerable<ObjectRequestDto>> UpdateObjectRequests(List<ObjectRequestDto> newRequests);
+    Task<IEnumerable<ObjectRequestDto>> UpdateObjectRequests(List<ObjectRequestDto> activeRequests);
 }

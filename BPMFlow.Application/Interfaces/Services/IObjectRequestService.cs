@@ -7,6 +7,7 @@ public interface IObjectRequestService
 {
 
     Task<ObjectRequestView> GetActiveByCode(int code);
+    Task<IEnumerable<ObjectRequestView>> GetManyActiveByCode(int[] codes);
     Task<IEnumerable<ObjectRequestView>> GetByResponsibleLogin(string login);
     
     /// <summary>

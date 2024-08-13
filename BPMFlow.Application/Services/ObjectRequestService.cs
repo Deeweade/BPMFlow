@@ -24,6 +24,15 @@ public class ObjectRequestService(IUnitOfWork unitOfWork, IMapper mapper) : IObj
         return _mapper.Map<ObjectRequestView>(objectRequest);
     }
 
+    public async Task<IEnumerable<ObjectRequestView>> GetManyActiveByCode(int[] codes)
+    {
+        ArgumentNullException.ThrowIfNull(codes);
+
+        var objectRequests = await _unitOfWork.ObjectRequestRepository.GetManyActiveByCode(codes);
+
+        return _mapper.Map<IEnumerable<ObjectRequestView>>(objectRequests);
+    }
+
     public async Task<IEnumerable<ObjectRequestView>> GetByResponsibleLogin(string login)
     {
         ArgumentNullException.ThrowIfNull(login);
@@ -255,22 +264,17 @@ public class ObjectRequestService(IUnitOfWork unitOfWork, IMapper mapper) : IObj
     public async Task<IEnumerable<ObjectRequestView>> ChangeResponsibleEmployee(int[] requestCodes, int newResponsibleEmployeeId)
     {
         ArgumentNullException.ThrowIfNull(requestCodes);
-        ArgumentNullException.ThrowIfNull(newResponsibleEmployeeId);
 
-        var newRequests = new List<ObjectRequestView>();
+        var activeRequests = await GetManyActiveByCode(requestCodes);
 
-        foreach(var requestCode in requestCodes)
+        ArgumentNullException.ThrowIfNull(activeRequests);
+
+        foreach (var activeRequest in activeRequests)
         {
-            var activeRequest = await GetActiveByCode(requestCode);
-
-            ArgumentNullException.ThrowIfNull(activeRequest);
-
             activeRequest.ResponsibleEmployeeId = newResponsibleEmployeeId;
-
-            newRequests.Add(activeRequest);
         }
 
-        var objectRequests = await _unitOfWork.ObjectRequestRepository.UpdateObjectRequests(_mapper.Map<List<ObjectRequestDto>>(newRequests));
+        var objectRequests = await _unitOfWork.ObjectRequestRepository.UpdateObjectRequests(_mapper.Map<List<ObjectRequestDto>>(activeRequests));
 
         return _mapper.Map<IEnumerable<ObjectRequestView>>(objectRequests);
     }

@@ -86,9 +86,6 @@ public class ObjectRequestController(IObjectRequestService orService, IRequestSt
     [HttpPost("changeResponsibleEmployee/{newResponsibleEmployeeId}")]
     public async Task<IActionResult> ChangeResponsibleEmployee([FromBody] int[] requestCodes, int newResponsibleEmployeeId)
     {
-        ArgumentNullException.ThrowIfNull(requestCodes);
-        ArgumentNullException.ThrowIfNull(newResponsibleEmployeeId);
-
         var objectRequests = await _orService.ChangeResponsibleEmployee(requestCodes, newResponsibleEmployeeId);
 
         return Ok(objectRequests);
