@@ -30,9 +30,6 @@ namespace BPMFlow.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("SystemId")
-                        .HasColumnType("int");
-
                     b.Property<int>("SystemObjectId")
                         .HasColumnType("int");
 
@@ -40,6 +37,8 @@ namespace BPMFlow.API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SystemObjectId");
 
                     b.ToTable("BusinessProcesses");
                 });
@@ -93,6 +92,8 @@ namespace BPMFlow.API.Migrations
                     b.HasIndex("RequestId");
 
                     b.HasIndex("RequestStatusId");
+
+                    b.HasIndex("RequestStatusTransitionId");
 
                     b.ToTable("ObjectRequests");
                 });
@@ -232,12 +233,28 @@ namespace BPMFlow.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("SystemId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("SystemId");
+
                     b.ToTable("SystemObjects");
+                });
+
+            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.BusinessProcess", b =>
+                {
+                    b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.SystemObject", "SystemObject")
+                        .WithMany("BusinessProcesses")
+                        .HasForeignKey("SystemObjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SystemObject");
                 });
 
             modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.ObjectRequest", b =>
@@ -245,18 +262,26 @@ namespace BPMFlow.API.Migrations
                     b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.Request", "Request")
                         .WithMany("ObjectRequests")
                         .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatus", "RequestStatus")
                         .WithMany("ObjectRequests")
                         .HasForeignKey("RequestStatusId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatusTransition", "RequestStatusTransition")
+                        .WithMany("ObjectRequests")
+                        .HasForeignKey("RequestStatusTransitionId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Request");
 
                     b.Navigation("RequestStatus");
+
+                    b.Navigation("RequestStatusTransition");
                 });
 
             modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.Request", b =>
@@ -275,7 +300,7 @@ namespace BPMFlow.API.Migrations
                     b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.Request", "Request")
                         .WithMany("RequestStatuses")
                         .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Request");
@@ -303,6 +328,17 @@ namespace BPMFlow.API.Migrations
                     b.Navigation("RequestStatus");
                 });
 
+            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.SystemObject", b =>
+                {
+                    b.HasOne("BPMFlow.Domain.Models.Entities.BPMFlow.System", "System")
+                        .WithMany("SystemObjects")
+                        .HasForeignKey("SystemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("System");
+                });
+
             modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.BusinessProcess", b =>
                 {
                     b.Navigation("Requests");
@@ -322,6 +358,21 @@ namespace BPMFlow.API.Migrations
                     b.Navigation("ObjectRequests");
 
                     b.Navigation("RequestStatusTriggers");
+                });
+
+            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.RequestStatusTransition", b =>
+                {
+                    b.Navigation("ObjectRequests");
+                });
+
+            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.System", b =>
+                {
+                    b.Navigation("SystemObjects");
+                });
+
+            modelBuilder.Entity("BPMFlow.Domain.Models.Entities.BPMFlow.SystemObject", b =>
+                {
+                    b.Navigation("BusinessProcesses");
                 });
 #pragma warning restore 612, 618
         }

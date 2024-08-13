@@ -28,24 +28,24 @@ public class BPMFlowDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ObjectRequest>()
-            .HasOne(ar => ar.RequestStatus)
+            .HasOne(or => or.RequestStatus)
             .WithMany(rs => rs.ObjectRequests)
-            .HasForeignKey(ar => ar.RequestStatusId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .HasForeignKey(or => or.RequestStatusId)
+            .OnDelete(DeleteBehavior.NoAction);
 
-        modelBuilder.Entity<RequestStatus>()
-            .HasOne(rs => rs.Request)
-            .WithMany(gr => gr.RequestStatuses)
-            .HasForeignKey(rs => rs.RequestId)
-            .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<ObjectRequest>()
+            .HasOne(or => or.Request)
+            .WithMany(r => r.ObjectRequests)
+            .HasForeignKey(or => or.RequestId)
+            .OnDelete(DeleteBehavior.NoAction);
 
-        modelBuilder.Entity<Request>()
-            .HasMany(rs => rs.RequestStatuses)
-            .WithOne(gr => gr.Request)
-            .HasForeignKey(rs => rs.RequestId)
-            .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<ObjectRequest>()
+            .HasOne(or => or.RequestStatusTransition)
+            .WithMany(rs => rs.ObjectRequests)
+            .HasForeignKey(or => or.RequestStatusTransitionId)
+            .OnDelete(DeleteBehavior.NoAction);
 
+        
         base.OnModelCreating(modelBuilder);
     }
-
 }

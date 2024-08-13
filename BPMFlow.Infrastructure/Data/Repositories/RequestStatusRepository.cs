@@ -1,3 +1,4 @@
+using System.Xml.Schema;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BPMFlow.Domain.Dtos.Entities.BPMFlow;
@@ -7,16 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BPMFlow.Infrastructure.Data.Repositories;
 
-public class RequestStatusRepository : IRequestStatusRepository
+public class RequestStatusRepository(BPMFlowDbContext bpmFlowDbContext, IMapper mapper) : IRequestStatusRepository
 {
-    private readonly BPMFlowDbContext _bpmFlowDbContext;
-    private readonly IMapper _mapper;
-
-    public RequestStatusRepository(BPMFlowDbContext bpmFlowDbContext, IMapper mapper)
-    {
-        _bpmFlowDbContext = bpmFlowDbContext;
-        _mapper = mapper;
-    }
+    private readonly BPMFlowDbContext _bpmFlowDbContext = bpmFlowDbContext;
+    private readonly IMapper _mapper = mapper;
 
     public async Task<RequestStatusDto> GetById(int requestStatusId)
     {

@@ -12,34 +12,6 @@ namespace BPMFlow.API.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "BusinessProcesses",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SystemId = table.Column<int>(type: "int", nullable: false),
-                    SystemObjectId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_BusinessProcesses", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SystemObjects",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SystemObjects", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Systems",
                 columns: table => new
                 {
@@ -50,6 +22,46 @@ namespace BPMFlow.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Systems", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SystemObjects",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SystemId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SystemObjects", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SystemObjects_Systems_SystemId",
+                        column: x => x.SystemId,
+                        principalTable: "Systems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BusinessProcesses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SystemObjectId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BusinessProcesses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BusinessProcesses_SystemObjects_SystemObjectId",
+                        column: x => x.SystemObjectId,
+                        principalTable: "SystemObjects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -93,7 +105,7 @@ namespace BPMFlow.API.Migrations
                         column: x => x.RequestId,
                         principalTable: "Requests",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -122,35 +134,6 @@ namespace BPMFlow.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ObjectRequests",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ObjectId = table.Column<int>(type: "int", nullable: false),
-                    AuthorEmployeeId = table.Column<int>(type: "int", nullable: false),
-                    ResponsibleEmployeeId = table.Column<int>(type: "int", nullable: false),
-                    RequestStatusTransitionId = table.Column<int>(type: "int", nullable: false),
-                    PeriodId = table.Column<int>(type: "int", nullable: false),
-                    EntityStatusId = table.Column<int>(type: "int", nullable: false),
-                    RequestStatusId = table.Column<int>(type: "int", nullable: false),
-                    Code = table.Column<int>(type: "int", nullable: false),
-                    DateStart = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DateEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ObjectRequests", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ObjectRequests_RequestStatuses_RequestStatusId",
-                        column: x => x.RequestStatusId,
-                        principalTable: "RequestStatuses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "RequestStatusTriggers",
                 columns: table => new
                 {
@@ -170,10 +153,53 @@ namespace BPMFlow.API.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ObjectRequests",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ObjectId = table.Column<int>(type: "int", nullable: false),
+                    AuthorEmployeeId = table.Column<int>(type: "int", nullable: false),
+                    ResponsibleEmployeeId = table.Column<int>(type: "int", nullable: false),
+                    RequestStatusId = table.Column<int>(type: "int", nullable: false),
+                    PeriodId = table.Column<int>(type: "int", nullable: false),
+                    EntityStatusId = table.Column<int>(type: "int", nullable: false),
+                    RequestStatusTransitionId = table.Column<int>(type: "int", nullable: false),
+                    Code = table.Column<int>(type: "int", nullable: false),
+                    DateStart = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ObjectRequests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ObjectRequests_RequestStatusTransitions_RequestStatusTransitionId",
+                        column: x => x.RequestStatusTransitionId,
+                        principalTable: "RequestStatusTransitions",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ObjectRequests_RequestStatuses_RequestStatusId",
+                        column: x => x.RequestStatusId,
+                        principalTable: "RequestStatuses",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BusinessProcesses_SystemObjectId",
+                table: "BusinessProcesses",
+                column: "SystemObjectId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_ObjectRequests_RequestStatusId",
                 table: "ObjectRequests",
                 column: "RequestStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ObjectRequests_RequestStatusTransitionId",
+                table: "ObjectRequests",
+                column: "RequestStatusTransitionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Requests_BusinessProcessId",
@@ -194,6 +220,11 @@ namespace BPMFlow.API.Migrations
                 name: "IX_RequestStatusTriggers_RequestStatusId",
                 table: "RequestStatusTriggers",
                 column: "RequestStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SystemObjects_SystemId",
+                table: "SystemObjects",
+                column: "SystemId");
         }
 
         /// <inheritdoc />
@@ -203,16 +234,10 @@ namespace BPMFlow.API.Migrations
                 name: "ObjectRequests");
 
             migrationBuilder.DropTable(
-                name: "RequestStatusTransitions");
-
-            migrationBuilder.DropTable(
                 name: "RequestStatusTriggers");
 
             migrationBuilder.DropTable(
-                name: "SystemObjects");
-
-            migrationBuilder.DropTable(
-                name: "Systems");
+                name: "RequestStatusTransitions");
 
             migrationBuilder.DropTable(
                 name: "RequestStatuses");
@@ -222,6 +247,12 @@ namespace BPMFlow.API.Migrations
 
             migrationBuilder.DropTable(
                 name: "BusinessProcesses");
+
+            migrationBuilder.DropTable(
+                name: "SystemObjects");
+
+            migrationBuilder.DropTable(
+                name: "Systems");
         }
     }
 }

@@ -2,19 +2,13 @@ namespace BPMFlow.Domain.Models.Entities.BPMFlow;
 
 public class RequestStatus : BaseEntity
 {
-    public RequestStatus()
-    {
-        ObjectRequests = new HashSet<ObjectRequest>();
-        RequestStatusTriggers = new HashSet<RequestStatusTrigger>();
-    }
-
     public string Title { get; set; }
     public int ResponsibleRoleId { get; set; }
     public int StatusOrder { get; set; }
     public bool IsFinalApproved { get; set; }
     public bool IsFinalDenied { get; set; }
 
-    //RequestStatus -> Request
+    // RequestStatus -> Request
     public int RequestId { get; set; }
     public virtual Request Request { get; set; }
     

@@ -5,7 +5,7 @@
 namespace BPMFlow.API.Migrations
 {
     /// <inheritdoc />
-    public partial class ObjectRequestEntityUpdate : Migration
+    public partial class EntityAndRealtionshipUpdate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -27,8 +27,7 @@ namespace BPMFlow.API.Migrations
                 table: "ObjectRequests",
                 column: "RequestId",
                 principalTable: "Requests",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
         }
 
         /// <inheritdoc />

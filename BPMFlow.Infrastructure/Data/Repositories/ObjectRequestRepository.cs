@@ -53,7 +53,7 @@ public class ObjectRequestRepository(BPMFlowDbContext bpmFlowDbContext, IMapper 
     {
         var objectRequests = await _bpmFlowDbContext.ObjectRequests
                                 .AsNoTracking()
-                                .Where(x => x.Request.BusinessProcess.SystemObjectId == (int)SystemObjects.Employee)
+                                .Where(x => x.RequestStatusTransition.Request.BusinessProcess.SystemObjectId == (int)SystemObjects.Employee)
                                 .ToListAsync();
 
         return _mapper.Map<IEnumerable<ObjectRequestDto>>(objectRequests);
@@ -68,12 +68,12 @@ public class ObjectRequestRepository(BPMFlowDbContext bpmFlowDbContext, IMapper 
 
         if (filterDto.RequestId.HasValue && filterDto.RequestId.Value != 0)
         {
-            query = query.Where(x => x.RequestId == filterDto.RequestId.Value);
+            query = query.Where(x => x.RequestStatus.RequestId == filterDto.RequestId.Value);
         }
 
         if (filterDto.SystemId.HasValue && filterDto.SystemId.Value != 0)
         {
-            query = query.Where(x => x.RequestStatus.Request.BusinessProcess.SystemObjectId == filterDto.SystemId);
+            query = query.Where(x => x.RequestStatus.Request.BusinessProcess.SystemObject.SystemId == filterDto.SystemId);
         }
 
         if (filterDto.SystemObjectId.HasValue && filterDto.SystemObjectId.Value != 0)
@@ -129,7 +129,7 @@ public class ObjectRequestRepository(BPMFlowDbContext bpmFlowDbContext, IMapper 
             DateStart = DateTime.Now,
             DateEnd = DateTime.MaxValue,
             IsActive = true,
-            EntityStatusId = (int)EntityStatuses.ActiveDraft
+            EntityStatusId = (int)EntityStatuses.ActiveDraft,
         };
 
         _bpmFlowDbContext.ObjectRequests.Add(request);
