@@ -27,4 +27,5 @@ public interface IObjectRequestService
 
     Task<IEnumerable<ObjectRequestView>> GetByFilter(ObjectRequestsFilterView filterView);
     Task<ObjectRequestView> ChangeStatus(ObjectRequestView objectRequestView, int nextStatusOrder);
+    Task<IEnumerable<ObjectRequestView>> ChangeResponsibleEmployee(int[] requestCodes, int newResponsibleEmployeeId);
 }

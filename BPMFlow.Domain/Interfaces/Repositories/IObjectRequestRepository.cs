@@ -16,4 +16,5 @@ public interface IObjectRequestRepository
     Task CloseRequest(ObjectRequestDto objectRequestDto);
     Task<IEnumerable<ObjectRequestDto>> GetParallelRequests(int code, int entityStatusId);
     Task AddObjectRequest(ObjectRequestDto objectRequestDto);
+    Task<IEnumerable<ObjectRequestDto>> ChangeResponsibleEmployee(int[] requestCodes, int newResponsibleEmployeeId);
 }

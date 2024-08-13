@@ -129,7 +129,7 @@ public class ObjectRequestRepository(BPMFlowDbContext bpmFlowDbContext, IMapper 
             DateStart = DateTime.Now,
             DateEnd = DateTime.MaxValue,
             IsActive = true,
-            EntityStatusId = (int)EntityStatuses.ActiveDraft,
+            EntityStatusId = (int)EntityStatuses.ActiveDraft
         };
 
         _bpmFlowDbContext.ObjectRequests.Add(request);
@@ -170,5 +170,30 @@ public class ObjectRequestRepository(BPMFlowDbContext bpmFlowDbContext, IMapper 
         
         await _bpmFlowDbContext.ObjectRequests.AddAsync(entity);
         await _bpmFlowDbContext.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<ObjectRequestDto>> ChangeResponsibleEmployee(int[] requestCodes, int newResponsibleEmployeeId)
+    {
+        var newRequests = new List<ObjectRequestDto>();
+
+        foreach(var requestCode in requestCodes)
+        {
+            var activeRequest = await GetActiveByCode(requestCode);
+
+            ArgumentNullException.ThrowIfNull(activeRequest);
+
+            activeRequest.ResponsibleEmployeeId = newResponsibleEmployeeId;
+
+            newRequests.Add(activeRequest);
+        }
+        
+        foreach(var newRequest in newRequests)
+        {
+            _bpmFlowDbContext.ObjectRequests.Update(_mapper.Map<ObjectRequest>(newRequest));
+        }
+
+        await _bpmFlowDbContext.SaveChangesAsync();
+
+        return newRequests;
     }
 }
