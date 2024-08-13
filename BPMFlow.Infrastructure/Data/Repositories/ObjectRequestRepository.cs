@@ -172,21 +172,8 @@ public class ObjectRequestRepository(BPMFlowDbContext bpmFlowDbContext, IMapper 
         await _bpmFlowDbContext.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<ObjectRequestDto>> ChangeResponsibleEmployee(int[] requestCodes, int newResponsibleEmployeeId)
-    {
-        var newRequests = new List<ObjectRequestDto>();
-
-        foreach(var requestCode in requestCodes)
-        {
-            var activeRequest = await GetActiveByCode(requestCode);
-
-            ArgumentNullException.ThrowIfNull(activeRequest);
-
-            activeRequest.ResponsibleEmployeeId = newResponsibleEmployeeId;
-
-            newRequests.Add(activeRequest);
-        }
-        
+    public async Task<IEnumerable<ObjectRequestDto>> ChangeResponsibleEmployee(List<ObjectRequestDto> newRequests)
+    {   
         foreach(var newRequest in newRequests)
         {
             _bpmFlowDbContext.ObjectRequests.Update(_mapper.Map<ObjectRequest>(newRequest));

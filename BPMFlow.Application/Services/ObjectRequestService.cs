@@ -257,7 +257,20 @@ public class ObjectRequestService(IUnitOfWork unitOfWork, IMapper mapper) : IObj
         ArgumentNullException.ThrowIfNull(requestCodes);
         ArgumentNullException.ThrowIfNull(newResponsibleEmployeeId);
 
-        var objectRequests = await _unitOfWork.ObjectRequestRepository.ChangeResponsibleEmployee(requestCodes, newResponsibleEmployeeId);
+        var newRequests = new List<ObjectRequestView>();
+
+        foreach(var requestCode in requestCodes)
+        {
+            var activeRequest = await GetActiveByCode(requestCode);
+
+            ArgumentNullException.ThrowIfNull(activeRequest);
+
+            activeRequest.ResponsibleEmployeeId = newResponsibleEmployeeId;
+
+            newRequests.Add(activeRequest);
+        }
+
+        var objectRequests = await _unitOfWork.ObjectRequestRepository.ChangeResponsibleEmployee(_mapper.Map<List<ObjectRequestDto>>(newRequests));
 
         return _mapper.Map<IEnumerable<ObjectRequestView>>(objectRequests);
     }
