@@ -172,7 +172,7 @@ public class ObjectRequestRepository(BPMFlowDbContext bpmFlowDbContext, IMapper 
         await _bpmFlowDbContext.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<ObjectRequestDto>> ChangeResponsibleEmployee(List<ObjectRequestDto> newRequests)
+    public async Task<IEnumerable<ObjectRequestDto>> UpdateObjectRequests(List<ObjectRequestDto> newRequests)
     {   
         foreach(var newRequest in newRequests)
         {

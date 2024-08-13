@@ -270,7 +270,7 @@ public class ObjectRequestService(IUnitOfWork unitOfWork, IMapper mapper) : IObj
             newRequests.Add(activeRequest);
         }
 
-        var objectRequests = await _unitOfWork.ObjectRequestRepository.ChangeResponsibleEmployee(_mapper.Map<List<ObjectRequestDto>>(newRequests));
+        var objectRequests = await _unitOfWork.ObjectRequestRepository.UpdateObjectRequests(_mapper.Map<List<ObjectRequestDto>>(newRequests));
 
         return _mapper.Map<IEnumerable<ObjectRequestView>>(objectRequests);
     }
