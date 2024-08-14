@@ -76,6 +76,7 @@ public class ObjectRequestController(IObjectRequestService orService, IRequestSt
     {
         ArgumentNullException.ThrowIfNull(objectRequestView);
 
+        //перенести это в _orService
         var requestStatusTransition = await _rstService.GetById(objectRequestView.RequestStatusTransitionId);
 
         var objectRequest = await _orService.ChangeStatus(objectRequestView, requestStatusTransition.NextStatusOrder);
